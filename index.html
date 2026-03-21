@@ -5,58 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>牛牛畫廊 · 今日靜思語</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Noto Sans SC', sans-serif; background-color: #1a1a1a; }
+        /* 关键：把 body 背景设为透明，防止遮挡 */
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Noto Sans SC', sans-serif; background: none; }
         
-        /* 全屏背景图层 */
-        .full-bg {
+        #bg-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #222 url('https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5') no-repeat center center;
+            /* 预设一个保底背景，确保加载时不是黑屏 */
+            background: url('https://images.unsplash.com/photo-1504858700536-882c978a3464') no-repeat center center;
             background-size: cover !important;
-            transition: background 1.2s ease-in-out;
-            z-index: -1;
+            transition: background 1s ease-in-out;
+            z-index: -1; 
         }
 
-        .container {
-            display: flex; align-items: center; justify-content: center;
-            height: 100vh; width: 100vw;
-        }
+        .container { display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; }
 
         .quote-card {
-            background: rgba(255, 255, 255, 0.48);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 50px 30px;
-            border-radius: 30px;
-            width: 82%; max-width: 450px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 40px 25px;
+            border-radius: 25px;
+            width: 80%; max-width: 400px;
             text-align: center;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        h1 { color: #1a1a1a; font-size: 8.5vw; line-height: 1.5; font-weight: 500; margin: 0; word-wrap: break-word; }
-        @media screen and (min-width: 600px) { h1 { font-size: 42px; } }
+        h1 { color: #1a1a1a; font-size: 32px; line-height: 1.5; margin: 0 0 20px 0; }
 
-        .footer { 
-            margin-top: 30px; font-size: 13px; color: rgba(0,0,0,0.5); letter-spacing: 2px;
-            display: flex; flex-direction: column; align-items: center;
-        }
+        .footer { display: flex; flex-direction: column; align-items: center; font-size: 12px; color: rgba(0,0,0,0.6); }
         
-        /* 这里的 Logo 样式 */
         .footer img {
-            width: 45px; height: 45px; border-radius: 50%;
-            margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            object-fit: cover;
+            width: 50px; height: 50px; border-radius: 50%;
+            margin-bottom: 10px; object-fit: cover;
+            border: 2px solid white;
         }
-        
-        .loading { font-size: 18px; color: #444; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="full-bg" id="bg-layer"></div>
+    <div id="bg-layer"></div>
     <div class="container">
         <div class="quote-card">
-            <h1 id="quote-text" class="loading">正在靜思中...</h1>
+            <h1 id="quote-text">正在載入...</h1>
             <div class="footer">
                 <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=100" alt="Logo">
                 <span>牛牛畫廊 · 智能藝術</span>
@@ -73,31 +62,20 @@
             document.body.appendChild(script);
         }
 
-                // 核心处理逻辑（带超級清理+穩健背景加載）
         function displayQuote(data) {
-            var textElem = document.getElementById('quote-text');
-            var bgLayer = document.getElementById('bg-layer');
-            textElem.classList.remove('loading');
-            
-            // 1. 超級去污函数：清除所有可能的引号和多余空格
-            function clean(str) {
-                return String(str || "").replace(/^["'“”‘’\s]+|["'“”‘’\s]+$/g, '').trim();
-            }
+            // 彻底清理链接，防止任何奇怪字符
+            var cleanImg = String(data.bgImage || "").replace(/["'\s]/g, "");
+            var cleanQuote = String(data.quote || "").replace(/["']/g, "");
 
-            // 2. 填入语录
-            var rawQuote = clean(data.quote || "心静自然凉");
-            textElem.innerText = rawQuote;
+            document.getElementById('quote-text').innerText = cleanQuote;
             
-            // 3. 填入背景图（关键修改点在 url('') 的引号上）
-            if(data.bgImage) {
-                var imgUrl = clean(data.bgImage);
-                if(imgUrl.startsWith('http')) {
-                    // 🚨 关键：这里去掉了 url里面的引号！🚨
-                    // 很多浏览器在加载 url时，如果里面有奇怪字符，加上引号反而会失败。
-                    bgLayer.style.backgroundImage = 'url(' + imgUrl + ')';
-                }
-            } else {
-                // 如果 B 列没图片，强制显示一个默认背景
-                bgLayer.style.backgroundImage = "url('https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5')";
+            if (cleanImg.startsWith('http')) {
+                // 暴力换背景
+                document.getElementById('bg-layer').style.backgroundImage = "url(" + cleanImg + ")";
             }
         }
+
+        window.onload = loadQuote;
+    </script>
+</body>
+</html>

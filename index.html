@@ -5,41 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>牛牛畫廊 · 今日靜思語</title>
     <style>
-        /* 关键：把 body 背景设为透明，防止遮挡 */
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Noto Sans SC', sans-serif; background: none; }
+        /* 核心修复：背景必须设为透明，否则会挡住下面的图 */
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Noto Sans SC', sans-serif; background: transparent !important; }
         
         #bg-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* 预设一个保底背景，确保加载时不是黑屏 */
-            background: url('https://images.unsplash.com/photo-1504858700536-882c978a3464') no-repeat center center;
+            /* 预设一个漂亮的极光图作为保险背景 */
+            background: #222 url('https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99') no-repeat center center;
             background-size: cover !important;
-            transition: background 1s ease-in-out;
-            z-index: -1; 
+            z-index: -2; /* 放在最底层 */
         }
 
-        .container { display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; }
+        .container { display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; background: transparent; }
 
+        /* 磨砂玻璃卡片 */
         .quote-card {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            padding: 40px 25px;
-            border-radius: 25px;
+            padding: 45px 25px;
+            border-radius: 30px;
             width: 80%; max-width: 400px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        h1 { color: #1a1a1a; font-size: 32px; line-height: 1.5; margin: 0 0 20px 0; }
+        /* 醍醐灌顶大字 */
+        h1 { color: #1a1a1a; font-size: 30px; line-height: 1.4; font-weight: 500; margin: 0 0 25px 0; }
 
-        .footer { display: flex; flex-direction: column; align-items: center; font-size: 12px; color: rgba(0,0,0,0.6); }
+        /* 底部 Logo 区域 */
+        .footer { display: flex; flex-direction: column; align-items: center; font-size: 12px; color: rgba(0,0,0,0.5); }
         
         .footer img {
-            width: 50px; height: 50px; border-radius: 50%;
-            margin-bottom: 10px; object-fit: cover;
-            border: 2px solid white;
+            width: 55px; height: 55px; border-radius: 50%;
+            margin-bottom: 12px; object-fit: cover;
+            border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="bg-layer"></div>
@@ -63,15 +67,18 @@
         }
 
         function displayQuote(data) {
-            // 彻底清理链接，防止任何奇怪字符
-            var cleanImg = String(data.bgImage || "").replace(/["'\s]/g, "");
-            var cleanQuote = String(data.quote || "").replace(/["']/g, "");
+            var textElem = document.getElementById('quote-text');
+            var bgLayer = document.getElementById('bg-layer');
+            
+            // 彻底清理所有可能的引号和空格
+            var cleanQuote = String(data.quote || "").replace(/["'“”]/g, "").trim();
+            var cleanImg = String(data.bgImage || "").replace(/["'“”\s]/g, "").trim();
 
-            document.getElementById('quote-text').innerText = cleanQuote;
+            textElem.innerText = cleanQuote;
             
             if (cleanImg.startsWith('http')) {
-                // 暴力换背景
-                document.getElementById('bg-layer').style.backgroundImage = "url(" + cleanImg + ")";
+                // 暴力重写背景，不给浏览器任何误解的机会
+                bgLayer.style.setProperty('background-image', 'url(' + cleanImg + ')', 'important');
             }
         }
 

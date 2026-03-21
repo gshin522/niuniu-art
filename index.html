@@ -7,25 +7,20 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Noto Sans SC', sans-serif; background-color: #1a1a1a; }
         
-        /* 1. 全屏背景图层 - 双重保险：
-           即使脚本加载失败，这里也会显示一个默认的、漂亮的艺术背景
-        */
+        /* 全屏背景图层 */
         .full-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* 我随便选了一个 Unsplash 上的漂亮山水画作为默认 */
             background: #222 url('https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5') no-repeat center center;
             background-size: cover !important;
             transition: background 1.2s ease-in-out;
             z-index: -1;
         }
 
-        /* 2. 中央容器 */
         .container {
             display: flex; align-items: center; justify-content: center;
             height: 100vh; width: 100vw;
         }
 
-        /* 3. 磨砂玻璃卡片 */
         .quote-card {
             background: rgba(255, 255, 255, 0.48);
             backdrop-filter: blur(20px);
@@ -38,28 +33,18 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* 4. 醍醐灌顶大字 - 自适应屏幕 */
-        h1 { 
-            color: #1a1a1a; font-size: 8.5vw; line-height: 1.5; 
-            font-weight: 500; margin: 0;
-            word-wrap: break-word;
-        }
-
+        h1 { color: #1a1a1a; font-size: 8.5vw; line-height: 1.5; font-weight: 500; margin: 0; word-wrap: break-word; }
         @media screen and (min-width: 600px) { h1 { font-size: 42px; } }
 
-        /* 5. 底部 Logo 和文字样式 */
         .footer { 
-            margin-top: 30px; 
-            font-size: 13px; 
-            color: rgba(0,0,0,0.5); 
-            letter-spacing: 2px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            margin-top: 30px; font-size: 13px; color: rgba(0,0,0,0.5); letter-spacing: 2px;
+            display: flex; flex-direction: column; align-items: center;
         }
         
+        /* 这里的 Logo 样式 */
         .footer img {
-            width: 40px; height: 40px; border-radius: 50%;
-            margin-bottom: 15px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 45px; height: 45px; border-radius: 50%;
+            margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             object-fit: cover;
         }
         
@@ -73,48 +58,36 @@
         <div class="quote-card">
             <h1 id="quote-text" class="loading">正在靜思中...</h1>
             <div class="footer">
-                <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5" alt="Logo">
+                <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=100" alt="Logo">
                 <span>牛牛畫廊 · 智能藝術</span>
             </div>
         </div>
     </div>
 
     <script>
-        // 你最新的 Google Script URL
         var googleScriptUrl = 'https://script.google.com/macros/s/AKfycbyNgKa4LAURh5jENB9-gfa2nQOHWm-Nz7DHPwFXMIkrfJwntQYAZ9ADN5CK2kVAMnwW/exec';
 
-        // 核心加载函数
         function loadQuote() {
             var script = document.createElement('script');
             script.src = googleScriptUrl + '?callback=displayQuote';
             document.body.appendChild(script);
         }
 
-        // 数据处理逻辑（带超级去引号功能）
         function displayQuote(data) {
             var textElem = document.getElementById('quote-text');
             var bgLayer = document.getElementById('bg-layer');
             textElem.classList.remove('loading');
             
-            // 7. 超级去污函数：自动清理语录和图片链接中所有的引号、空格、换行符
-            function cleanStr(str) {
-                return String(str || "").replace(/^["'“”‘’\s]+|["'“”‘’\s]+$/g, '').trim();
+            // 核心修复：彻底清除任何可能存在的引号
+            function clean(str) {
+                return String(str || "").replace(/["']/g, "").trim();
             }
 
-            // 填入语录
-            var rawQuote = cleanStr(data.quote || "心静自然凉");
-            textElem.innerText = rawQuote;
+            textElem.innerText = clean(data.quote);
             
-            // 填入背景图（如果有）
-            if(data.bgImage) {
-                var cleanImg = cleanStr(data.bgImage);
-                if(cleanImg.startsWith('http')) {
-                    // 核心修改：确保这里加载的是纯净的、无引号的链接
-                    bgLayer.style.backgroundImage = "url('" + cleanImg + "')";
-                }
-            } else {
-                // 如果表格 B 列为空，这里也会强制显示一个保险背景
-                bgLayer.style.backgroundImage = "url('https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5')";
+            var imgUrl = clean(data.bgImage);
+            if(imgUrl.startsWith('http')) {
+                bgLayer.style.backgroundImage = "url('" + imgUrl + "')";
             }
         }
 

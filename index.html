@@ -73,25 +73,31 @@
             document.body.appendChild(script);
         }
 
+                // 核心处理逻辑（带超級清理+穩健背景加載）
         function displayQuote(data) {
             var textElem = document.getElementById('quote-text');
             var bgLayer = document.getElementById('bg-layer');
             textElem.classList.remove('loading');
             
-            // 核心修复：彻底清除任何可能存在的引号
+            // 1. 超級去污函数：清除所有可能的引号和多余空格
             function clean(str) {
-                return String(str || "").replace(/["']/g, "").trim();
+                return String(str || "").replace(/^["'“”‘’\s]+|["'“”‘’\s]+$/g, '').trim();
             }
 
-            textElem.innerText = clean(data.quote);
+            // 2. 填入语录
+            var rawQuote = clean(data.quote || "心静自然凉");
+            textElem.innerText = rawQuote;
             
-            var imgUrl = clean(data.bgImage);
-            if(imgUrl.startsWith('http')) {
-                bgLayer.style.backgroundImage = "url('" + imgUrl + "')";
+            // 3. 填入背景图（关键修改点在 url('') 的引号上）
+            if(data.bgImage) {
+                var imgUrl = clean(data.bgImage);
+                if(imgUrl.startsWith('http')) {
+                    // 🚨 关键：这里去掉了 url里面的引号！🚨
+                    // 很多浏览器在加载 url时，如果里面有奇怪字符，加上引号反而会失败。
+                    bgLayer.style.backgroundImage = 'url(' + imgUrl + ')';
+                }
+            } else {
+                // 如果 B 列没图片，强制显示一个默认背景
+                bgLayer.style.backgroundImage = "url('https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5')";
             }
         }
-
-        window.onload = loadQuote;
-    </script>
-</body>
-</html>

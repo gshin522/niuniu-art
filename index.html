@@ -2,18 +2,19 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>牛牛畫廊 · 今日靜思語</title>
     <style>
         /* 1. 基础样式 */
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Noto Sans SC', sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Noto Sans SC', sans-serif; background-color: #000; }
         
-        /* 2. 全屏山水背景：强制铺满，不留白 */
+        /* 2. 全屏山水背景 */
         .full-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /*https://images.unsplash.com/photo-1504858700536-882c978a3464?q=80&w=2070&auto=format&fit=crop  */
-            background: url(' https://images.unsplash.com/photo-1504858700536-882c978a3464?q=80&w=2070&auto=format&fit=crop ') no-repeat center center;
+            /* 这里默认放你之前的极光图，脚本加载后会自动换成表格里的画 */
+            background: url('https://images.unsplash.com/photo-1504858700536-882c978a3464') no-repeat center center;
             background-size: cover !important;
+            transition: background 1s ease-in-out;
             z-index: -1;
         }
 
@@ -23,68 +24,71 @@
             height: 100vh; width: 100vw;
         }
 
-        /* 4. 毛玻璃文字方格 - 高级感 */
+        /* 4. 毛玻璃大文字方格 */
         .quote-card {
-            background: rgba(255, 255, 255, 0.5); /* 半透明 */
-            backdrop-filter: blur(15px); /* 毛玻璃模糊 */
-            -webkit-backdrop-filter: blur(15px);
-            padding: 40px 20px;
-            border-radius: 20px;
-            width: 85%; max-width: 400px;
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 50px 30px;
+            border-radius: 30px;
+            width: 85%; max-width: 450px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* 5. 调整文字大小：醍醐灌顶大字报 */
+        /* 5. 醍醐灌顶大字报：根据屏幕宽度自适应 */
         h1 { 
-            color: #1a1a1a; font-size: 8vw; line-height: 1.5; 
-            font-weight: bold; margin: 20px 0;
+            color: #1a1a1a; font-size: 8.5vw; line-height: 1.4; 
+            font-weight: 500; margin: 0;
             word-wrap: break-word;
         }
 
-        /* 6. Logo 样式 */
-        .logo-img {
-            /*https://images.unsplash.com/photo-1504858700536-882c978a3464?q=80&w=2070&auto=format&fit=crop  */
-            background: url('https://images.unsplash.com/photo-1504858700536-882c978a3464?q=80&w=2070&auto=format&fit=crop ') no-repeat center center;
-            background-size: contain;
-            width: 100px; /* Logo 宽度 */
-            height: 100px; /* Logo 高度 */
-            margin: 0 auto 20px auto; /* 居中，底部留白 */
-        }
+        /* 手机端大字号保护 */
+        @media screen and (min-width: 600px) { h1 { font-size: 42px; } }
 
-        .footer { font-size: 14px; color: #555; letter-spacing: 2px; }
+        .footer { margin-top: 30px; font-size: 14px; color: rgba(0,0,0,0.5); letter-spacing: 3px; font-weight: 300; }
+        
+        /* 载入状态样式 */
+        .loading { font-size: 18px; color: #666; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100;300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="full-bg"></div> <div class="container">
+    <div class="full-bg" id="bg-layer"></div>
+    <div class="container">
         <div class="quote-card">
-            <div class="logo-img"></div> <h1 id="quote-text">載入中...</h1> <div class="footer">牛牛畫廊 · 智能藝術</div>
+            <h1 id="quote-text" class="loading">正在靜思中...</h1>
+            <div class="footer">牛牛畫廊 · 智能藝術</div>
         </div>
     </div>
 
     <script>
-        // 阿新，这里需要你的 Google Apps Script 网址！
-        // 逻辑：GitHub 网页是“外壳”，依然去你的 Google Sheet 抓语录。
-        
-        // 1. 去 Google Apps Script 的 `doGet` 函数末尾，把 
-        // return HtmlService.createHtmlOutput(html)
-        // 改成
-        // return ContentService.createTextOutput(JSON.stringify({quote: quote, bgImage: bgImage})).setMimeType(ContentService.MimeType.JSON);
-        
-        // 2. 重新部署 Google Apps Script，复制那个新的 Web App URL。
-        
-        // 3. 把那个新的 Web App URL 填入下面：
-        var googleScriptUrl = 'https://script.google.com/macros/s/AKfycbxTvdj1CsPkOC8utKanMeKGO5iueJygsa9iw5NLz2JqXTCLnzkmRt6G13kox1yftE0l/exec  ';
+        // 已经填好阿新的 Google Script 网址
+        var googleScriptUrl = 'https://script.google.com/macros/s/AKfycbxTvdj1CsPkOC8utKanMeKGO5iueJygsa9iw5NLz2JqXTCLnzkmRt6G13kox1yftE0l/exec';
 
-        fetch(googleScriptUrl)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('quote-text').innerText = data.quote;
-                // 如果你想随机背景，把下面这一行取消注释
-                // document.querySelector('.full-bg').style.background = "url('" + data.bgImage + "') no-repeat center center";
-            });
+        // 使用 JSONP 解决跨域加载问题
+        function loadQuote() {
+            var script = document.createElement('script');
+            // 加上 callback 参数让 Google 知道我们要传数据
+            script.src = googleScriptUrl + '?callback=displayQuote';
+            document.body.appendChild(script);
+        }
+
+        // 数据加载成功后的处理函数
+        function displayQuote(data) {
+            var textElem = document.getElementById('quote-text');
+            textElem.classList.remove('loading');
+            textElem.innerText = data.quote;
+            
+            // 如果表格 B 列有图片链接，就换掉背景
+            if(data.bgImage && data.bgImage.startsWith('http')) {
+                document.getElementById('bg-layer').style.backgroundImage = "url('" + data.bgImage + "')";
+            }
+        }
+
+        // 页面启动执行
+        window.onload = loadQuote;
     </script>
 </body>
 </html>

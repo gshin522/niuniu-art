@@ -5,26 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>牛牛畫廊 · 今日靜思語</title>
     <style>
-        /* 1. 基础样式 */
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Noto Sans SC', sans-serif; background-color: #000; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Noto Sans SC', sans-serif; background-color: #1a1a1a; }
         
-        /* 2. 全屏山水背景 */
+        /* 全屏背景图层 */
         .full-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* 这里默认放你之前的极光图，脚本加载后会自动换成表格里的画 */
-            background: url('https://images.unsplash.com/photo-1504858700536-882c978a3464') no-repeat center center;
+            background: #222 no-repeat center center;
             background-size: cover !important;
-            transition: background 1s ease-in-out;
+            transition: background 1.2s ease-in-out;
             z-index: -1;
         }
 
-        /* 3. 中央容器 */
         .container {
             display: flex; align-items: center; justify-content: center;
             height: 100vh; width: 100vw;
         }
 
-        /* 4. 毛玻璃大文字方格 */
+        /* 磨砂玻璃卡片 */
         .quote-card {
             background: rgba(255, 255, 255, 0.45);
             backdrop-filter: blur(20px);
@@ -33,24 +30,22 @@
             border-radius: 30px;
             width: 85%; max-width: 450px;
             text-align: center;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.3);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* 5. 醍醐灌顶大字报：根据屏幕宽度自适应 */
+        /* 醍醐灌顶大字 */
         h1 { 
-            color: #1a1a1a; font-size: 8.5vw; line-height: 1.4; 
+            color: #1a1a1a; font-size: 8.5vw; line-height: 1.5; 
             font-weight: 500; margin: 0;
             word-wrap: break-word;
         }
 
-        /* 手机端大字号保护 */
         @media screen and (min-width: 600px) { h1 { font-size: 42px; } }
 
-        .footer { margin-top: 30px; font-size: 14px; color: rgba(0,0,0,0.5); letter-spacing: 3px; font-weight: 300; }
+        .footer { margin-top: 30px; font-size: 13px; color: rgba(0,0,0,0.5); letter-spacing: 2px; }
         
-        /* 载入状态样式 */
-        .loading { font-size: 18px; color: #666; }
+        .loading { font-size: 18px; color: #444; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;500&display=swap" rel="stylesheet">
 </head>
@@ -64,30 +59,32 @@
     </div>
 
     <script>
-        // 已经填好阿新的 Google Script 网址
+        // 这是你最新的 Google Script URL
         var googleScriptUrl = 'https://script.google.com/macros/s/AKfycbyNgKa4LAURh5jENB9-gfa2nQOHWm-Nz7DHPwFXMIkrfJwntQYAZ9ADN5CK2kVAMnwW/exec';
 
-        // 使用 JSONP 解决跨域加载问题
+        // 核心：JSONP 加载函数
         function loadQuote() {
             var script = document.createElement('script');
-            // 加上 callback 参数让 Google 知道我们要传数据
+            // 必须带上 callback，对应你 Script 里的 e.parameter.callback
             script.src = googleScriptUrl + '?callback=displayQuote';
             document.body.appendChild(script);
         }
 
-        // 数据加载成功后的处理函数
+        // 数据加载后的展示函数
         function displayQuote(data) {
             var textElem = document.getElementById('quote-text');
             textElem.classList.remove('loading');
+            
+            // 填入语录
             textElem.innerText = data.quote;
             
-            // 如果表格 B 列有图片链接，就换掉背景
+            // 填入背景图（如果有）
             if(data.bgImage && data.bgImage.startsWith('http')) {
                 document.getElementById('bg-layer').style.backgroundImage = "url('" + data.bgImage + "')";
             }
         }
 
-        // 页面启动执行
+        // 启动！
         window.onload = loadQuote;
     </script>
 </body>

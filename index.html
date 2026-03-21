@@ -3,63 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>牛牛畫廊</title>
+    <title>牛牛畫廊 · 語音版</title>
     <style>
-        /* 1. 彻底清空干扰颜色，参考 1000194491.jpg 的结构 */
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; background-color: #000; overflow: hidden; }
-        
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; background-color: #000; overflow: hidden; font-family: 'Noto Sans SC', sans-serif; }
         #bg-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* 预设背景，确保万一没图也不黑屏 */
             background: url('https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99') no-repeat center center;
             background-size: cover !important;
-            z-index: 1; /* 调高层级，确保它在最前面 */
+            z-index: 1; transition: background 1.5s ease;
         }
-
-        /* 2. 让内容浮在背景图上面 */
         .content-overlay {
-            position: relative;
-            z-index: 10; 
+            position: relative; z-index: 10; 
             display: flex; align-items: center; justify-content: center;
             height: 100vh; width: 100vw;
         }
-
         .quote-card {
             background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 40px 25px;
-            border-radius: 25px;
-            width: 80%; max-width: 400px;
-            text-align: center;
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 40px 25px; border-radius: 25px;
+            width: 80%; max-width: 400px; text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-
         h1 { color: #1a1a1a; font-size: 28px; line-height: 1.5; margin: 0 0 20px 0; }
-
         .footer { display: flex; flex-direction: column; align-items: center; font-size: 12px; color: rgba(0,0,0,0.6); }
+        .footer img { width: 50px; height: 50px; border-radius: 50%; margin-bottom: 10px; border: 2px solid #fff; }
         
-        .footer img {
-            width: 50px; height: 50px; border-radius: 50%;
-            margin-bottom: 10px; object-fit: cover;
-            border: 2px solid #fff;
-        }
+        /* 语音小提示 */
+        .voice-tip { font-size: 10px; color: rgba(0,0,0,0.3); margin-top: 10px; }
     </style>
 </head>
 <body>
     <div id="bg-layer"></div>
-    <div class="content-overlay">
+    <div class="content-overlay" onclick="speakQuote()">
         <div class="quote-card">
-            <h1 id="quote-text">正在讀取...</h1>
+            <h1 id="quote-text">正在加載靜思語...</h1>
             <div class="footer">
                 <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=100" alt="Logo">
                 <span>牛牛畫廊 · 智能藝術</span>
+                <div class="voice-tip">若未自動朗讀，請點擊屏幕</div>
             </div>
         </div>
     </div>
 
     <script>
         var googleScriptUrl = 'https://script.google.com/macros/s/AKfycbyNgKa4LAURh5jENB9-gfa2nQOHWm-Nz7DHPwFXMIkrfJwntQYAZ9ADN5CK2kVAMnwW/exec';
+        var currentQuote = "";
 
         function loadQuote() {
             var script = document.createElement('script');
@@ -68,17 +56,34 @@
         }
 
         function displayQuote(data) {
-            // 彻底清理所有可能的引号和空格
             var cleanQuote = String(data.quote || "").replace(/["'“”]/g, "").trim();
             var cleanImg = String(data.bgImage || "").replace(/["'“”\s]/g, "").trim();
-
+            
+            currentQuote = cleanQuote;
             document.getElementById('quote-text').innerText = cleanQuote;
             
             if (cleanImg.startsWith('http')) {
-                // 参考 1000194491.jpg 的渲染逻辑，强制刷新背景图
-                var bg = document.getElementById('bg-layer');
-                bg.style.backgroundImage = 'url(' + cleanImg + ')';
+                document.getElementById('bg-layer').style.backgroundImage = 'url(' + cleanImg + ')';
             }
+
+            // 核心：尝试自动朗读
+            setTimeout(speakQuote, 1000); 
+        }
+
+        // 朗读函数
+        function speakQuote() {
+            if (!currentQuote) return;
+            
+            // 先停止之前的朗读
+            window.speechSynthesis.cancel();
+            
+            var msg = new SpeechSynthesisUtterance();
+            msg.text = currentQuote;
+            msg.lang = 'zh-CN'; // 设置为中文
+            msg.rate = 0.9;      // 语速稍微慢一点，更有意境
+            msg.pitch = 1.1;     // 音调稍微高一点，显得温柔
+            
+            window.speechSynthesis.speak(msg);
         }
 
         window.onload = loadQuote;

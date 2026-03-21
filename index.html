@@ -7,7 +7,6 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Noto Sans SC', sans-serif; background-color: #1a1a1a; }
         
-        /* 全屏背景图层 */
         .full-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #222 no-repeat center center;
@@ -21,20 +20,18 @@
             height: 100vh; width: 100vw;
         }
 
-        /* 磨砂玻璃卡片 */
         .quote-card {
-            background: rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.48);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             padding: 50px 30px;
             border-radius: 30px;
-            width: 85%; max-width: 450px;
+            width: 82%; max-width: 450px;
             text-align: center;
             box-shadow: 0 15px 45px rgba(0,0,0,0.3);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* 醍醐灌顶大字 */
         h1 { 
             color: #1a1a1a; font-size: 8.5vw; line-height: 1.5; 
             font-weight: 500; margin: 0;
@@ -59,32 +56,35 @@
     </div>
 
     <script>
-        // 这是你最新的 Google Script URL
+        // 1. 阿新最新的 Google Script URL
         var googleScriptUrl = 'https://script.google.com/macros/s/AKfycbyNgKa4LAURh5jENB9-gfa2nQOHWm-Nz7DHPwFXMIkrfJwntQYAZ9ADN5CK2kVAMnwW/exec';
 
-        // 核心：JSONP 加载函数
+        // 2. 核心加载函数
         function loadQuote() {
             var script = document.createElement('script');
-            // 必须带上 callback，对应你 Script 里的 e.parameter.callback
             script.src = googleScriptUrl + '?callback=displayQuote';
             document.body.appendChild(script);
         }
 
-        // 数据加载后的展示函数
+        // 3. 数据处理逻辑（带自动去引号功能）
         function displayQuote(data) {
             var textElem = document.getElementById('quote-text');
             textElem.classList.remove('loading');
             
-            // 填入语录
-            textElem.innerText = data.quote;
+            // 自动清理语录中多余的引号
+            var rawQuote = String(data.quote || "心静自然凉");
+            var cleanQuote = rawQuote.replace(/^["']|["']$/g, ''); 
+            textElem.innerText = cleanQuote;
             
-            // 填入背景图（如果有）
-            if(data.bgImage && data.bgImage.startsWith('http')) {
-                document.getElementById('bg-layer').style.backgroundImage = "url('" + data.bgImage + "')";
+            // 自动清理图片链接中多余的引号
+            if(data.bgImage) {
+                var cleanImg = String(data.bgImage).replace(/^["']|["']$/g, '');
+                if(cleanImg.startsWith('http')) {
+                    document.getElementById('bg-layer').style.backgroundImage = "url('" + cleanImg + "')";
+                }
             }
         }
 
-        // 启动！
         window.onload = loadQuote;
     </script>
 </body>

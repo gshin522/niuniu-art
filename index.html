@@ -24,23 +24,35 @@
             width: 80%; max-width: 400px; text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        h1 { color: #1a1a1a; font-size: 28px; line-height: 1.5; margin: 0 0 20px 0; }
+        h1 { color: #1a1a1a; font-size: 28px; line-height: 1.5; margin: 0 0 15px 0; }
+        
+        /* 朗读按钮样式 */
+        .audio-btn {
+            background: rgba(0,0,0,0.1); border: none; border-radius: 50%;
+            width: 50px; height: 50px; cursor: pointer;
+            margin-bottom: 20px; display: inline-flex; align-items: center; justify-content: center;
+            transition: transform 0.2s;
+        }
+        .audio-btn:active { transform: scale(0.9); }
+        .audio-btn svg { width: 24px; height: 24px; fill: #1a1a1a; }
+
         .footer { display: flex; flex-direction: column; align-items: center; font-size: 12px; color: rgba(0,0,0,0.6); }
         .footer img { width: 50px; height: 50px; border-radius: 50%; margin-bottom: 10px; border: 2px solid #fff; }
-        
-        /* 语音小提示 */
-        .voice-tip { font-size: 10px; color: rgba(0,0,0,0.3); margin-top: 10px; }
     </style>
 </head>
 <body>
     <div id="bg-layer"></div>
-    <div class="content-overlay" onclick="speakQuote()">
+    <div class="content-overlay">
         <div class="quote-card">
-            <h1 id="quote-text">正在加載靜思語...</h1>
+            <button class="audio-btn" onclick="speakQuote()" title="朗讀語錄">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            </button>
+            
+            <h1 id="quote-text">靜思中...</h1>
+            
             <div class="footer">
                 <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=100" alt="Logo">
                 <span>牛牛畫廊 · 智能藝術</span>
-                <div class="voice-tip">若未自動朗讀，請點擊屏幕</div>
             </div>
         </div>
     </div>
@@ -65,23 +77,19 @@
             if (cleanImg.startsWith('http')) {
                 document.getElementById('bg-layer').style.backgroundImage = 'url(' + cleanImg + ')';
             }
-
-            // 核心：尝试自动朗读
-            setTimeout(speakQuote, 1000); 
+            
+            // 尝试静默预热语音引擎
+            window.speechSynthesis.getVoices();
         }
 
-        // 朗读函数
         function speakQuote() {
             if (!currentQuote) return;
-            
-            // 先停止之前的朗读
-            window.speechSynthesis.cancel();
+            window.speechSynthesis.cancel(); // 停止当前所有播放
             
             var msg = new SpeechSynthesisUtterance();
             msg.text = currentQuote;
-            msg.lang = 'zh-CN'; // 设置为中文
-            msg.rate = 0.9;      // 语速稍微慢一点，更有意境
-            msg.pitch = 1.1;     // 音调稍微高一点，显得温柔
+            msg.lang = 'zh-CN';
+            msg.rate = 0.85; // 稍慢一点更庄重
             
             window.speechSynthesis.speak(msg);
         }

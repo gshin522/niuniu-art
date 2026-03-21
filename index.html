@@ -3,53 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>牛牛畫廊</title>
+    <title>牛牛畫廊 · 語音修復版</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: #000; overflow: hidden; font-family: sans-serif; }
-        #bg { position: fixed; top:0; left:0; width:100%; height:100%; background: url('https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99') center/cover; z-index:1; }
+        #bg { position: fixed; top:0; left:0; width:100%; height:100%; background: url('https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99') center/cover; z-index:1; transition: 1s; }
         .wrap { position: relative; z-index:10; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .card { background: rgba(255,255,255,0.5); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 40px 20px; border-radius: 30px; width: 85%; max-width: 400px; text-align: center; }
-        .btn { background: #fff; border:none; width:60px; height:60px; border-radius:50%; margin-bottom:20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        h1 { color: #000; font-size: 28px; margin: 0 0 20px 0; }
-        .logo { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff; }
+        .card { background: rgba(255,255,255,0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 40px 20px; border-radius: 30px; width: 85%; max-width: 400px; text-align: center; }
+        
+        /* 確保按鈕外觀可點擊 */
+        .btn { 
+            background: #fff; border:none; width:65px; height:65px; border-radius:50%; 
+            margin-bottom:20px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:active { background: #eee; transform: scale(0.95); }
+        
+        h1 { color: #000; font-size: 28px; margin: 0 0 20px 0; line-height: 1.4; }
+        .logo { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff; margin-bottom: 10px; }
+        .info { font-size: 12px; color: #444; }
     </style>
 </head>
 <body>
     <div id="bg"></div>
     <div class="wrap">
         <div class="card">
-            <button class="btn" onclick="speak()">
-                <svg width="30" height="30" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            <button class="btn" onclick="handleSpeak()">
+                <svg width="30" height="30" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
             </button>
-            <h1 id="txt">數據讀取中...</h1>
-            <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=100" class="logo">
-            <div style="font-size:12px; margin-top:10px;">牛牛畫廊 · 智能藝術</div>
+            
+            <h1 id="txt">正在讀取語錄...</h1>
+            
+            <div class="footer">
+                <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=100" class="logo">
+                <div class="info">牛牛畫廊 · 智能藝術</div>
+            </div>
         </div>
     </div>
+
     <script>
         var sUrl = 'https://script.google.com/macros/s/AKfycbyNgKa4LAURh5jENB9-gfa2nQOHWm-Nz7DHPwFXMIkrfJwntQYAZ9ADN5CK2kVAMnwW/exec';
-        var q = "";
-        function load() {
+        var finalQuote = "";
+
+        // 1. 加載數據
+        function start() {
             var s = document.createElement('script');
-            s.src = sUrl + '?callback=cb';
+            s.src = sUrl + '?callback=finish';
             document.body.appendChild(s);
         }
-        function cb(d) {
-            q = d.quote.replace(/["']/g, "");
-            document.getElementById('txt').innerText = q;
+
+        // 2. 渲染頁面
+        function finish(d) {
+            finalQuote = d.quote.replace(/["'“”]/g, "").trim();
+            document.getElementById('txt').innerText = finalQuote;
             if(d.bgImage) {
-                var i = d.bgImage.replace(/["'\s]/g, "");
-                document.getElementById('bg').style.backgroundImage = "url(" + i + ")";
+                var img = d.bgImage.replace(/["'\s]/g, "");
+                document.getElementById('bg').style.backgroundImage = "url('" + img + "')";
             }
         }
-        function speak() {
-            if(!q) return;
+
+        // 3. 核心朗讀邏輯 (參考回成功點擊的版本)
+        function handleSpeak() {
+            if(!finalQuote || finalQuote === "正在讀取語錄...") {
+                return;
+            }
+
+            // 停止排隊中的語音
             window.speechSynthesis.cancel();
-            var u = new SpeechSynthesisUtterance(q);
-            u.lang = 'zh-CN';
-            window.speechSynthesis.speak(u);
+
+            var msg = new SpeechSynthesisUtterance();
+            msg.text = finalQuote;
+            msg.lang = 'zh-CN';
+            msg.rate = 0.85; // 語速稍微優雅一點
+            msg.volume = 1.0;
+
+            // 暴力發聲
+            window.speechSynthesis.speak(msg);
         }
-        window.onload = load;
+
+        // 初始化
+        window.onload = start;
     </script>
 </body>
 </html>

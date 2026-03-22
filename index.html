@@ -4,27 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>心願FM | 智慧錦囊</title>
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: "Microsoft JhengHei", sans-serif; }
-        #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; transition: opacity 1.5s ease; z-index: 1; opacity: 0; background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&w=1350&q=80'); }
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2; display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px; box-sizing: border-box; }
-        #quote { color: white; font-size: 1.8rem; line-height: 1.6; text-shadow: 2px 2px 15px rgba(0,0,0,1); opacity: 0; transition: opacity 2s ease; font-weight: bold; white-space: pre-wrap; }
-        #btn { position: fixed; bottom: 12%; left: 50%; transform: translateX(-50%); z-index: 3; padding: 18px 35px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.8); color: white; border-radius: 40px; cursor: pointer; backdrop-filter: blur(10px); font-size: 1.1rem; letter-spacing: 2px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        /* 背景圖層 */
+        #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; transition: opacity 2s ease; z-index: 1; opacity: 0; }
+        /* 遮罩層 */
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2; display: flex; align-items: center; justify-content: center; text-align: center; padding: 40px; box-sizing: border-box; }
+        /* 語錄文字 */
+        #quote { color: white; font-size: 1.8rem; line-height: 1.6; text-shadow: 2px 2px 20px rgba(0,0,0,1); opacity: 0; transition: opacity 1.5s ease; font-weight: bold; }
+        /* 啟動按鈕 */
+        #btn { position: fixed; bottom: 15%; left: 50%; transform: translateX(-50%); z-index: 3; padding: 18px 40px; background: #FF9800; color: white; border: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.4); display: none; transition: transform 0.2s; }
+        #btn:active { transform: translateX(-50%) scale(0.95); }
     </style>
 </head>
 <body>
     <div id="bg"></div>
-    <div id="overlay"><div id="quote">正在恭請智慧...</div></div>
+    <div id="overlay">
+        <div id="quote">正在恭請智慧語錄...</div>
+    </div>
     <button id="btn" onclick="startExperience()">開啟智慧錦囊</button>
 
     <script>
-        // 已填入你的專屬 Google Sheet ID
-        const SHEET_ID = '1kOKRFjKXaK87C5q8PYpoD3pYqVBTOjpfOq65hQGir38';
-        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+        // 你的 Google Sheet CSV 導出鏈接
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/1kOKRFjKXaK87C5q8PYpoD3pYqVBTOjpfOq65hQGir38/gviz/tq?tqx=out:csv";
 
-        let currentQuote = "心存善念，福氣自來。";
+        let currentQuote = "";
         let currentAudio = "";
 
         // 1. 抓取表格數據
@@ -33,12 +37,11 @@
             .then(csv => {
                 const rows = csv.split('\n');
                 if (rows.length > 1) {
-                    // 隨機選一行 (排除標題行)
                     const randomIndex = Math.floor(Math.random() * (rows.length - 1)) + 1;
-                    // 使用正則解析 CSV，避免逗號干擾
+                    // 解析 CSV 行（處理引號和逗號）
                     const data = rows[randomIndex].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
                     
-                    if (data && data.length >= 1) {
+                    if (data) {
                         // A列: 語錄
                         currentQuote = data[0].replace(/^"|"$/g, "").replace(/""/g, '"');
                         document.getElementById('quote').innerText = currentQuote;
@@ -48,39 +51,44 @@
                         if (data[1]) {
                             const bgUrl = data[1].replace(/^"|"$/g, "").trim();
                             if(bgUrl.startsWith('http')) {
-                                document.getElementById('bg').style.backgroundImage = `url('${bgUrl}')`;
-                                document.getElementById('bg').style.opacity = 1;
+                                const img = new Image();
+                                img.src = bgUrl;
+                                img.onload = () => {
+                                    document.getElementById('bg').style.backgroundImage = `url('${bgUrl}')`;
+                                    document.getElementById('bg').style.opacity = 1;
+                                };
                             }
                         }
                         
-                        // C列: 真人錄音連結
+                        // C列: 音檔
                         if (data[2]) {
                             currentAudio = data[2].replace(/^"|"$/g, "").trim();
                         }
+
+                        // 數據準備好了，顯示按鈕
+                        document.getElementById('btn').style.display = 'block';
                     }
                 }
             })
             .catch(err => {
-                console.error("數據讀取錯誤:", err);
-                document.getElementById('quote').innerText = currentQuote;
-                document.getElementById('quote').style.opacity = 1;
-                document.getElementById('bg').style.opacity = 1;
+                document.getElementById('quote').innerText = "連接失敗，請稍後再試";
+                console.error(err);
             });
 
         function startExperience() {
-            // A. 嘗試進入全屏 (優化用戶體驗)
-            const docEl = document.documentElement;
-            if (docEl.requestFullscreen) docEl.requestFullscreen();
-            else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen();
+            // A. 全屏觸發
+            const de = document.documentElement;
+            if (de.requestFullscreen) de.requestFullscreen();
+            else if (de.webkitRequestFullscreen) de.webkitRequestFullscreen();
 
-            // B. 隱藏啟動按鈕
+            // B. 隱藏按鈕
             document.getElementById('btn').style.display = 'none';
 
-            // C. 播放聲音邏輯
-            if (currentAudio && currentAudio.startsWith('http')) {
+            // C. 播放聲音
+            if (currentAudio && currentAudio.includes('http')) {
                 const audio = new Audio(currentAudio);
                 audio.play().catch(e => {
-                    console.warn("錄音播放受阻，使用系統語音替代");
+                    console.warn("自動播放受阻，切換AI朗讀");
                     speakAI();
                 });
             } else {
@@ -90,8 +98,8 @@
 
         function speakAI() {
             const msg = new SpeechSynthesisUtterance(currentQuote);
-            msg.lang = 'zh-CN'; // 設定為中文朗讀
-            msg.rate = 0.9;     // 語速稍微放慢，更有智慧感
+            msg.lang = 'zh-CN';
+            msg.rate = 0.9;
             window.speechSynthesis.speak(msg);
         }
     </script>

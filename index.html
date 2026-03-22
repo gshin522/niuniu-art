@@ -4,32 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>心願FM | 智慧錦囊</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: "Microsoft JhengHei", sans-serif; }
-        /* 背景圖層 */
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: "Microsoft JhengHei", sans-serif; cursor: pointer; }
         #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; transition: opacity 2s ease; z-index: 1; opacity: 0; }
-        /* 遮罩層 */
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2; display: flex; align-items: center; justify-content: center; text-align: center; padding: 40px; box-sizing: border-box; }
-        /* 語錄文字 */
         #quote { color: white; font-size: 1.8rem; line-height: 1.6; text-shadow: 2px 2px 20px rgba(0,0,0,1); opacity: 0; transition: opacity 1.5s ease; font-weight: bold; }
-        /* 啟動按鈕 */
-        #btn { position: fixed; bottom: 15%; left: 50%; transform: translateX(-50%); z-index: 3; padding: 18px 40px; background: #FF9800; color: white; border: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.4); display: none; transition: transform 0.2s; }
-        #btn:active { transform: translateX(-50%) scale(0.95); }
     </style>
 </head>
-<body>
+<body onclick="startExperience()">
     <div id="bg"></div>
     <div id="overlay">
-        <div id="quote">正在恭請智慧語錄...</div>
+        <div id="quote">靜思中...</div>
     </div>
-    <button id="btn" onclick="startExperience()">開啟智慧錦囊</button>
 
     <script>
-        // 你的 Google Sheet CSV 導出鏈接
+        // 你的 Google Sheet CSV 鏈接
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/1kOKRFjKXaK87C5q8PYpoD3pYqVBTOjpfOq65hQGir38/gviz/tq?tqx=out:csv";
 
         let currentQuote = "";
         let currentAudio = "";
+        let isDataReady = false;
 
         // 1. 抓取表格數據
         fetch(SHEET_URL)
@@ -38,57 +34,46 @@
                 const rows = csv.split('\n');
                 if (rows.length > 1) {
                     const randomIndex = Math.floor(Math.random() * (rows.length - 1)) + 1;
-                    // 解析 CSV 行（處理引號和逗號）
                     const data = rows[randomIndex].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
                     
                     if (data) {
-                        // A列: 語錄
                         currentQuote = data[0].replace(/^"|"$/g, "").replace(/""/g, '"');
-                        document.getElementById('quote').innerText = currentQuote;
-                        document.getElementById('quote').style.opacity = 1;
-
-                        // B列: 背景圖
+                        
                         if (data[1]) {
                             const bgUrl = data[1].replace(/^"|"$/g, "").trim();
                             if(bgUrl.startsWith('http')) {
-                                const img = new Image();
-                                img.src = bgUrl;
-                                img.onload = () => {
-                                    document.getElementById('bg').style.backgroundImage = `url('${bgUrl}')`;
-                                    document.getElementById('bg').style.opacity = 1;
-                                };
+                                document.getElementById('bg').style.backgroundImage = `url('${bgUrl}')`;
+                                document.getElementById('bg').style.opacity = 1;
                             }
                         }
                         
-                        // C列: 音檔
                         if (data[2]) {
                             currentAudio = data[2].replace(/^"|"$/g, "").trim();
                         }
 
-                        // 數據準備好了，顯示按鈕
-                        document.getElementById('btn').style.display = 'block';
+                        isDataReady = true;
                     }
                 }
             })
-            .catch(err => {
-                document.getElementById('quote').innerText = "連接失敗，請稍後再試";
-                console.error(err);
-            });
+            .catch(err => console.error("數據讀取錯誤:", err));
 
         function startExperience() {
-            // A. 全屏觸發
+            if (!isDataReady) return;
+
+            // A. 全屏觸發 (解决手机浏览器限制)
             const de = document.documentElement;
             if (de.requestFullscreen) de.requestFullscreen();
             else if (de.webkitRequestFullscreen) de.webkitRequestFullscreen();
 
-            // B. 隱藏按鈕
-            document.getElementById('btn').style.display = 'none';
+            // B. 顯示文字
+            document.getElementById('quote').innerText = currentQuote;
+            document.getElementById('quote').style.opacity = 1;
 
-            // C. 播放聲音
+            // C. 播放聲音 (优先播放 C列录音)
             if (currentAudio && currentAudio.includes('http')) {
                 const audio = new Audio(currentAudio);
                 audio.play().catch(e => {
-                    console.warn("自動播放受阻，切換AI朗讀");
+                    console.warn("錄音播放受阻，切換AI朗讀");
                     speakAI();
                 });
             } else {
@@ -99,7 +84,6 @@
         function speakAI() {
             const msg = new SpeechSynthesisUtterance(currentQuote);
             msg.lang = 'zh-CN';
-            msg.rate = 0.9;
             window.speechSynthesis.speak(msg);
         }
     </script>

@@ -1,100 +1,72 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>牛牛畫廊 · 靜思錦囊</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>心願FM | 智慧錦囊</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: #000; overflow: hidden; font-family: sans-serif; color: #fff; }
-        
-        /* 星空背景 (載入中) */
-        #bg-waiting {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: url('https://images.unsplash.com/photo-1436891620584-47fd0e565afb?w=1000') center/cover;
-            z-index: 1; filter: brightness(0.6); transition: opacity 1s;
-        }
-
-        /* 極光背景 (結果) */
-        #bg-final {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: #1a1a1a; background-size: cover; background-position: center;
-            z-index: 2; opacity: 0; transition: opacity 1.5s ease-in-out; filter: brightness(0.7);
-        }
-
-        .wrap { position: relative; z-index:10; display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; cursor: pointer; }
-        .card { 
-            background: rgba(255,255,255,0.12); 
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
-            padding: 50px 30px; border-radius: 40px; width: 85%; max-width: 450px; 
-            text-align: center; border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        h1 { font-size: 30px; line-height: 1.6; margin: 0 0 30px 0; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .logo { width: 60px; height: 60px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); margin-bottom: 15px; }
-        .footer { font-size: 14px; opacity: 0.8; }
-        
-        /* 提示字閃爍動畫 */
-        .hint { position: fixed; bottom: 40px; width: 100%; text-align: center; font-size: 13px; opacity: 0.7; z-index: 20; color: #fff; animation: blink 2.5s infinite; }
-        @keyframes blink { 0% {opacity: 0.2;} 50% {opacity: 0.9;} 100% {opacity: 0.2;} }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: "Microsoft JhengHei", sans-serif; }
+        #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; transition: opacity 1.5s ease; z-index: 1; }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; }
+        #quote { color: white; font-size: 1.8rem; line-height: 1.6; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); opacity: 0; transition: opacity 2s ease; font-weight: bold; }
+        #btn { position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%); z-index: 3; padding: 15px 30px; background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 30px; cursor: pointer; backdrop-filter: blur(5px); }
     </style>
 </head>
-<body>
-    <div id="bg-waiting"></div>
-    <div id="bg-final"></div>
-
-    <div class="wrap" onclick="magicStart()">
-        <div class="card" id="main-card">
-            <h1 id="txt">靜思中...</h1>
-            <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=100" class="logo">
-            <div class="footer">牛牛畫廊 · 智能藝術</div>
-        </div>
-    </div>
-    <div class="hint" id="hint-msg">正在感知天地精華...</div>
+<body onclick="startExperience()">
+    <div id="bg"></div>
+    <div id="overlay"><div id="quote">正在靜修，請稍候...</div></div>
+    <button id="btn">開啟智慧錦囊</button>
 
     <script>
-        var sUrl = 'https://script.google.com/macros/s/AKfycbyNgKa4LAURh5jENB9-gfa2nQOHWm-Nz7DHPwFXMIkrfJwntQYAZ9ADN5CK2kVAMnwW/exec';
-        var quote = "";
+        // ⚠️ 請把這裡換成你的 Google Sheet ID
+        const SHEET_ID = '你的_SHEET_ID_HERE';
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
-        function load() {
-            var s = document.createElement('script');
-            s.src = sUrl + '?callback=cb';
-            document.body.appendChild(s);
-        }
+        let currentQuote = "";
+        let currentAudio = "";
 
-        function cb(d) {
-            quote = d.quote.replace(/["'“”]/g, "").trim();
-            document.getElementById('txt').innerText = quote;
-            if(d.bgImage) {
-                var img = d.bgImage.replace(/["'\s]/g, "");
-                document.getElementById('bg-final').style.backgroundImage = "url('" + img + "')";
+        // 1. 從 Google Sheet 抓取數據
+        fetch(SHEET_URL)
+            .then(res => res.text())
+            .then(csv => {
+                const rows = csv.split('\n').map(row => row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/));
+                // 假設：A列語錄, B列背景圖, D列音檔 (index 3)
+                const randomIndex = Math.floor(Math.random() * (rows.length - 1)) + 1;
+                const data = rows[randomIndex];
+                
+                currentQuote = data[0].replace(/"/g, "");
+                const bgUrl = data[1] ? data[1].replace(/"/g, "") : "";
+                currentAudio = data[3] ? data[3].replace(/"/g, "").trim() : ""; // Column D 是 index 3
+
+                document.getElementById('bg').style.backgroundImage = `url('${bgUrl}')`;
+                document.getElementById('quote').innerText = currentQuote;
+                document.getElementById('quote').style.opacity = 1;
+            });
+
+        function startExperience() {
+            // A. 觸發全屏
+            const doc = window.document;
+            const docEl = doc.documentElement;
+            const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            if (requestFullScreen) requestFullScreen.call(docEl);
+
+            // B. 隱藏按鈕
+            document.getElementById('btn').style.display = 'none';
+
+            // C. 播放音聲
+            if (currentAudio && currentAudio !== "") {
+                // 如果有真人錄音
+                const audio = new Audio(currentAudio);
+                audio.play().catch(e => console.log("播放失敗:", e));
+            } else {
+                // 否則使用 AI 朗讀
+                const msg = new SpeechSynthesisUtterance(currentQuote);
+                msg.lang = 'zh-CN';
+                window.speechSynthesis.speak(msg);
             }
-            document.getElementById('bg-waiting').style.opacity = "0";
-            document.getElementById('bg-final').style.opacity = "1";
-            document.getElementById('hint-msg').innerText = "點擊屏幕 聆聽智慧";
         }
-
-        function magicStart() {
-            if(!quote || quote === "靜思中...") return;
-
-            // 1. 嘗試進入全螢幕 (Address bar 會縮起來)
-            var de = document.documentElement;
-            if (de.requestFullscreen) { de.requestFullscreen(); }
-            else if (de.mozRequestFullScreen) { de.mozRequestFullScreen(); }
-            else if (de.webkitRequestFullScreen) { de.webkitRequestFullScreen(); }
-            else if (de.msRequestFullscreen) { de.msRequestFullscreen(); }
-
-            // 2. 朗讀
-            window.speechSynthesis.cancel();
-            var u = new SpeechSynthesisUtterance(quote);
-            u.lang = 'zh-CN';
-            u.rate = 0.85;
-            window.speechSynthesis.speak(u);
-
-            // 3. 隱藏提示
-            document.getElementById('hint-msg').style.display = "none";
-        }
-
-        window.onload = load;
     </script>
 </body>
 </html>

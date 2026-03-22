@@ -7,58 +7,54 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: #000; overflow: hidden; font-family: sans-serif; color: #fff; }
         
-        /* 1. 初始背景層 (全黑) */
-        #bg-initial {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: #000;
-            z-index: 1;
-            transition: opacity 1s;
-        }
-
-        /* 2. 靜思中背景層 (載入中浮現) */
+        /* 1. 漫天星星等待背景層 (參考自之前的版本) */
         #bg-waiting {
             position: fixed; top:0; left:0; width:100%; height:100%;
-            background: url('https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=500') center/cover;
-            z-index: 2;
-            opacity: 0; /* 初始隱藏 */
-            transition: opacity 1s;
-            filter: brightness(0.6) blur(2px);
+            background: url('https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=1000') center/cover;
+            z-index: 1;
+            filter: brightness(0.6) blur(1px);
+            transition: opacity 1.2s;
         }
 
-        /* 3. 終極背景層 (語錄載入後換上) */
+        /* 2. 極光終極背景層 (語錄載入後換上) */
         #bg-final {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: #1a1a1a; background-size: cover; background-position: center;
-            z-index: 3;
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
+            z-index: 2;
+            opacity: 0; /* 初始隱藏 */
+            transition: opacity 1.2s ease-in-out;
             filter: brightness(0.7);
         }
 
+        /* 3. 卡片佈局 (參考自 image_4.png) */
         .wrap { position: relative; z-index:10; display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; cursor: pointer; }
         .card { 
-            background: rgba(255,255,255,0.1); 
+            background: rgba(255,255,255,0.15); 
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
             padding: 50px 30px; border-radius: 40px; width: 80%; max-width: 450px; 
-            text-align: center; border: 1px solid rgba(255,255,255,0.1);
-            transition: 1s opacity, 1s transform; 
-            opacity: 0; /* 初始隱藏 */
-            transform: translateY(20px);
+            text-align: center; border: 1px solid rgba(255,255,255,0.15);
+            transition: 0.8s opacity, 0.8s transform;
+            opacity: 1; /* 初始可見 */
         }
-        h1 { font-size: 32px; line-height: 1.5; margin: 0 0 30px 0; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        
+        /* 語錄字體 */
+        h1 { font-size: 30px; line-height: 1.5; margin: 0 0 30px 0; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        
+        /*Logo 與 Footer */
         .logo { width: 60px; height: 60px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); margin-bottom: 15px; }
         .footer { font-size: 14px; opacity: 0.8; letter-spacing: 1px; }
-        .hint { position: fixed; bottom: 30px; width: 100%; text-align: center; font-size: 12px; opacity: 0.5; z-index: 20; transition: 1s; }
+        
+        /* 底部提示 */
+        .hint { position: fixed; bottom: 30px; width: 100%; text-align: center; font-size: 12px; opacity: 0.5; z-index: 20; transition: 0.8s; color: #fff; }
     </style>
 </head>
 <body>
-    <div id="bg-initial"></div>
     <div id="bg-waiting"></div>
     <div id="bg-final"></div>
 
     <div class="wrap" onclick="activateAndSpeak()">
         <div class="card" id="main-card">
-            <h1 id="txt"></h1>
+            <h1 id="txt">靜思中...</h1>
             <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=100" class="logo">
             <div class="footer">牛牛畫廊 · 智能藝術</div>
         </div>
@@ -74,14 +70,6 @@
             var s = document.createElement('script');
             s.src = sUrl + '?callback=cb';
             document.body.appendChild(s);
-
-            // 啟動 0.5 秒後，浮現等待背景，並更改提示
-            setTimeout(function() {
-                if(!quote) { // 如果數據還沒到
-                    document.getElementById('bg-waiting').style.opacity = "1";
-                    document.getElementById('hint-msg').innerText = "靜思中...";
-                }
-            }, 500);
         }
 
         function cb(d) {
@@ -91,18 +79,21 @@
                 var img = d.bgImage.replace(/["'\s]/g, "");
                 document.getElementById('bg-final').style.backgroundImage = "url('" + img + "')";
             }
-            // 核心：抓到數據後瞬间换上极光，淡入卡片
-            document.getElementById('bg-waiting').style.opacity = "0";
-            document.getElementById('bg-final').style.opacity = "1";
+            // 核心：抓到數據後瞬间换上极光，卡片內容淡出再淡入
+            document.getElementById('main-card').style.opacity = "0";
             
-            document.getElementById('main-card').style.opacity = "1";
-            document.getElementById('main-card').style.transform = "translateY(0)";
-            document.getElementById('hint-msg').innerText = "點擊屏幕 聆聽智慧";
-            document.getElementById('hint-msg').style.opacity = "0.7";
+            setTimeout(function() {
+                // 數據已更新在 txt 裡了，這裡淡入卡片
+                document.getElementById('bg-waiting').style.opacity = "0";
+                document.getElementById('bg-final').style.opacity = "1";
+                document.getElementById('main-card').style.opacity = "1";
+                document.getElementById('hint-msg').innerText = "點擊屏幕 聆聽智慧";
+                document.getElementById('hint-msg').style.opacity = "0.7";
+            }, 300); // 縮短卡片淡出的時間，更流暢
         }
 
         function activateAndSpeak() {
-            if(!quote) return;
+            if(!quote || quote === "靜思中...") return;
             
             // 語音朗讀
             window.speechSynthesis.cancel();

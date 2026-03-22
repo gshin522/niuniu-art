@@ -6,23 +6,10 @@
     <title>牛牛畫廊 · 靜思錦囊</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: #000; overflow: hidden; font-family: sans-serif; color: #fff; }
-        #bg-waiting {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: url('https://images.unsplash.com/photo-1436891620584-47fd0e565afb?w=1000') center/cover;
-            z-index: 1; filter: brightness(0.6); transition: opacity 1s;
-        }
-        #bg-final {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: #1a1a1a; background-size: cover; background-position: center;
-            z-index: 2; opacity: 0; transition: opacity 1.5s ease-in-out; filter: brightness(0.7);
-        }
+        #bg-waiting { position: fixed; top:0; left:0; width:100%; height:100%; background: url('https://images.unsplash.com/photo-1436891620584-47fd0e565afb?w=1000') center/cover; z-index: 1; filter: brightness(0.6); transition: opacity 1s; }
+        #bg-final { position: fixed; top:0; left:0; width:100%; height:100%; background: #1a1a1a; background-size: cover; background-position: center; z-index: 2; opacity: 0; transition: opacity 1.5s ease-in-out; filter: brightness(0.7); }
         .wrap { position: relative; z-index:10; display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; cursor: pointer; }
-        .card { 
-            background: rgba(255,255,255,0.12); 
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
-            padding: 50px 30px; border-radius: 40px; width: 85%; max-width: 450px; 
-            text-align: center; border: 1px solid rgba(255,255,255,0.1);
-        }
+        .card { background: rgba(255,255,255,0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 50px 30px; border-radius: 40px; width: 85%; max-width: 450px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
         h1 { font-size: 30px; line-height: 1.6; margin: 0 0 30px 0; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .logo { width: 60px; height: 60px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); margin-bottom: 15px; }
         .footer { font-size: 14px; opacity: 0.8; }
@@ -32,4 +19,64 @@
 </head>
 <body>
     <div id="bg-waiting"></div>
-    <div
+    <div id="bg-final"></div>
+    <div class="wrap" onclick="magicStart()">
+        <div class="card">
+            <h1 id="txt">靜思中...</h1>
+            <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=100" class="logo">
+            <div class="footer">牛牛畫廊 · 智能藝術</div>
+        </div>
+    </div>
+    <div class="hint" id="hint-msg">正在感知天地精華...</div>
+
+    <script>
+        var sUrl = 'https://script.google.com/macros/s/AKfycbyRjHxNdHeaGH4nyJBK7OzmjYlHcSfa7B0AVbjU65YKxsAdOHZ_omRuvZF_I36z7JEy/exec';
+        var quote = "";
+        var audioUrl = "";
+
+        // 核心修正：手動處理 JSONP 回傳
+        window.cb = function(d) {
+            quote = d.quote.replace(/["'“”]/g, "").trim();
+            document.getElementById('txt').innerText = quote;
+            if(d.bgImage) {
+                document.getElementById('bg-final').style.backgroundImage = "url('" + d.bgImage.trim() + "')";
+            }
+            if(d.audioUrl) { audioUrl = d.audioUrl.trim(); }
+            document.getElementById('bg-waiting').style.opacity = "0";
+            document.getElementById('bg-final').style.opacity = "1";
+            document.getElementById('hint-msg').innerText = "點擊屏幕 聆聽智慧";
+        };
+
+        function load() {
+            var s = document.createElement('script');
+            // 強制指定回傳函數名為 cb
+            s.src = sUrl + '?callback=cb';
+            document.body.appendChild(s);
+        }
+
+        function magicStart() {
+            if(!quote || quote === "靜思中...") return;
+            var de = document.documentElement;
+            if (de.requestFullscreen) de.requestFullscreen();
+            else if (de.webkitRequestFullscreen) de.webkitRequestFullscreen();
+
+            if (audioUrl && audioUrl.includes("http")) {
+                var audio = new Audio(audioUrl);
+                audio.play().catch(function() { playAI(); });
+            } else {
+                playAI();
+            }
+            document.getElementById('hint-msg').style.display = "none";
+        }
+
+        function playAI() {
+            window.speechSynthesis.cancel();
+            var u = new SpeechSynthesisUtterance(quote);
+            u.lang = 'zh-CN';
+            u.rate = 0.85;
+            window.speechSynthesis.speak(u);
+        }
+        window.onload = load;
+    </script>
+</body>
+</html>

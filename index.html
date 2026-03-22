@@ -3,25 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>牛牛畫廊 · 靜思語</title>
+    <title>牛牛畫廊 · 靜思錦囊</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: #000; overflow: hidden; font-family: sans-serif; color: #fff; }
-        #bg-waiting { position: fixed; top:0; left:0; width:100%; height:100%; background: url('https://images.unsplash.com/photo-1436891620584-47fd0e565afb?w=1000') center/cover; z-index: 1; filter: brightness(0.6); transition: opacity 1s; }
-        #bg-final { position: fixed; top:0; left:0; width:100%; height:100%; background: #1a1a1a; background-size: cover; background-position: center; z-index: 2; opacity: 0; transition: opacity 1.5s ease-in-out; filter: brightness(0.7); }
+        
+        /* 星空背景 (載入中) */
+        #bg-waiting {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: url('https://images.unsplash.com/photo-1436891620584-47fd0e565afb?w=1000') center/cover;
+            z-index: 1; filter: brightness(0.6); transition: opacity 1s;
+        }
+
+        /* 極光背景 (結果) */
+        #bg-final {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: #1a1a1a; background-size: cover; background-position: center;
+            z-index: 2; opacity: 0; transition: opacity 1.5s ease-in-out; filter: brightness(0.7);
+        }
+
         .wrap { position: relative; z-index:10; display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; cursor: pointer; }
-        .card { background: rgba(255,255,255,0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 50px 30px; border-radius: 40px; width: 80%; max-width: 450px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        h1 { font-size: 28px; line-height: 1.5; margin: 0 0 25px 0; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .logo { width: 55px; height: 55px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); margin-bottom: 15px; }
-        .footer { font-size: 13px; opacity: 0.8; }
-        .hint { position: fixed; bottom: 40px; width: 100%; text-align: center; font-size: 12px; opacity: 0.7; z-index: 20; color: #fff; animation: blink 2s infinite; }
-        @keyframes blink { 0% {opacity: 0.3;} 50% {opacity: 0.8;} 100% {opacity: 0.3;} }
+        .card { 
+            background: rgba(255,255,255,0.12); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+            padding: 50px 30px; border-radius: 40px; width: 85%; max-width: 450px; 
+            text-align: center; border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        h1 { font-size: 30px; line-height: 1.6; margin: 0 0 30px 0; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .logo { width: 60px; height: 60px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); margin-bottom: 15px; }
+        .footer { font-size: 14px; opacity: 0.8; }
+        
+        /* 提示字閃爍動畫 */
+        .hint { position: fixed; bottom: 40px; width: 100%; text-align: center; font-size: 13px; opacity: 0.7; z-index: 20; color: #fff; animation: blink 2.5s infinite; }
+        @keyframes blink { 0% {opacity: 0.2;} 50% {opacity: 0.9;} 100% {opacity: 0.2;} }
     </style>
 </head>
 <body>
     <div id="bg-waiting"></div>
     <div id="bg-final"></div>
-    <div class="wrap" onclick="goFullAndSpeak()">
-        <div class="card">
+
+    <div class="wrap" onclick="magicStart()">
+        <div class="card" id="main-card">
             <h1 id="txt">靜思中...</h1>
             <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=100" class="logo">
             <div class="footer">牛牛畫廊 · 智能藝術</div>
@@ -51,27 +73,24 @@
             document.getElementById('hint-msg').innerText = "點擊屏幕 聆聽智慧";
         }
 
-        function goFullAndSpeak() {
+        function magicStart() {
             if(!quote || quote === "靜思中...") return;
 
-            // 嘗試全屏 (隐藏地址栏)
-            var doc = window.document;
-            var docEl = doc.documentElement;
-            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-            if(requestFullScreen) { requestFullScreen.call(docEl); }
+            // 1. 嘗試進入全螢幕 (Address bar 會縮起來)
+            var de = document.documentElement;
+            if (de.requestFullscreen) { de.requestFullscreen(); }
+            else if (de.mozRequestFullScreen) { de.mozRequestFullScreen(); }
+            else if (de.webkitRequestFullScreen) { de.webkitRequestFullScreen(); }
+            else if (de.msRequestFullscreen) { de.msRequestFullscreen(); }
 
-            // 語音朗讀
+            // 2. 朗讀
             window.speechSynthesis.cancel();
             var u = new SpeechSynthesisUtterance(quote);
-            
-            // 自动检测并匹配中文语音
             u.lang = 'zh-CN';
             u.rate = 0.85;
-            
-            // 兼容性修正：有些手机需要这一步
-            var voices = window.speechSynthesis.getVoices();
             window.speechSynthesis.speak(u);
 
+            // 3. 隱藏提示
             document.getElementById('hint-msg').style.display = "none";
         }
 

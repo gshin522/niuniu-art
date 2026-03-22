@@ -20,53 +20,70 @@
     <button id="btn">開啟智慧錦囊</button>
 
     <script>
-        // ⚠️ 請把這裡換成你的 Google Sheet ID
+        // ⚠️ 记得填入你的真实 ID
         const SHEET_ID = '你的_SHEET_ID_HERE';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
-        let currentQuote = "";
+        let currentQuote = "正在聆听智慧...";
         let currentAudio = "";
 
-        // 1. 從 Google Sheet 抓取數據
         fetch(SHEET_URL)
             .then(res => res.text())
             .then(csv => {
-                const rows = csv.split('\n').map(row => row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/));
-                // 假設：A列語錄, B列背景圖, D列音檔 (index 3)
+                const rows = csv.split('\n');
                 const randomIndex = Math.floor(Math.random() * (rows.length - 1)) + 1;
-                const data = rows[randomIndex];
+                // 这里处理 CSV 的逗号逻辑
+                const data = rows[randomIndex].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
                 
-                currentQuote = data[0].replace(/"/g, "");
-                const bgUrl = data[1] ? data[1].replace(/"/g, "") : "";
-                currentAudio = data[3] ? data[3].replace(/"/g, "").trim() : ""; // Column D 是 index 3
+                if (data) {
+                    // A列 (Index 0): 语录
+                    currentQuote = data[0].replace(/"/g, "");
+                    document.getElementById('quote').innerText = currentQuote;
+                    document.getElementById('quote').style.opacity = 1;
 
-                document.getElementById('bg').style.backgroundImage = `url('${bgUrl}')`;
-                document.getElementById('quote').innerText = currentQuote;
-                document.getElementById('quote').style.opacity = 1;
+                    // B列 (Index 1): 背景图
+                    if (data[1]) {
+                        const bgUrl = data[1].replace(/"/g, "");
+                        document.getElementById('bg').style.backgroundImage = `url('${bgUrl}')`;
+                        document.getElementById('bg').style.opacity = 1;
+                    }
+                    
+                    // C列 (Index 2): 音档链接 👈 刚才这里写错了，现在改好了！
+                    if (data[2]) {
+                        currentAudio = data[2].replace(/"/g, "").trim();
+                    }
+                }
+            })
+            .catch(err => {
+                document.getElementById('quote').innerText = "加载失败，请检查网络或表格";
             });
 
         function startExperience() {
-            // A. 觸發全屏
-            const doc = window.document;
-            const docEl = doc.documentElement;
-            const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-            if (requestFullScreen) requestFullScreen.call(docEl);
+            // 触发全屏
+            const docEl = document.documentElement;
+            if (docEl.requestFullscreen) docEl.requestFullscreen();
+            else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen();
 
-            // B. 隱藏按鈕
             document.getElementById('btn').style.display = 'none';
 
-            // C. 播放音聲
-            if (currentAudio && currentAudio !== "") {
-                // 如果有真人錄音
+            // 播放音频逻辑
+            if (currentAudio && currentAudio !== "" && currentAudio.includes('http')) {
                 const audio = new Audio(currentAudio);
-                audio.play().catch(e => console.log("播放失敗:", e));
+                audio.play().catch(e => {
+                    console.log("音频播放受阻，切换AI朗读");
+                    speakAI();
+                });
             } else {
-                // 否則使用 AI 朗讀
-                const msg = new SpeechSynthesisUtterance(currentQuote);
-                msg.lang = 'zh-CN';
-                window.speechSynthesis.speak(msg);
+                speakAI();
             }
         }
+
+        function speakAI() {
+            const msg = new SpeechSynthesisUtterance(currentQuote);
+            msg.lang = 'zh-CN';
+            window.speechSynthesis.speak(msg);
+        }
     </script>
+    
 </body>
 </html>

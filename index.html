@@ -7,45 +7,39 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: #000; overflow: hidden; font-family: sans-serif; color: #fff; }
         
-        /* 1. 漫天星星等待背景層 (參考自之前的版本) */
+        /* 1. 漫天星星等待背景層 */
         #bg-waiting {
             position: fixed; top:0; left:0; width:100%; height:100%;
-            background: url('https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=1000') center/cover;
+            /* 換回你最喜歡的那張星空圖 */
+            background: url('https://images.unsplash.com/photo-1436891620584-47fd0e565afb?w=1000') center/cover;
             z-index: 1;
-            filter: brightness(0.6) blur(1px);
+            filter: brightness(0.6);
             transition: opacity 1.2s;
         }
 
-        /* 2. 極光終極背景層 (語錄載入後換上) */
+        /* 2. 極光終極背景層 */
         #bg-final {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: #1a1a1a; background-size: cover; background-position: center;
             z-index: 2;
-            opacity: 0; /* 初始隱藏 */
-            transition: opacity 1.2s ease-in-out;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
             filter: brightness(0.7);
         }
 
-        /* 3. 卡片佈局 (參考自 image_4.png) */
         .wrap { position: relative; z-index:10; display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; cursor: pointer; }
         .card { 
-            background: rgba(255,255,255,0.15); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
+            background: rgba(255,255,255,0.12); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
             padding: 50px 30px; border-radius: 40px; width: 80%; max-width: 450px; 
-            text-align: center; border: 1px solid rgba(255,255,255,0.15);
-            transition: 0.8s opacity, 0.8s transform;
-            opacity: 1; /* 初始可見 */
+            text-align: center; border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.8s opacity;
         }
         
-        /* 語錄字體 */
-        h1 { font-size: 30px; line-height: 1.5; margin: 0 0 30px 0; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        
-        /*Logo 與 Footer */
+        h1 { font-size: 32px; line-height: 1.5; margin: 0 0 30px 0; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .logo { width: 60px; height: 60px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); margin-bottom: 15px; }
         .footer { font-size: 14px; opacity: 0.8; letter-spacing: 1px; }
-        
-        /* 底部提示 */
-        .hint { position: fixed; bottom: 30px; width: 100%; text-align: center; font-size: 12px; opacity: 0.5; z-index: 20; transition: 0.8s; color: #fff; }
+        .hint { position: fixed; bottom: 30px; width: 100%; text-align: center; font-size: 12px; opacity: 0.6; z-index: 20; color: #fff; }
     </style>
 </head>
 <body>
@@ -65,7 +59,6 @@
         var sUrl = 'https://script.google.com/macros/s/AKfycbyNgKa4LAURh5jENB9-gfa2nQOHWm-Nz7DHPwFXMIkrfJwntQYAZ9ADN5CK2kVAMnwW/exec';
         var quote = "";
 
-        // 啟動數據加載
         function load() {
             var s = document.createElement('script');
             s.src = sUrl + '?callback=cb';
@@ -79,30 +72,22 @@
                 var img = d.bgImage.replace(/["'\s]/g, "");
                 document.getElementById('bg-final').style.backgroundImage = "url('" + img + "')";
             }
-            // 核心：抓到數據後瞬间换上极光，卡片內容淡出再淡入
-            document.getElementById('main-card').style.opacity = "0";
             
-            setTimeout(function() {
-                // 數據已更新在 txt 裡了，這裡淡入卡片
-                document.getElementById('bg-waiting').style.opacity = "0";
-                document.getElementById('bg-final').style.opacity = "1";
-                document.getElementById('main-card').style.opacity = "1";
-                document.getElementById('hint-msg').innerText = "點擊屏幕 聆聽智慧";
-                document.getElementById('hint-msg').style.opacity = "0.7";
-            }, 300); // 縮短卡片淡出的時間，更流暢
+            // 數據載入後的切換
+            document.getElementById('bg-waiting').style.opacity = "0";
+            document.getElementById('bg-final').style.opacity = "1";
+            document.getElementById('hint-msg').innerText = "點擊屏幕 聆聽智慧";
         }
 
         function activateAndSpeak() {
             if(!quote || quote === "靜思中...") return;
             
-            // 語音朗讀
             window.speechSynthesis.cancel();
             var u = new SpeechSynthesisUtterance(quote);
             u.lang = 'zh-CN';
             u.rate = 0.85;
             window.speechSynthesis.speak(u);
 
-            // 點擊後隱藏提示
             document.getElementById('hint-msg').style.display = "none";
         }
 

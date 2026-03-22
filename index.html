@@ -8,69 +8,79 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: "Microsoft JhengHei", sans-serif; }
-        #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; transition: opacity 1.5s ease; z-index: 1; }
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; }
-        #quote { color: white; font-size: 1.8rem; line-height: 1.6; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); opacity: 0; transition: opacity 2s ease; font-weight: bold; }
-        #btn { position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%); z-index: 3; padding: 15px 30px; background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 30px; cursor: pointer; backdrop-filter: blur(5px); }
+        #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; transition: opacity 1.5s ease; z-index: 1; opacity: 0; background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&w=1350&q=80'); }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2; display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px; box-sizing: border-box; }
+        #quote { color: white; font-size: 1.8rem; line-height: 1.6; text-shadow: 2px 2px 15px rgba(0,0,0,1); opacity: 0; transition: opacity 2s ease; font-weight: bold; white-space: pre-wrap; }
+        #btn { position: fixed; bottom: 12%; left: 50%; transform: translateX(-50%); z-index: 3; padding: 18px 35px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.8); color: white; border-radius: 40px; cursor: pointer; backdrop-filter: blur(10px); font-size: 1.1rem; letter-spacing: 2px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
     </style>
 </head>
-<body onclick="startExperience()">
+<body>
     <div id="bg"></div>
-    <div id="overlay"><div id="quote">正在靜修，請稍候...</div></div>
-    <button id="btn">開啟智慧錦囊</button>
+    <div id="overlay"><div id="quote">正在恭請智慧...</div></div>
+    <button id="btn" onclick="startExperience()">開啟智慧錦囊</button>
 
     <script>
-        // ⚠️ 记得填入你的真实 ID
-        const SHEET_ID = '你的_SHEET_ID_HERE';
+        // 已填入你的專屬 Google Sheet ID
+        const SHEET_ID = '1kOKRFjKXaK87C5q8PYpoD3pYqVBTOjpfOq65hQGir38';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
-        let currentQuote = "正在聆听智慧...";
+        let currentQuote = "心存善念，福氣自來。";
         let currentAudio = "";
 
+        // 1. 抓取表格數據
         fetch(SHEET_URL)
             .then(res => res.text())
             .then(csv => {
                 const rows = csv.split('\n');
-                const randomIndex = Math.floor(Math.random() * (rows.length - 1)) + 1;
-                // 这里处理 CSV 的逗号逻辑
-                const data = rows[randomIndex].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                
-                if (data) {
-                    // A列 (Index 0): 语录
-                    currentQuote = data[0].replace(/"/g, "");
-                    document.getElementById('quote').innerText = currentQuote;
-                    document.getElementById('quote').style.opacity = 1;
-
-                    // B列 (Index 1): 背景图
-                    if (data[1]) {
-                        const bgUrl = data[1].replace(/"/g, "");
-                        document.getElementById('bg').style.backgroundImage = `url('${bgUrl}')`;
-                        document.getElementById('bg').style.opacity = 1;
-                    }
+                if (rows.length > 1) {
+                    // 隨機選一行 (排除標題行)
+                    const randomIndex = Math.floor(Math.random() * (rows.length - 1)) + 1;
+                    // 使用正則解析 CSV，避免逗號干擾
+                    const data = rows[randomIndex].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
                     
-                    // C列 (Index 2): 音档链接 👈 刚才这里写错了，现在改好了！
-                    if (data[2]) {
-                        currentAudio = data[2].replace(/"/g, "").trim();
+                    if (data && data.length >= 1) {
+                        // A列: 語錄
+                        currentQuote = data[0].replace(/^"|"$/g, "").replace(/""/g, '"');
+                        document.getElementById('quote').innerText = currentQuote;
+                        document.getElementById('quote').style.opacity = 1;
+
+                        // B列: 背景圖
+                        if (data[1]) {
+                            const bgUrl = data[1].replace(/^"|"$/g, "").trim();
+                            if(bgUrl.startsWith('http')) {
+                                document.getElementById('bg').style.backgroundImage = `url('${bgUrl}')`;
+                                document.getElementById('bg').style.opacity = 1;
+                            }
+                        }
+                        
+                        // C列: 真人錄音連結
+                        if (data[2]) {
+                            currentAudio = data[2].replace(/^"|"$/g, "").trim();
+                        }
                     }
                 }
             })
             .catch(err => {
-                document.getElementById('quote').innerText = "加载失败，请检查网络或表格";
+                console.error("數據讀取錯誤:", err);
+                document.getElementById('quote').innerText = currentQuote;
+                document.getElementById('quote').style.opacity = 1;
+                document.getElementById('bg').style.opacity = 1;
             });
 
         function startExperience() {
-            // 触发全屏
+            // A. 嘗試進入全屏 (優化用戶體驗)
             const docEl = document.documentElement;
             if (docEl.requestFullscreen) docEl.requestFullscreen();
             else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen();
 
+            // B. 隱藏啟動按鈕
             document.getElementById('btn').style.display = 'none';
 
-            // 播放音频逻辑
-            if (currentAudio && currentAudio !== "" && currentAudio.includes('http')) {
+            // C. 播放聲音邏輯
+            if (currentAudio && currentAudio.startsWith('http')) {
                 const audio = new Audio(currentAudio);
                 audio.play().catch(e => {
-                    console.log("音频播放受阻，切换AI朗读");
+                    console.warn("錄音播放受阻，使用系統語音替代");
                     speakAI();
                 });
             } else {
@@ -80,10 +90,10 @@
 
         function speakAI() {
             const msg = new SpeechSynthesisUtterance(currentQuote);
-            msg.lang = 'zh-CN';
+            msg.lang = 'zh-CN'; // 設定為中文朗讀
+            msg.rate = 0.9;     // 語速稍微放慢，更有智慧感
             window.speechSynthesis.speak(msg);
         }
     </script>
-    
 </body>
 </html>

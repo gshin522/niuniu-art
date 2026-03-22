@@ -7,18 +7,19 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
+    <meta name="display" content="standalone">
+
     <title>牛牛畫廊 · 智能藝術</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: #000; overflow: hidden; font-family: sans-serif; color: #fff; }
         #bg-waiting { position: fixed; top:0; left:0; width:100%; height:100%; background: url('https://images.unsplash.com/photo-1436891620584-47fd0e565afb?w=1000') center/cover; z-index: 1; filter: brightness(0.6); transition: opacity 1.2s; }
         #bg-final { position: fixed; top:0; left:0; width:100%; height:100%; background: #1a1a1a; background-size: cover; background-position: center; z-index: 2; opacity: 0; transition: opacity 1.5s ease-in-out; filter: brightness(0.7); }
         .wrap { position: relative; z-index:10; display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; cursor: pointer; }
-        .card { background: rgba(255,255,255,0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 50px 30px; border-radius: 40px; width: 80%; max-width: 450px; text-align: center; border: 1px solid rgba(255,255,255,0.1); transition: 0.8s opacity; }
+        .card { background: rgba(255,255,255,0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 50px 30px; border-radius: 40px; width: 80%; max-width: 450px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
         h1 { font-size: 32px; line-height: 1.5; margin: 0 0 30px 0; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .logo { width: 60px; height: 60px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); margin-bottom: 15px; }
         .footer { font-size: 14px; opacity: 0.8; letter-spacing: 1px; }
-        .hint { position: fixed; bottom: 30px; width: 100%; text-align: center; font-size: 12px; opacity: 0.6; z-index: 20; color: #fff; }
+        .hint { position: fixed; bottom: 30px; width: 100%; text-align: center; font-size: 12px; opacity: 0.6; z-index: 20; }
     </style>
 </head>
 <body>

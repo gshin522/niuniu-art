@@ -1,279 +1,36 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>心願 FM - 會員編號查詢</title>
-    <style>
-        :root {
-            --primary: #f39c12; /* 電台橘 */
-            --secondary: #e67e22;
-            --dark: #2c3e50;    /* 深夜藍 */
-            --bg: #fdf2e9;
-        }
-        
-        body {
-            background-color: var(--bg);
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            width: 100%;
-            max-width: 380px;
-            padding: 40px 30px;
-            border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .logo-area {
-            margin-bottom: 30px;
-        }
-
-        .logo-icon {
-            font-size: 50px;
-            margin-bottom: 10px;
-            display: inline-block;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--dark);
-            margin: 0;
-            letter-spacing: 1px;
-        }
-
-        .sub-title {
-            color: #95a5a6;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .input-group {
-            margin-top: 30px;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            font-size: 14px;
-            color: var(--dark);
-            margin-bottom: 5px;
-            margin-left: 5px;
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 2px solid #eee;
-            border-radius: 12px;
-            box-sizing: border-box;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        button {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
-            transition: transform 0.2s;
-        }
-
-        button:active {
-            transform: scale(0.97);
-        }
-
-        /* 結果顯示區域 */
-        #result {
-            margin-top: 30px;
-            display: none;
-            animation: slideUp 0.5s ease-out;
-        }
-
-        .member-card {
-            background: var(--dark);
-            color: white;
-            padding: 25px;
-            border-radius: 18px;
-            text-align: left;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .member-card::after {
-            content: '📻';
-            position: absolute;
-            right: -15px;
-            bottom: -15px;
-            font-size: 100px;
-            opacity: 0.1;
-            transform: rotate(-15deg);
-        }
-
-        .card-label {
-            font-size: 12px;
-            color: #bdc3c7;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .card-value {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
-
-        .card-footer {
-            margin-top: 10px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 10px;
-            font-size: 12px;
-            color: var(--primary);
-            font-weight: bold;
-        }
-
-        .error {
-            color: #e74c3c;
-            margin-top: 20px;
-            font-size: 14px;
-            display: none;
-            background: #fdeaea;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    <title>FM Check Test</title>
 </head>
-<body>
+<body style="text-align:center; padding:50px; background:#fdf2e9;">
+    <h2>🎙️ 心願 FM 查詢測試</h2>
+    <input type="text" id="name" placeholder="姓名">
+    <input type="text" id="phone" placeholder="末4位">
+    <button onclick="test()">查詢</button>
+    <div id="out" style="margin-top:20px; font-weight:bold; color:blue;"></div>
 
-<div class="container">
-    <div class="logo-area">
-        <div class="logo-icon">🎙️</div>
-        <div class="title">心願 FM</div>
-        <div class="sub-title">XIN YUAN FM MEMBER CHECK</div>
-    </div>
-
-    <div class="input-group">
-        <label>會員姓名</label>
-        <input type="text" id="searchName" placeholder="請輸入註冊全名" autocomplete="off">
-        
-        <label>驗證碼 (手機末 4 位)</label>
-        <input type="tel" id="searchPhone" placeholder="請輸入手機末 4 數字" maxlength="4">
-        
-        <button id="searchBtn" onclick="checkMember()">立即查詢</button>
-    </div>
-
-    <div id="errorMsg" class="error">⚠️ 查無此人，請確認姓名與驗證碼。</div>
-
-    <div id="result">
-        <div class="member-card">
-            <div class="card-label">MEMBER NAME</div>
-            <div class="card-value" id="resName">---</div>
+    <script>
+        async function test() {
+            const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGpv5GQ4HLRd7LfPeaTrPA9LB3ct-IiHXdUEZ7Ck1av3Or4N_v1-aMa1iJFd6rfwbUlTUoZECqiaX2/pub?output=csv';
+            const res = await fetch(url);
+            const text = await res.text();
+            console.log("数据已收到");
+            const rows = text.split('\n');
+            const n = document.getElementById('name').value;
+            const p = document.getElementById('phone').value;
             
-            <div class="card-label">MEMBER ID</div>
-            <div class="card-value" id="resID" style="color: var(--primary);">---</div>
-            
-            <div class="card-footer">心願 FM · 溫暖你的心</div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // 你的專屬 CSV 數據源
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGpv5GQ4HLRd7LfPeaTrPA9LB3ct-IiHXdUEZ7Ck1av3Or4N_v1-aMa1iJFd6rfwbUlTUoZECqiaX2/pub?output=csv';
-
-    async function checkMember() {
-        const btn = document.getElementById('searchBtn');
-        const nameInput = document.getElementById('searchName').value.trim();
-        const phoneInput = document.getElementById('searchPhone').value.trim();
-        const resultDiv = document.getElementById('result');
-        const errorMsg = document.getElementById('errorMsg');
-
-        if (!nameInput || !phoneInput) {
-            alert("請完整輸入姓名和手機末 4 位數");
-            return;
-        }
-
-        // 按鈕加載動畫
-        btn.innerText = "查詢中...";
-        btn.disabled = true;
-
-        try {
-            const response = await fetch(csvUrl);
-            const data = await response.text();
-            
-            // 解析 CSV (處理換行和逗號)
-            const rows = data.split(/\r?\n/).slice(1); 
-
             let found = false;
-            for (let row of rows) {
-                const cols = row.split(',');
-                if (cols.length >= 3) {
-                    const dbName = cols[0].trim();
-                    const dbPhone = cols[1].trim();
-                    const dbID = cols[2].trim();
-
-                    // 嚴格匹配比對
-                    if (dbName.toLowerCase() === nameInput.toLowerCase() && dbPhone === phoneInput) {
-                        document.getElementById('resName').innerText = dbName;
-                        document.getElementById('resID').innerText = dbID;
-                        resultDiv.style.display = 'block';
-                        errorMsg.style.display = 'none';
-                        found = true;
-                        break;
-                    }
+            rows.forEach(r => {
+                const c = r.split(',');
+                if(c[0].trim() === n && c[1].trim() === p) {
+                    document.getElementById('out').innerText = "會員編號：" + c[2];
+                    found = true;
                 }
-            }
-
-            if (!found) {
-                resultDiv.style.display = 'none';
-                errorMsg.style.display = 'block';
-            }
-
-        } catch (error) {
-            console.error("Fetch Error:", error);
-            alert("數據加載失敗，請檢查網絡連結。");
-        } finally {
-            btn.innerText = "開始查詢";
-            btn.disabled = false;
+            });
+            if(!found) document.getElementById('out').innerText = "未找到";
         }
-    }
-</script>
-
+    </script>
 </body>
 </html>

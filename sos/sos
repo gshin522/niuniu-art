@@ -1,1 +1,29 @@
-
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>緊急醫療資訊</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
+        .card { background: white; width: 100%; max-width: 400px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: #e74c3c; color: white; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; }
+        .content { padding: 20px; line-height: 1.8; color: #333; }
+        .info-row { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; }
+        .label { color: #888; }
+        .btn { display: block; background: #27ae60; color: white; text-align: center; padding: 15px; border-radius: 10px; text-decoration: none; margin-top: 20px; font-weight: bold; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">🆘 緊急聯絡資訊</div>
+        <div class="content">
+            <div class="info-row"><span class="label">姓名</span> <span>Lim (林先生)</span></div>
+            <div class="info-row"><span class="label">血型</span> <span>O+</span></div>
+            <div class="info-row"><span class="label">生日</span> <span>07/03/1950</span></div>
+            <div class="info-row"><span class="label">健康狀況</span> <span>患有高血壓，需定時服藥</span></div>
+            <a href="tel:+60126952368" class="btn">📞 點擊撥打兒子電話</a>
+        </div>
+    </div>
+</body>
+</html>

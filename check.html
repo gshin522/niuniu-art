@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>心愿 FM - 会员系统</title>
+    <title>心愿 FM - 会员查询系统</title>
     <style>
         :root { --primary: #E08870; --bg-soft: #E7A595; --wa-green: #25d366; }
         body { background-color: var(--bg-soft); font-family: "Microsoft YaHei", sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; flex-direction: column; }
@@ -16,8 +16,9 @@
         input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #f3e0dc; border-radius: 12px; box-sizing: border-box; font-size: 16px; background: #fffaf9; outline: none; }
         button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; cursor: pointer; font-weight: bold; margin-top: 10px; }
 
-        /* 会员卡预览层 */
+        /* 预览层 - 黑色背景 */
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; padding: 20px; box-sizing: border-box; }
+        
         #memberCardImg { 
             width: 100%; 
             max-width: 350px; 
@@ -25,7 +26,7 @@
             transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
             cursor: zoom-in; 
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            background: #eee; /* 加载前的底色 */
+            display: block;
         }
         #memberCardImg.fullscreen { max-width: 100vw; width: 100vw; border-radius: 0; cursor: zoom-out; }
 
@@ -33,11 +34,7 @@
         .close-btn { color: white; border: 1.5px solid rgba(255,255,255,0.5); padding: 12px 40px; border-radius: 30px; cursor: pointer; font-size: 15px; margin-top: 30px; }
 
         .error { color: #c0392b; margin-top: 25px; font-size: 14px; display: none; background: #fff0ed; padding: 18px; border-radius: 15px; line-height: 1.6; }
-        .wa-btn { 
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            background: var(--wa-green); color: white; padding: 10px 20px; 
-            border-radius: 25px; text-decoration: none; font-weight: bold; margin-top: 12px;
-        }
+        .wa-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--wa-green); color: white; padding: 10px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-top: 12px; }
         .wa-icon { width: 18px; height: 18px; fill: white; }
     </style>
 </head>
@@ -62,7 +59,7 @@
 
     <div id="modal">
         <div class="tip-text" id="tipText">点击会员证可放大/缩小</div>
-        <img id="memberCardImg" src="" onclick="toggleFullscreen()" alt="正在载入会员证...">
+        <img id="memberCardImg" src="" onclick="toggleFullscreen()" crossorigin="anonymous" alt="会员证加载中...">
         <div class="close-btn" id="closeBtn" onclick="closeModal()">返回修改资料</div>
     </div>
 
@@ -70,7 +67,6 @@
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGpv5GQ4HLRd7LfPeaTrPA9LB3ct-IiHXdUEZ7Ck1av3Or4N_v1-aMa1iJFd6rfwbUlTUoZECqiaX2/pub?output=csv';
     const hotLine = "60149696608"; 
 
-    // 智能转换链接：支持直链、分享链
     function getDirectUrl(url) {
         if (!url) return "";
         let id = "";
@@ -79,7 +75,8 @@
         } else if (url.includes('id=')) {
             id = url.split('id=')[1].split('&')[0];
         }
-        return id ? `https://drive.google.com/uc?export=view&id=${id}` : url;
+        // 使用一个随机数后缀 t=xxx 来强制刷新图片缓存
+        return id ? `https://drive.google.com/uc?export=view&id=${id}&t=${new Date().getTime()}` : url;
     }
 
     async function doSearch() {
@@ -90,7 +87,7 @@
 
         if(!userInput || !phoneInput) { alert("请填写姓名和电话末4位"); return; }
 
-        btn.innerText = "验证中...";
+        btn.innerText = "系统验证中...";
         btn.disabled = true;
 
         try {
@@ -100,11 +97,7 @@
             
             let found = false;
             for (let i = 1; i < lines.length; i++) {
-                // 使用更健壮的 CSV 解析（处理逗号和引号）
                 const cols = lines[i].split(',').map(c => c.replace(/^"|"$/g, '').trim());
-                
-                // 打印每一行到控制台（你可以按 F12 看到数据是否正确抓取）
-                console.log("正在检查行:", cols);
 
                 if (cols.length >= 2) { 
                     const dbChi = cols[0].replace(/\s+/g, '').toUpperCase();
@@ -112,19 +105,25 @@
                     const dbPhone = cols[1].replace(/\D/g, '').slice(-4);
 
                     if ((dbChi === userInput || dbEng === userInput) && dbPhone === phoneInput) {
-                        // 尝试从 F 栏（索引 5）或更后的栏位找链接
                         const imgUrl = getDirectUrl(cols[5]); 
                         
                         if(imgUrl) {
-                            console.log("找到图片链接:", imgUrl);
-                            document.getElementById('memberCardImg').src = imgUrl;
-                            document.getElementById('modal').style.display = 'flex';
-                            document.getElementById('searchBox').style.display = 'none';
-                            errDiv.style.display = 'none';
-                            found = true;
+                            const cardImg = document.getElementById('memberCardImg');
+                            cardImg.src = imgUrl;
+                            
+                            // 预加载检查
+                            cardImg.onload = function() {
+                                document.getElementById('modal').style.display = 'flex';
+                                document.getElementById('searchBox').style.display = 'none';
+                                errDiv.style.display = 'none';
+                            };
+                            cardImg.onerror = function() {
+                                alert("图片加载失败，请确保 Google Drive 图片已设置为“任何人可见”，并尝试再次查询。");
+                            };
                         } else {
-                            alert("已找到资料，但 F 栏没有图片链接！");
+                            alert("已找到资料，但图片链接无效！");
                         }
+                        found = true;
                         break;
                     }
                 }
@@ -135,8 +134,7 @@
                 document.getElementById('waLink').href = `https://wa.me/${hotLine}?text=${msg}`;
             }
         } catch (e) {
-            console.error(e);
-            alert("系统繁忙，请重试");
+            alert("网络超时，请稍后重试");
         } finally {
             btn.innerText = "查询我的电子会员证";
             btn.disabled = false;

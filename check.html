@@ -1,66 +1,12 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>心願 FM - 會員編號查詢</title>
-    <style>
-        :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdf2e9; }
-        body { background: var(--bg); font-family: sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .container { background: white; width: 100%; max-width: 380px; padding: 40px 30px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; }
-        .title { font-size: 24px; font-weight: bold; color: var(--dark); margin: 10px 0; }
-        .input-group { margin-top: 20px; text-align: left; }
-        label { display: block; font-size: 14px; margin-bottom: 5px; font-weight: bold; color: var(--dark); }
-        input { width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid #eee; border-radius: 12px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        
-        #result { margin-top: 30px; display: none; animation: slideUp 0.5s ease-out; }
-        .member-card { background: var(--dark); color: white; padding: 25px; border-radius: 18px; text-align: left; position: relative; overflow: hidden; }
-        .member-card::after { content: '📻'; position: absolute; right: -15px; bottom: -15px; font-size: 100px; opacity: 0.1; transform: rotate(-15deg); }
-        .card-value { font-size: 20px; font-weight: bold; margin-bottom: 10px; color: var(--primary); }
-        .error { color: #e74c3c; margin-top: 20px; display: none; background: #fdeaea; padding: 10px; border-radius: 8px; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <div style="font-size: 50px;">🎙️</div>
-    <div class="title">心願 FM</div>
-    <div style="color: #95a5a6; font-size: 14px;">MEMBER CHECK</div>
-
-    <div class="input-group">
-        <label>會員姓名 (全名)</label>
-        <input type="text" id="searchName" placeholder="例如: LIM AH KAO">
-        
-        <label>驗證碼 (手機末 4 位)</label>
-        <input type="tel" id="searchPhone" placeholder="例如: 7903" maxlength="4">
-        
-        <button id="searchBtn" onclick="checkMember()">立即查詢</button>
-    </div>
-
-    <div id="errorMsg" class="error">⚠️ 查無此人，請確認姓名與驗證碼。</div>
-
-    <div id="result">
-        <div class="member-card">
-            <div style="font-size: 12px; color: #bdc3c7;">MEMBER NAME</div>
-            <div id="resName" style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">---</div>
-            
-            <div style="font-size: 12px; color: #bdc3c7;">MEMBER ID</div>
-            <div id="resID" class="card-value">---</div>
-            
-            <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; font-size: 12px; color: var(--primary);">心願 FM · 溫暖你的心</div>
-        </div>
-    </div>
-</div>
-
 <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGpv5GQ4HLRd7LfPeaTrPA9LB3ct-IiHXdUEZ7Ck1av3Or4N_v1-aMa1iJFd6rfwbUlTUoZECqiaX2/pub?output=csv';
 
     async function checkMember() {
         const btn = document.getElementById('searchBtn');
-        const nameInput = document.getElementById('searchName').value.trim();
-        const phoneInput = document.getElementById('searchPhone').value.trim();
+        // 獲取輸入並去除所有空格，轉為大寫
+        const nameInput = document.getElementById('searchName').value.replace(/\s/g, '').toUpperCase();
+        const phoneInput = document.getElementById('searchPhone').value.replace(/\s/g, '');
+        
         const resultDiv = document.getElementById('result');
         const errorMsg = document.getElementById('errorMsg');
 
@@ -73,22 +19,26 @@
         btn.disabled = true;
 
         try {
-            const response = await fetch(csvUrl);
+            // 加入時間戳緩存清理，確保讀取到最新的 Google Sheet 數據
+            const response = await fetch(csvUrl + '&cache=' + new Date().getTime());
             const data = await response.text();
-            const rows = data.split(/\r?\n/).slice(1); 
+            
+            // 處理換行符，兼容 Windows 和 Mac 格式
+            const rows = data.split(/\r?\n/).filter(row => row.trim() !== ""); 
 
             let found = false;
-            for (let row of rows) {
-                // 這裡處理 CSV 可能帶引號的情況
-                const cols = row.split(',').map(c => c.replace(/"/g, '').trim());
+            // 從第二行開始找 (i=1)，跳過標題
+            for (let i = 1; i < rows.length; i++) {
+                const cols = rows[i].split(',').map(c => c.replace(/"/g, '').trim());
                 
                 if (cols.length >= 3) {
-                    const dbName = cols[0];
-                    const dbPhone = cols[1];
+                    // 清除資料庫內容的所有空格進行比對
+                    const dbName = cols[0].replace(/\s/g, '').toUpperCase();
+                    const dbPhone = cols[1].replace(/\s/g, '');
                     const dbID = cols[2];
 
-                    if (dbName.toLowerCase() === nameInput.toLowerCase() && dbPhone === phoneInput) {
-                        document.getElementById('resName').innerText = dbName;
+                    if (dbName === nameInput && dbPhone === phoneInput) {
+                        document.getElementById('resName').innerText = cols[0]; // 顯示原名
                         document.getElementById('resID').innerText = dbID;
                         resultDiv.style.display = 'block';
                         errorMsg.style.display = 'none';
@@ -104,13 +54,11 @@
             }
 
         } catch (error) {
-            alert("數據讀取失敗，請稍後再試。");
+            console.error(error);
+            alert("數據讀取失敗，請檢查網絡或 CSV 連結。");
         } finally {
             btn.innerText = "立即查詢";
             btn.disabled = false;
         }
     }
 </script>
-
-</body>
-</html>

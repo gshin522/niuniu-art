@@ -3,43 +3,36 @@
 
     async function checkMember() {
         const btn = document.getElementById('searchBtn');
-        // 獲取輸入並去除所有空格，轉為大寫
         const nameInput = document.getElementById('searchName').value.replace(/\s/g, '').toUpperCase();
-        const phoneInput = document.getElementById('searchPhone').value.replace(/\s/g, '');
+        const phoneInput = document.getElementById('searchPhone').value.trim(); // 用戶輸入的 4 位數
         
         const resultDiv = document.getElementById('result');
         const errorMsg = document.getElementById('errorMsg');
 
         if (!nameInput || !phoneInput) {
-            alert("請完整輸入姓名和手機末 4 位數");
+            alert("請輸入姓名和手機末 4 位");
             return;
         }
 
-        btn.innerText = "查詢中...";
-        btn.disabled = true;
-
+        btn.innerText = "搜尋中...";
         try {
-            // 加入時間戳緩存清理，確保讀取到最新的 Google Sheet 數據
-            const response = await fetch(csvUrl + '&cache=' + new Date().getTime());
+            const response = await fetch(csvUrl + '&t=' + new Date().getTime());
             const data = await response.text();
-            
-            // 處理換行符，兼容 Windows 和 Mac 格式
             const rows = data.split(/\r?\n/).filter(row => row.trim() !== ""); 
 
             let found = false;
-            // 從第二行開始找 (i=1)，跳過標題
             for (let i = 1; i < rows.length; i++) {
                 const cols = rows[i].split(',').map(c => c.replace(/"/g, '').trim());
                 
                 if (cols.length >= 3) {
-                    // 清除資料庫內容的所有空格進行比對
                     const dbName = cols[0].replace(/\s/g, '').toUpperCase();
-                    const dbPhone = cols[1].replace(/\s/g, '');
-                    const dbID = cols[2];
+                    // 關鍵修改：截取表格內電話號碼的最後 4 位進行比對
+                    const dbFullPhone = cols[1].replace(/\D/g, ''); // 只拿數字
+                    const dbLast4 = dbFullPhone.slice(-4); 
 
-                    if (dbName === nameInput && dbPhone === phoneInput) {
-                        document.getElementById('resName').innerText = cols[0]; // 顯示原名
-                        document.getElementById('resID').innerText = dbID;
+                    if (dbName === nameInput && dbLast4 === phoneInput) {
+                        document.getElementById('resName').innerText = cols[0];
+                        document.getElementById('resID').innerText = cols[2];
                         resultDiv.style.display = 'block';
                         errorMsg.style.display = 'none';
                         found = true;
@@ -47,18 +40,14 @@
                     }
                 }
             }
-
             if (!found) {
                 resultDiv.style.display = 'none';
                 errorMsg.style.display = 'block';
             }
-
-        } catch (error) {
-            console.error(error);
-            alert("數據讀取失敗，請檢查網絡或 CSV 連結。");
+        } catch (e) {
+            alert("網路連線失敗");
         } finally {
             btn.innerText = "立即查詢";
-            btn.disabled = false;
         }
     }
 </script>

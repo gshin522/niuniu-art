@@ -6,32 +6,23 @@
     <title>心愿 FM - 会员系统</title>
     <style>
         :root { --primary: #E08870; --bg-soft: #E7A595; --wa-green: #25d366; }
-        body { background-color: var(--bg-soft); font-family: "Microsoft YaHei", sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; flex-direction: column; overflow-x: hidden;}
+        body { background-color: var(--bg-soft); font-family: "Microsoft YaHei", sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; flex-direction: column; }
         
-        /* 查询界面 */
         .search-container { background: white; padding: 30px 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
         .logo-img { width: 80px; margin-bottom: 10px; }
         h2 { color: var(--primary); margin: 0; }
         .slogan { color: #8e7470; font-size: 12px; margin: 5px 0 20px 0; }
-        input { width: 100%; padding: 14px; margin: 8px 0; border: 2px solid #f3e0dc; border-radius: 12px; box-sizing: border-box; font-size: 16px; background: #fffaf9; outline: none; }
-        button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 17px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        input { width: 100%; padding: 14px; margin: 8px 0; border: 2px solid #f3e0dc; border-radius: 12px; box-sizing: border-box; font-size: 16px; outline: none; }
+        button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 17px; cursor: pointer; font-weight: bold; margin-top: 10px; }
 
-        /* 全屏会员卡弹出层 (默认隐藏) */
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; cursor: zoom-out; animation: fadeIn 0.4s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        #memberCardImg { 
-            width: 100vw; 
-            height: auto; 
-            max-height: 100vh; 
-            object-fit: contain; /* 确保整张卡片都能看见，不被裁剪 */
-            transition: transform 0.3s;
-        }
-
-        /* 顶部提示 (可选，几秒后可自动隐藏，这里设为一直显示但较淡) */
-        .fullscreen-tip { color: rgba(255,255,255,0.4); font-size: 12px; position: absolute; top: 20px; text-align: center; width: 100%; }
-
-        .error { color: #c0392b; margin-top: 20px; font-size: 14px; display: none; text-align: center; }
+        /* 预览层 */
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 1000; justify-content: center; align-items: center; flex-direction: column; }
+        #memberCardImg { width: 100%; height: auto; max-height: 90vh; object-fit: contain; cursor: pointer; }
+        
+        /* 报错文字样式 */
+        .error { color: #c0392b; margin-top: 20px; font-size: 14px; display: none; line-height: 1.6; }
+        .wa-link { color: var(--wa-green); text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 5px; }
+        .wa-icon { width: 18px; vertical-align: middle; }
     </style>
 </head>
 <body>
@@ -42,16 +33,20 @@
         <div class="slogan">聆听陪伴，共享法悦</div>
         <input type="text" id="nameInput" placeholder="输入姓名 (中文或英文)">
         <input type="tel" id="phoneInput" placeholder="手机号末 4 位" maxlength="4">
-        <button onclick="doSearch()">查询我的会员证</button>
+        <button id="searchBtn" onclick="doSearch()">查询会员证</button>
+        
         <div id="errorMsg" class="error">
-            查无资料。请检查姓名和电话末4位。<br>
-            需要协助？<a href="https://wa.me/60149696608" style="color: #25d366; font-weight: bold; text-decoration: none;">💬 点此联系热线</a>
+            插无资料。请检查姓名及电话末4位。<br>
+            需要协助？
+            <a href="https://wa.me/60149696608" class="wa-link">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="wa-icon">点此联系热线
+            </a>
         </div>
     </div>
 
-    <div id="modal" onclick="closeModal()">
-        <div class="fullscreen-tip">聆听陪伴 · 共享法悦 (再次点击关闭)</div>
-        <img id="memberCardImg" src="" alt="电子会员证">
+    <div id="modal">
+        <p style="color: white; font-size: 12px; margin-bottom: 10px;">点击图片进入全屏模式 | <span onclick="closeModal()" style="text-decoration: underline;">返回修改</span></p>
+        <img id="memberCardImg" src="" onclick="requestFull()">
     </div>
 
 <script>
@@ -60,13 +55,14 @@
     async function doSearch() {
         const userInput = document.getElementById('nameInput').value.replace(/\s+/g, '').toUpperCase();
         const phoneInput = document.getElementById('phoneInput').value.replace(/\s+/g, '');
-        const btn = document.querySelector('button');
+        const btn = document.getElementById('searchBtn');
         const errDiv = document.getElementById('errorMsg');
 
         if(!userInput || !phoneInput) { alert("请填写完整信息"); return; }
 
-        btn.innerText = "正在为您调取原版证件...";
+        btn.innerText = "查询中...";
         btn.disabled = true;
+        errDiv.style.display = 'none';
 
         try {
             const resp = await fetch(csvUrl + '&t=' + new Date().getTime());
@@ -82,49 +78,56 @@
                     const dbPhone = cols[1].replace(/\D/g, '').slice(-4);
 
                     if ((dbChi === userInput || dbEng === userInput) && dbPhone === phoneInput) {
-                        const rawUrl = cols[5]; // Drive 链接
-                        // 使用最兼容移动端的 Thumbnail 接口，直接调取原图 ID
+                        const rawUrl = cols[5];
                         let id = "";
                         if (rawUrl.includes('/d/')) id = rawUrl.split('/d/')[1].split('/')[0];
                         else if (rawUrl.includes('id=')) id = rawUrl.split('id=')[1].split('&')[0];
                         
                         if(id) {
-                            // sz=w1200 确保全屏显示足够清晰，同时避开移动端跨域限制
                             const fullImgUrl = `https://drive.google.com/thumbnail?id=${id}&sz=w1200`;
-                            document.getElementById('memberCardImg').src = fullImgUrl;
+                            const imgElement = document.getElementById('memberCardImg');
+                            imgElement.src = fullImgUrl;
                             
-                            // 预加载检查，确保图片下载完成再显示，防止出现小图标
-                            document.getElementById('memberCardImg').onload = () => {
+                            imgElement.onload = () => {
                                 document.getElementById('modal').style.display = 'flex';
-                                // 为了沉浸感，查询框不用隐藏，因为全屏层遮住了它，不需要多余代码。
-                                errDiv.style.display = 'none';
-                                btn.innerText = "查询我的会员证";
+                                btn.innerText = "查询会员证";
                                 btn.disabled = false;
                             };
-                            document.getElementById('memberCardImg').onerror = () => {
-                                alert("原版证件调取受阻，可能因为 Google Drive 的手机端安全检查。请确保 Google Drive 图片已设置为“任何人可见”，并联络热线。");
-                                btn.innerText = "查询我的会员证";
-                                btn.disabled = false;
-                            };
-                        } else {
-                            alert("已找到资料，但表格中没有证件链接。");
                         }
                         found = true;
                         break;
                     }
                 }
             }
-            if (!found) errDiv.style.display = 'block';
+            if (!found) {
+                errDiv.style.display = 'block';
+                btn.innerText = "查询会员证";
+                btn.disabled = false;
+            }
         } catch (e) {
-            alert("系统繁忙，请重试");
-        } finally {
-            // 这里不改 btn.innerText，改由 onload 处理。
+            alert("网络超时");
+            btn.innerText = "查询会员证";
+            btn.disabled = false;
+        }
+    }
+
+    // 触发真正全屏（隐藏 Address bar）
+    function requestFull() {
+        const img = document.getElementById('memberCardImg');
+        if (img.requestFullscreen) {
+            img.requestFullscreen();
+        } else if (img.webkitRequestFullscreen) { /* Safari/iOS */
+            img.webkitRequestFullscreen();
+        } else if (img.msRequestFullscreen) {
+            img.msRequestFullscreen();
         }
     }
 
     function closeModal() {
         document.getElementById('modal').style.display = 'none';
-        // 不用特别清理图片 src，下次搜会自动换新图。
+        // 退出全屏（如果正在全屏）
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
     }
 </script>
 </body>

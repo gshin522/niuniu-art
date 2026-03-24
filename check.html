@@ -6,33 +6,32 @@
     <title>心愿 FM - 会员系统</title>
     <style>
         :root { --primary: #E08870; --bg-soft: #E7A595; --wa-green: #25d366; }
-        body { background-color: var(--bg-soft); font-family: "Microsoft YaHei", sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; flex-direction: column; }
+        body { background-color: var(--bg-soft); font-family: "Microsoft YaHei", sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; flex-direction: column; overflow-x: hidden;}
         
-        .search-container { background: white; padding: 35px 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
-        .logo-img { width: 85px; margin-bottom: 12px; }
-        h2 { color: var(--primary); margin: 0; font-size: 24px; }
-        .slogan { color: #8e7470; font-size: 13px; margin: 5px 0 25px 0; }
-        
-        input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #f3e0dc; border-radius: 12px; box-sizing: border-box; font-size: 16px; outline: none; }
-        button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        /* 查询界面 */
+        .search-container { background: white; padding: 30px 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
+        .logo-img { width: 80px; margin-bottom: 10px; }
+        h2 { color: var(--primary); margin: 0; }
+        .slogan { color: #8e7470; font-size: 12px; margin: 5px 0 20px 0; }
+        input { width: 100%; padding: 14px; margin: 8px 0; border: 2px solid #f3e0dc; border-radius: 12px; box-sizing: border-box; font-size: 16px; background: #fffaf9; outline: none; }
+        button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 17px; cursor: pointer; font-weight: bold; margin-top: 10px; }
 
-        /* 会员证弹出层 */
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; padding: 20px; box-sizing: border-box; }
+        /* 全屏会员卡弹出层 (默认隐藏) */
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; cursor: zoom-out; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
         #memberCardImg { 
-            width: 100%; 
-            max-width: 350px; 
-            border-radius: 15px; 
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            transition: 0.3s;
+            width: 100vw; 
+            height: auto; 
+            max-height: 100vh; 
+            object-fit: contain; /* 确保整张卡片都能看见，不被裁剪 */
+            transition: transform 0.3s;
         }
-        #memberCardImg.fullscreen { max-width: 100vw; width: 100vw; border-radius: 0; }
 
-        .tip-text { color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 15px; }
-        .close-btn { color: white; border: 1.5px solid rgba(255,255,255,0.5); padding: 12px 40px; border-radius: 30px; cursor: pointer; font-size: 15px; margin-top: 30px; }
+        /* 顶部提示 (可选，几秒后可自动隐藏，这里设为一直显示但较淡) */
+        .fullscreen-tip { color: rgba(255,255,255,0.4); font-size: 12px; position: absolute; top: 20px; text-align: center; width: 100%; }
 
-        .error { color: #c0392b; margin-top: 25px; font-size: 14px; display: none; background: #fff0ed; padding: 18px; border-radius: 15px; }
-        .wa-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--wa-green); color: white; padding: 10px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-top: 12px; }
-        .wa-icon { width: 18px; height: 18px; fill: white; }
+        .error { color: #c0392b; margin-top: 20px; font-size: 14px; display: none; text-align: center; }
     </style>
 </head>
 <body>
@@ -41,41 +40,22 @@
         <img src="https://i.ibb.co/ycBDJ23z/logo.png" class="logo-img">
         <h2>心愿 FM</h2>
         <div class="slogan">聆听陪伴，共享法悦</div>
-        <input type="text" id="nameInput" placeholder="输入姓名">
+        <input type="text" id="nameInput" placeholder="输入姓名 (中文或英文)">
         <input type="tel" id="phoneInput" placeholder="手机号末 4 位" maxlength="4">
-        <button onclick="doSearch()">查询我的电子会员证</button>
-        
+        <button onclick="doSearch()">查询我的会员证</button>
         <div id="errorMsg" class="error">
-            查无资料。若是资料有误或无法查询：<br>
-            <a id="waLink" href="#" target="_blank" class="wa-btn">
-                <svg class="wa-icon" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.4-11.3 2.5-2.5 5.5-6.5 8.3-9.7 2.8-3.3 3.7-5.6 5.5-9.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
-                联系心愿热线协助
-            </a>
+            查无资料。请检查姓名和电话末4位。<br>
+            需要协助？<a href="https://wa.me/60149696608" style="color: #25d366; font-weight: bold; text-decoration: none;">💬 点此联系热线</a>
         </div>
     </div>
 
-    <div id="modal">
-        <div class="tip-text">点击会员证可放大/缩小</div>
-        <img id="memberCardImg" src="" onclick="this.classList.toggle('fullscreen')" alt="加载中...">
-        <div class="close-btn" onclick="closeModal()">返回修改</div>
+    <div id="modal" onclick="closeModal()">
+        <div class="fullscreen-tip">聆听陪伴 · 共享法悦 (再次点击关闭)</div>
+        <img id="memberCardImg" src="" alt="电子会员证">
     </div>
 
 <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGpv5GQ4HLRd7LfPeaTrPA9LB3ct-IiHXdUEZ7Ck1av3Or4N_v1-aMa1iJFd6rfwbUlTUoZECqiaX2/pub?output=csv';
-    const hotLine = "60149696608";
-
-    // 重点：使用高兼容性的缩略图接口 (Thumbnail API)
-    function getDriveThumbnail(url) {
-        if (!url) return "";
-        let id = "";
-        if (url.includes('/d/')) {
-            id = url.split('/d/')[1].split('/')[0];
-        } else if (url.includes('id=')) {
-            id = url.split('id=')[1].split('&')[0];
-        }
-        // sz=w1000 表示获取宽度为 1000 像素的清晰图，通常足以看清会员卡
-        return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000` : url;
-    }
 
     async function doSearch() {
         const userInput = document.getElementById('nameInput').value.replace(/\s+/g, '').toUpperCase();
@@ -83,8 +63,10 @@
         const btn = document.querySelector('button');
         const errDiv = document.getElementById('errorMsg');
 
-        if(!userInput || !phoneInput) { alert("请填写完整资料"); return; }
-        btn.innerText = "正在查询..."; btn.disabled = true;
+        if(!userInput || !phoneInput) { alert("请填写完整信息"); return; }
+
+        btn.innerText = "正在为您调取原版证件...";
+        btn.disabled = true;
 
         try {
             const resp = await fetch(csvUrl + '&t=' + new Date().getTime());
@@ -93,40 +75,56 @@
             
             let found = false;
             for (let i = 1; i < lines.length; i++) {
-                const cols = lines[i].split(',').map(c => c.replace(/^"|"$/g, '').trim());
-                if (cols.length >= 2) { 
+                const cols = lines[i].split(',').map(c => c.replace(/"/g, '').trim());
+                if (cols.length >= 6) { 
                     const dbChi = cols[0].replace(/\s+/g, '').toUpperCase();
                     const dbEng = (cols[4] || "").replace(/\s+/g, '').toUpperCase();
                     const dbPhone = cols[1].replace(/\D/g, '').slice(-4);
 
                     if ((dbChi === userInput || dbEng === userInput) && dbPhone === phoneInput) {
-                        const finalImgUrl = getDriveThumbnail(cols[5]);
-                        if(finalImgUrl) {
-                            const cardImg = document.getElementById('memberCardImg');
-                            cardImg.src = finalImgUrl;
-                            cardImg.onload = () => {
+                        const rawUrl = cols[5]; // Drive 链接
+                        // 使用最兼容移动端的 Thumbnail 接口，直接调取原图 ID
+                        let id = "";
+                        if (rawUrl.includes('/d/')) id = rawUrl.split('/d/')[1].split('/')[0];
+                        else if (rawUrl.includes('id=')) id = rawUrl.split('id=')[1].split('&')[0];
+                        
+                        if(id) {
+                            // sz=w1200 确保全屏显示足够清晰，同时避开移动端跨域限制
+                            const fullImgUrl = `https://drive.google.com/thumbnail?id=${id}&sz=w1200`;
+                            document.getElementById('memberCardImg').src = fullImgUrl;
+                            
+                            // 预加载检查，确保图片下载完成再显示，防止出现小图标
+                            document.getElementById('memberCardImg').onload = () => {
                                 document.getElementById('modal').style.display = 'flex';
-                                document.getElementById('searchBox').style.display = 'none';
+                                // 为了沉浸感，查询框不用隐藏，因为全屏层遮住了它，不需要多余代码。
                                 errDiv.style.display = 'none';
+                                btn.innerText = "查询我的会员证";
+                                btn.disabled = false;
                             };
+                            document.getElementById('memberCardImg').onerror = () => {
+                                alert("原版证件调取受阻，可能因为 Google Drive 的手机端安全检查。请确保 Google Drive 图片已设置为“任何人可见”，并联络热线。");
+                                btn.innerText = "查询我的会员证";
+                                btn.disabled = false;
+                            };
+                        } else {
+                            alert("已找到资料，但表格中没有证件链接。");
                         }
-                        found = true; break;
+                        found = true;
+                        break;
                     }
                 }
             }
-            if (!found) {
-                errDiv.style.display = 'block';
-                const msg = encodeURIComponent("心愿FM你好，我是会员但透过网页查询不到会员编号，请协助。");
-                document.getElementById('waLink').href = `https://wa.me/${hotLine}?text=${msg}`;
-            }
-        } catch (e) { alert("网络错误"); } 
-        finally { btn.innerText = "查询我的电子会员证"; btn.disabled = false; }
+            if (!found) errDiv.style.display = 'block';
+        } catch (e) {
+            alert("系统繁忙，请重试");
+        } finally {
+            // 这里不改 btn.innerText，改由 onload 处理。
+        }
     }
 
     function closeModal() {
         document.getElementById('modal').style.display = 'none';
-        document.getElementById('searchBox').style.display = 'block';
-        document.getElementById('memberCardImg').classList.remove('fullscreen');
+        // 不用特别清理图片 src，下次搜会自动换新图。
     }
 </script>
 </body>

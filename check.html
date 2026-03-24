@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>心願 FM 會員查詢</title>
+    <title>心愿 FM - 会员查询系统</title>
     <style>
         :root { --primary: #f39c12; --gold: #ffd700; --dark: #2c3e50; --bg: #fdf2e9; }
-        body { background-color: var(--bg); font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        body { background-color: var(--bg); font-family: "Microsoft YaHei", sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         .card { background: white; padding: 35px 25px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
-        h2 { color: var(--primary); margin: 0 0 20px 0; font-size: 24px; }
+        .logo-placeholder { font-size: 50px; margin-bottom: 10px; } /* 稍后换成 <img> */
+        h2 { color: var(--primary); margin: 0; font-size: 24px; }
+        .slogan { color: #95a5a6; font-size: 13px; margin: 5px 0 20px 0; }
+        
         input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #eee; border-radius: 12px; box-sizing: border-box; font-size: 16px; transition: border-color 0.3s; }
         input:focus { outline: none; border-color: var(--primary); }
         button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; cursor: pointer; font-weight: bold; margin-top: 10px; }
@@ -18,10 +21,8 @@
         .member-card::after { content: '🎙️'; position: absolute; right: -10px; bottom: -10px; font-size: 80px; opacity: 0.1; }
         
         .label { font-size: 11px; color: #bdc3c7; margin-bottom: 3px; letter-spacing: 1px; }
-        .value { font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+        .value { font-size: 18px; font-weight: bold; margin-bottom: 12px; }
         .id-value { font-size: 22px; color: var(--primary); }
-        
-        /* 標籤樣式 */
         .tag { display: inline-block; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; margin-top: 5px; }
         .tag-forever { background: var(--gold); color: #000; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
         .tag-normal { background: #3498db; color: #fff; }
@@ -33,48 +34,49 @@
 <body>
 
 <div class="card">
-    <h2>📻 心願 FM 查詢</h2>
-    <div style="font-size: 13px; color: #95a5a6; margin-bottom: 20px;">請輸入註冊資料進行驗證</div>
+    <div class="logo-placeholder">🎙️</div>
+    <h2>心愿 FM</h2>
+    <div class="slogan">聆听陪伴，共享法悦</div>
     
-    <input type="text" id="nameInput" placeholder="會員全名 (簡繁皆可)">
-    <input type="tel" id="phoneInput" placeholder="手機末 4 位數" maxlength="4">
-    <button onclick="doSearch()">立即查詢</button>
+    <input type="text" id="nameInput" placeholder="输入姓名 (中文或英文)">
+    <input type="tel" id="phoneInput" placeholder="手机号末 4 位" maxlength="4">
+    <button onclick="doSearch()">立即查询</button>
     
     <div id="errorMsg" class="error">
-        查無此人。若您換過號碼，請聯繫管理員協助：<br>
-        <a id="waLink" href="#" target="_blank" class="whatsapp-btn">💬 聯絡心願熱線</a>
+        查无资料。若您换过号码或无法查询，请联系管理员协助：<br>
+        <a id="waLink" href="#" target="_blank" class="whatsapp-btn">💬 联络心愿热线</a>
     </div>
     
     <div id="result">
         <div class="member-card">
-            <div class="label">姓名 NAME</div>
+            <div class="label">会员姓名 NAME</div>
             <div id="resName" class="value">---</div>
             
-            <div class="label">編號 ID</div>
+            <div class="label">会员编号 ID</div>
             <div id="resID" class="value id-value">---</div>
             
-            <div class="label">類別 CATEGORY</div>
+            <div class="label">会员类别 CATEGORY</div>
             <div id="resTypeTag" class="tag">---</div>
             
-            <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; font-size: 11px; color: #95a5a6; text-align:center;">心願 FM · 始終溫暖你的心</div>
+            <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; font-size: 11px; color: #95a5a6; text-align:center;">聆听陪伴 · 共享法悦</div>
         </div>
     </div>
 </div>
 
 <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGpv5GQ4HLRd7LfPeaTrPA9LB3ct-IiHXdUEZ7Ck1av3Or4N_v1-aMa1iJFd6rfwbUlTUoZECqiaX2/pub?output=csv';
-    const hotLine = "60149696608"; // WhatsApp 格式
+    const hotLine = "60149696608"; 
 
     async function doSearch() {
-        const nameInput = document.getElementById('nameInput').value.replace(/\s+/g, '').toUpperCase();
+        const userInput = document.getElementById('nameInput').value.replace(/\s+/g, '').toUpperCase();
         const phoneInput = document.getElementById('phoneInput').value.replace(/\s+/g, '');
         const resDiv = document.getElementById('result');
         const errDiv = document.getElementById('errorMsg');
         const btn = document.querySelector('button');
 
-        if(!nameInput || !phoneInput) { alert("請填寫姓名和電話末4位"); return; }
+        if(!userInput || !phoneInput) { alert("请填写姓名和电话末4位"); return; }
 
-        btn.innerText = "查詢中...";
+        btn.innerText = "查询中...";
         try {
             const resp = await fetch(csvUrl + '&t=' + new Date().getTime());
             const text = await resp.text();
@@ -84,17 +86,19 @@
             for (let i = 1; i < lines.length; i++) {
                 const cols = lines[i].split(',').map(c => c.replace(/"/g, '').trim());
                 if (cols.length >= 3) {
-                    const dbName = cols[0].replace(/\s+/g, '').toUpperCase();
-                    // 即使表格是全號碼，也能自動抓最後4位
+                    const dbChineseName = cols[0].replace(/\s+/g, '').toUpperCase(); // A栏 中文名
+                    const dbEnglishName = (cols[4] || "").replace(/\s+/g, '').toUpperCase(); // E栏 英文名
                     const dbPhone = cols[1].replace(/\D/g, '').slice(-4);
 
-                    if (dbName === nameInput && dbPhone === phoneInput) {
-                        document.getElementById('resName').innerText = cols[0];
+                    // 匹配逻辑：(中文名对 或 英文名对) 且 电话对
+                    if ((dbChineseName === userInput || dbEnglishName === userInput) && dbPhone === phoneInput) {
+                        // 显示时同时显示中英文名 (如果E栏有资料的话)
+                        const displayName = cols[4] ? `${cols[0]} (${cols[4]})` : cols[0];
+                        document.getElementById('resName').innerText = displayName;
                         document.getElementById('resID').innerText = cols[2];
                         
-                        // 類別判斷 (兼容簡繁體)
                         const dbType = cols[3] || "普通会员";
-                        const isForever = (dbType === "永久会员" || dbType === "永久會員");
+                        const isForever = (dbType.includes("永久"));
                         
                         const tag = document.getElementById('resTypeTag');
                         tag.innerText = dbType;
@@ -110,14 +114,13 @@
             if (!found) {
                 resDiv.style.display = 'none';
                 errDiv.style.display = 'block';
-                // 設置預設 WhatsApp 文字
                 const msg = encodeURIComponent("心愿FM好，我是会员但透过网页查询不到会员编号，请协助，谢谢。");
                 document.getElementById('waLink').href = `https://wa.me/${hotLine}?text=${msg}`;
             }
         } catch (e) {
-            alert("網路連線不穩定，請重試");
+            alert("网络连线不稳定");
         } finally {
-            btn.innerText = "立即查詢";
+            btn.innerText = "立即查询";
         }
     }
 </script>

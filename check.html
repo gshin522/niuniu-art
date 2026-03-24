@@ -3,120 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>心愿 FM - 会员查询系统</title>
+    <title>心愿 FM - 会员系统</title>
     <style>
+        /* 品牌色盤 */
         :root { 
-            --primary: #E08870;  /* 心愿粉 RED 1 */
-            --bg-soft: #E7A595;   /* 背景粉 RED 2 */
-            --gold: #ffd700; 
-            --dark: #2c3e50; 
-            --wa-green: #25d366;
+            --primary: #E08870;  /* RED 1 */
+            --bg-soft: #E7A595;   /* RED 2 背景粉 */
+            --card-gray: #333333; /* 實體卡下半部灰 */
+            --gold: #ffd700;
         }
         
-        body { 
-            background-color: var(--bg-soft); 
-            font-family: "Microsoft YaHei", sans-serif; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            padding: 20px; 
-        }
+        body { background-color: var(--bg-soft); font-family: "Microsoft YaHei", sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; flex-direction: column;}
         
-        .card { 
-            background: rgba(255, 255, 255, 0.95); 
-            padding: 35px 25px; 
-            border-radius: 24px; 
-            box-shadow: 0 15px 35px rgba(224, 136, 112, 0.2); 
-            text-align: center; 
-            width: 100%; 
-            max-width: 350px; 
-        }
-        
-        .logo-img { width: 100px; height: auto; margin-bottom: 15px; }
-        h2 { color: var(--primary); margin: 0; font-size: 24px; }
-        .slogan { color: #8e7470; font-size: 13px; margin: 5px 0 20px 0; letter-spacing: 1px;}
-        
-        input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #f3e0dc; border-radius: 12px; box-sizing: border-box; font-size: 16px; background: #fffaf9; }
+        /* 1. 查詢輸入框 (珊瑚粉風格) */
+        .search-container { background: rgba(255, 255, 255, 0.95); padding: 30px 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(224, 136, 112, 0.2); text-align: center; width: 100%; max-width: 350px; margin-bottom: 30px; }
+        .logo-img { width: 80px; height: auto; margin-bottom: 10px; }
+        h2 { color: var(--primary); margin: 0; font-size: 22px; }
+        .slogan { color: #8e7470; font-size: 12px; margin: 5px 0 20px 0; letter-spacing: 1px; }
+        input { width: 100%; padding: 14px; margin: 8px 0; border: 2px solid #f3e0dc; border-radius: 12px; box-sizing: border-box; font-size: 16px; background: #fffaf9; }
         input:focus { outline: none; border-color: var(--primary); background: white; }
-        
-        button { 
-            width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; 
-            font-size: 18px; cursor: pointer; font-weight: bold; margin-top: 10px; 
-            box-shadow: 0 5px 15px rgba(224, 136, 112, 0.3);
-        }
-        
-        #result { margin-top: 25px; display: none; text-align: left; }
-        .member-card { background: var(--dark); color: white; padding: 25px; border-radius: 20px; position: relative; overflow: hidden; }
-        
-        /* 替换原本的符号为 WhatsApp 图标背景 */
-        .member-card::after { 
-            content: ''; 
-            position: absolute; 
-            right: -15px; 
-            bottom: -15px; 
-            width: 100px; 
-            height: 100px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="%23ffffff"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.4-11.3 2.5-2.5 5.5-6.5 8.3-9.7 2.8-3.3 3.7-5.6 5.5-9.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>');
-            background-repeat: no-repeat;
-            opacity: 0.1; 
-        }
-        
-        .label { font-size: 11px; color: #bdc3c7; margin-bottom: 3px; letter-spacing: 1px; }
-        .value { font-size: 18px; font-weight: bold; margin-bottom: 12px; }
-        .id-value { font-size: 24px; color: var(--gold); }
-        
-        .tag { display: inline-block; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; margin-top: 5px; }
-        .tag-forever { background: var(--gold); color: #000; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-        .tag-normal { background: var(--primary); color: #fff; }
+        button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 17px; cursor: pointer; font-weight: bold; margin-top: 10px; box-shadow: 0 5px 15px rgba(224, 136, 112, 0.3); }
 
-        .error { color: #c0392b; margin-top: 20px; font-size: 14px; display: none; padding: 15px; background: #fff0ed; border-radius: 12px; line-height: 1.6; border: 1px solid #f3e0dc; }
-        .whatsapp-btn { 
-            display: inline-block; margin-top: 10px; padding: 10px 20px; 
-            background: var(--wa-green); color: white; border-radius: 30px; 
-            text-decoration: none; font-weight: bold; font-size: 14px; 
-            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+        /* 2. 復刻版實體會員卡 */
+        #result { display: none; width: 100%; max-width: 350px; animation: slideUp 0.5s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .physical-card { 
+            width: 100%; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3); 
+            display: flex; 
+            flex-direction: column; 
+            aspect-ratio: 3 / 4.8; /* 接近實體卡比例 */
+            position: relative;
         }
-        /* 按钮内的 WhatsApp 小图标 */
-        .wa-icon-small { width: 18px; height: 18px; fill: white; }
+
+        /* 卡片上半部：天空、文字、Logo */
+        .card-top { 
+            flex: 6; 
+            background: linear-gradient(to bottom, #87ceeb 0%, #b0e0e6 100%); /* 天空藍 */
+            padding: 20px; 
+            color: #003366; 
+            position: relative; 
+            text-align: left;
+        }
+        .card-header-text { font-size: 18px; font-weight: bold; margin-top: 5px;}
+        .card-intro-text { font-size: 10px; line-height: 1.4; margin-top: 8px; max-width: 65%; color: #004488; }
+        .card-top-logo { position: absolute; top: 15px; right: 15px; width: 60px; height: auto; }
+
+        /* 卡片中部：木紋、心形公仔 */
+        .card-mid { 
+            flex: 3; 
+            background: #cd853f; /* 仿真木紋底色 */
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36z8gAFkNfX5+RASTByMDIgC4IABCbCAtunmYAAAAAAElFTkSuQmCC'); /* 極細木紋 */
+            border-top: 3px solid #8b4513;
+            position: relative;
+            display: flex; justify-content: center; align-items: flex-end;
+        }
+        /* 仿真立體心形公仔 */
+        .heart-figure {
+            width: 70px; height: 60px;
+            background: #ff0000;
+            border-radius: 50px 50px 0 0;
+            position: relative;
+            transform: rotate(-45deg);
+            box-shadow: -5px 5px 15px rgba(0,0,0,0.3);
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 5px; /* 站在木紋上 */
+        }
+        .heart-figure::after {
+            content: '';
+            width: 70px; height: 60px;
+            background: #ff0000;
+            border-radius: 50px 50px 0 0;
+            position: absolute; top: 0; left: 35px;
+        }
+        /* 公仔上的「心愿」文字 */
+        .heart-text {
+            transform: rotate(45deg); /* 轉回來 */
+            color: white; font-weight: bold; font-size: 16px;
+            position: absolute; z-index: 10;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        /* 卡片下半部：會員資料 (灰底) */
+        .card-bottom { 
+            flex: 5; 
+            background-color: var(--card-gray); 
+            color: white; 
+            padding: 25px 20px; 
+            text-align: center; 
+            display: flex; flex-direction: column; align-items: center;
+        }
+        
+        .info-group { margin-bottom: 15px; width: 100%; }
+        .info-label { font-size: 10px; color: #aaaaaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;}
+        .info-value-name { font-size: 16px; font-weight: bold; }
+        .info-value-id { font-size: 20px; font-weight: bold; color: var(--gold); letter-spacing: 1px; }
+        .info-value-type { font-size: 16px; font-weight: bold; color: white; }
+
+        /* 沒有 QR Code，只顯示資料 */
+
+        /* 錯誤提示與 WhatsApp 按鈕 */
+        .error { color: #c0392b; margin-top: 20px; font-size: 14px; display: none; padding: 15px; background: #fff0ed; border-radius: 12px; line-height: 1.6; max-width: 350px;}
+        .whatsapp-btn { display: inline-block; margin-top: 10px; padding: 10px 20px; background: #25d366; color: white; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;}
     </style>
 </head>
 <body>
 
-<div class="card">
-    <img src="https://i.ibb.co/ycBDJ23z/logo.png" alt="心愿 FM Logo" class="logo-img">
-    <h2>心愿 FM</h2>
-    <div class="slogan">聆听陪伴，共享法悦</div>
-    
-    <input type="text" id="nameInput" placeholder="输入注册姓名 (中/英文皆可)">
-    <input type="tel" id="phoneInput" placeholder="手机号末 4 位" maxlength="4">
-    <button onclick="doSearch()">立即查询</button>
-    
-    <div id="errorMsg" class="error">
-        查无资料。若您换过号码或无法查询，请联系管理员协助：<br>
-        <a id="waLink" href="#" target="_blank" class="whatsapp-btn">
-            <svg class="wa-icon-small" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.4-11.3 2.5-2.5 5.5-6.5 8.3-9.7 2.8-3.3 3.7-5.6 5.5-9.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
-            联络心愿热线咨询
-        </a>
+    <div class="search-container">
+        <img src="https://i.ibb.co/ycBDJ23z/logo.png" alt="心愿 FM Logo" class="logo-img">
+        <h2>心愿 FM</h2>
+        <div class="slogan">聆听陪伴，共享法悦</div>
+        
+        <input type="text" id="nameInput" placeholder="输入注册姓名 (中/英文)">
+        <input type="tel" id="phoneInput" placeholder="手机号末 4 位" maxlength="4">
+        <button onclick="doSearch()">立即查询会员证</button>
     </div>
-    
+
+    <div id="errorMsg" class="error">
+        查无资料。若您换过号码或需要协助，请联系管理员：<br>
+        <a id="waLink" href="#" target="_blank" class="whatsapp-btn">💬 联络心愿热线諮詢</a>
+    </div>
+
     <div id="result">
-        <div class="member-card">
-            <div class="label">会员姓名 NAME</div>
-            <div id="resName" class="value">---</div>
-            
-            <div class="label">会员编号 ID</div>
-            <div id="resID" class="value id-value">---</div>
-            
-            <div class="label">会员类别 CATEGORY</div>
-            <div id="resTypeTag" class="tag">---</div>
-            
-            <div style="margin-top: 18px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; font-size: 11px; color: #95a5a6; text-align:center;">聆听陪伴 · 共享法悦</div>
+        <div class="physical-card">
+            <div class="card-top">
+                <img src="https://i.ibb.co/ycBDJ23z/logo.png" alt="心愿 Logo" class="card-top-logo">
+                <div class="card-header-text">心愿FM会员证</div>
+                <div class="card-intro-text">一个提供你看、听、写<br>创作及参与互动的<br>佛教网络电台</div>
+            </div>
+
+            <div class="card-mid">
+                <div class="heart-figure">
+                    <span class="heart-text">心愿</span>
+                </div>
+            </div>
+
+            <div class="card-bottom">
+                <div class="info-group">
+                    <div id="resName" class="info-value-name">---</div>
+                </div>
+                
+                <div style="display: flex; width: 100%; justify-content: space-between; margin-top: 10px;">
+                    <div class="info-group" style="text-align: left; width: 48%;">
+                        <div class="info-label">会员编号</div>
+                        <div id="resID" class="info-value-id">XY230000</div>
+                    </div>
+                    <div class="info-group" style="text-align: right; width: 48%;">
+                        <div class="info-label">会员类别</div>
+                        <div id="resTypeTag" class="info-value-type">---會員</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 9px; color: #888888; margin-top: auto; letter-spacing: 1px;">聆听陪伴 · 共享法悦</div>
+            </div>
         </div>
     </div>
-</div>
 
 <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGpv5GQ4HLRd7LfPeaTrPA9LB3ct-IiHXdUEZ7Ck1av3Or4N_v1-aMa1iJFd6rfwbUlTUoZECqiaX2/pub?output=csv';
@@ -131,7 +175,7 @@
 
         if(!userInput || !phoneInput) { alert("请填写姓名和电话末4位"); return; }
 
-        btn.innerText = "正在验证...";
+        btn.innerText = "正在生成会员证...";
         btn.disabled = true;
 
         try {
@@ -143,22 +187,27 @@
             for (let i = 1; i < lines.length; i++) {
                 const cols = lines[i].split(',').map(c => c.replace(/"/g, '').trim());
                 if (cols.length >= 3) {
-                    const dbChineseName = cols[0].replace(/\s+/g, '').toUpperCase();
-                    const dbEnglishName = (cols[4] || "").replace(/\s+/g, '').toUpperCase();
-                    const dbPhone = cols[1].replace(/\D/g, '').slice(-4);
+                    const dbChineseName = cols[0].replace(/\s+/g, '').toUpperCase(); // A欄
+                    const dbEnglishName = (cols[4] || "").replace(/\s+/g, '').toUpperCase(); // E欄
+                    const dbPhone = cols[1].replace(/\D/g, '').slice(-4); // B欄末4位
 
                     if ((dbChineseName === userInput || dbEnglishName === userInput) && dbPhone === phoneInput) {
-                        const displayName = cols[4] ? `${cols[0]} (${cols[4]})` : cols[0];
+                        // 合併顯示中英文名
+                        const displayName = cols[4] ? `${cols[0]} / ${cols[4]}` : cols[0];
                         document.getElementById('resName').innerText = displayName;
+                        
+                        // ID 顯示
                         document.getElementById('resID').innerText = cols[2];
+                        
+                        // 類別顯示 (直接顯示簡體字，不用金色標籤，還原原設計樣式)
                         const dbType = cols[3] || "普通会员";
-                        const isForever = (dbType.includes("永久"));
-                        const tag = document.getElementById('resTypeTag');
-                        tag.innerText = dbType;
-                        tag.className = isForever ? "tag tag-forever" : "tag tag-normal";
+                        document.getElementById('resTypeTag').innerText = dbType;
+
                         resDiv.style.display = 'block';
                         errDiv.style.display = 'none';
                         found = true;
+                        // 查到後，把輸入框藏起來，專心看卡
+                        document.querySelector('.search-container').style.display = 'none';
                         break;
                     }
                 }
@@ -172,7 +221,7 @@
         } catch (e) {
             alert("网络连接超时");
         } finally {
-            btn.innerText = "立即查询";
+            btn.innerText = "立即查询会员证";
             btn.disabled = false;
         }
     }

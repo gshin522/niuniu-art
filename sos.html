@@ -9,12 +9,13 @@
             height: 100%;
             margin: 0;
             font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            overflow: hidden; /* 防止捲動影響全屏感 */
+            overflow: hidden;
+            background-color: #2c3e50;
         }
         
-        /* 設置背景圖：山水畫 */
+        /* 使用 Unsplash 的高清山水意境圖 */
         .bg-image {
-            background-image: url('http://googleusercontent.com/image_collection/image_retrieval/4510064362189951074_0');
+            background-image: url('https://images.unsplash.com/photo-1508197149814-0cc02e8b7f74?w=1000&q=80');
             height: 100%;
             background-position: center;
             background-repeat: no-repeat;
@@ -27,24 +28,24 @@
 
         /* 毛玻璃卡片效果 */
         .card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             width: 100%;
-            max-width: 350px;
+            max-width: 320px;
             border-radius: 25px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             overflow: hidden;
-            animation: fadeIn 1s ease;
+            animation: cardEntrance 0.8s ease-out;
         }
 
         .header {
-            background: rgba(231, 76, 60, 0.85);
+            background: rgba(192, 57, 43, 0.9);
             color: white;
-            padding: 15px;
+            padding: 20px;
             text-align: center;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             letter-spacing: 2px;
         }
@@ -56,13 +57,15 @@
 
         .info-row {
             margin-bottom: 15px;
-            border-bottom: 1px dashed rgba(0,0,0,0.1);
-            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            padding-bottom: 10px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
-        .label { font-weight: bold; color: #7f8c8d; }
+        .label { color: #7f8c8d; font-size: 14px; }
+        .value { font-weight: bold; color: #333; font-size: 16px; }
 
         .btn {
             display: block;
@@ -75,22 +78,25 @@
             margin-top: 25px;
             font-weight: bold;
             font-size: 18px;
-            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4);
+            transition: transform 0.2s;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .btn:active { transform: scale(0.95); }
+
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: scale(0.8) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* 全屏提示字 */
         .fs-hint {
             position: absolute;
-            bottom: 10px;
-            color: rgba(0,0,0,0.3);
-            font-size: 12px;
+            bottom: 30px;
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
             text-align: center;
             width: 100%;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -100,22 +106,22 @@
         <div class="card">
             <div class="header">🆘 緊急聯絡資訊</div>
             <div class="content">
-                <div class="info-row"><span class="label">姓名</span> <span>Lim (林先生)</span></div>
-                <div class="info-row"><span class="label">血型</span> <span>O+</span></div>
-                <div class="info-row"><span class="label">生日</span> <span>07/03/1950</span></div>
-                <div class="info-row"><span class="label">健康狀況</span> <span>患有高血壓</span></div>
-                <a href="tel:+60126952368" class="btn">📞 一鍵撥打兒子電話</a>
+                <div class="info-row"><span class="label">姓名</span> <span class="value">Lim (林先生)</span></div>
+                <div class="info-row"><span class="label">血型</span> <span class="value">O+</span></div>
+                <div class="info-row"><span class="label">生日</span> <span class="value">07/03/1950</span></div>
+                <div class="info-row"><span class="label">健康狀況</span> <span class="value">患有高血壓，需定時服藥</span></div>
+                <a href="tel:+60126952368" class="btn">📞 點擊撥打聯絡電話</a>
             </div>
         </div>
-        <div class="fs-hint">點擊屏幕進入全屏模式</div>
+        <div class="fs-hint">💡 點擊屏幕任何地方進入全屏</div>
     </div>
 
     <script>
-        // 點擊屏幕切換全屏的代碼
+        // 進入全屏函數
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
-                    console.log(`全屏失敗: ${err.message}`);
+                    console.log(`無法切換全屏: ${err.message}`);
                 });
             } else {
                 if (document.exitFullscreen) {

@@ -3,17 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>心願 FM - 會員查詢</title>
+    <title>心願 FM 會員查詢</title>
     <style>
-        :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdf2e9; }
-        body { background: var(--bg); font-family: 'PingFang SC', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .container { background: white; width: 100%; max-width: 380px; padding: 40px 30px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; }
-        .title { font-size: 24px; font-weight: bold; color: var(--dark); margin: 10px 0; }
-        .input-group { margin-top: 20px; text-align: left; }
-        label { display: block; font-size: 14px; margin-bottom: 5px; font-weight: bold; color: var(--dark); }
-        input { width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid #eee; border-radius: 12px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        #result { margin-top: 30px; display: none; }
-        .member-card { background: var(--dark); color: white; padding: 25px; border-radius: 18px; text-align: left; position: relative; overflow: hidden; }
-        .member-card::after { content: '📻'; position: absolute; right: -15px; bottom: -15px; font-size: 100px; opacity: 0.1; transform: rotate(-15deg); }
-        .error { color: #e74c3c; margin-top: 20px; display: none; background: #fdeaea; padding: 10px; border-radius: 8px; font-size: 14px;
+        body { background-color: #fdf2e9; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; width: 320px; }
+        h2 { color: #f39c12; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #f39c12; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        #result { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; text-align: left; background: #2c3e50; color: white; }
+        .error { color: red; margin-top: 15px; font-size: 14px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>🎙️ 心願 FM 查詢</h2>
+    <input type="text" id="nameInput" placeholder="請輸入姓名 (如: LIM AH KAO)">
+    <input type="text" id="phoneInput" placeholder="手機末 4 位 (如: 7903)">
+    <button onclick="doSearch()">立即查詢</button>
+    
+    <div id="errorMsg" class="error">❌ 找不到資料，請檢查姓名和電話</div>
+    
+    <div id="result">
+        <div style="font-size: 12px; color: #bdc3c7;">姓名：</div>
+        <div id="resName" style="font-size: 18px; margin-bottom: 10px;"></div>
+        <div style="font-size: 12px; color: #bdc3c7;">會員編號：</div>
+        <div id="resID" style="font-size: 20px; color: #f39c12; font-weight: bold;"></div>
+    </div>
+</div>
+
+<script>
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGpv5GQ4HLRd7LfPeaTrPA9LB3ct-IiHXdUEZ7Ck1av3Or4N_v1-aMa1iJFd6rfwbUlTUoZECqiaX2/pub?output=csv';
+
+    async function doSearch() {
+        const name = document.getElementById('nameInput').value.trim().toUpperCase();
+        const phone = document.getElementById('phoneInput').value.trim();
+        const resDiv = document.getElementById('result');
+        const errDiv = document.getElementById('errorMsg');
+
+        try {
+            // 加入隨機數防止緩存
+            const resp = await fetch(csvUrl + '&t=' + new Date().getTime());
+            const text = await resp.text();
+            const lines = text.split('\n');
+            
+            let found = false;
+            for (let i = 1; i < lines.length; i++) {
+                const cols = lines[i].split(',').map(c => c.replace(/"/g, '').trim());
+                if (cols.length >= 3) {
+                    // 比對姓名（轉大寫）和電話（末4位）
+                    if (cols[0].toUpperCase() === name && cols[1] === phone) {
+                        document.getElementById('resName').innerText = cols[0];
+                        document.getElementById('resID').innerText = cols[2];
+                        resDiv.style.display = 'block';
+                        errDiv.style.display = 'none';
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
+                resDiv.style.display = 'none';
+                errDiv.style.display = 'block';
+            }
+        } catch (e) {
+            alert("讀取資料失敗");
+        }
+    }
+</script>
+
+</body>
+</html>

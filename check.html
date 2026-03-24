@@ -1,53 +1,19 @@
-    async function checkMember() {
-        const btn = document.getElementById('searchBtn');
-        // 1. 取得輸入並徹底清除所有空格，強制轉大寫
-        const nameInput = document.getElementById('searchName').value.replace(/\s+/g, '').toUpperCase();
-        const phoneInput = document.getElementById('searchPhone').value.replace(/\s+/g, '').slice(-4);
-        
-        const resultDiv = document.getElementById('result');
-        const errorMsg = document.getElementById('errorMsg');
-
-        if (!nameInput || !phoneInput) {
-            alert("請輸入姓名和手機末 4 位");
-            return;
-        }
-
-        btn.innerText = "驗證中...";
-        try {
-            // 加上 t= 參數強制讀取最新資料，不使用緩存
-            const response = await fetch(csvUrl + '&t=' + new Date().getTime());
-            const data = await response.text();
-            const rows = data.split(/\r?\n/).filter(row => row.trim() !== ""); 
-
-            let found = false;
-            for (let i = 1; i < rows.length; i++) {
-                // 處理 CSV 格式，考慮到可能存在的逗號和引號
-                const cols = rows[i].split(',').map(c => c.replace(/"/g, '').trim());
-                
-                if (cols.length >= 3) {
-                    // 2. 表格資料也徹底清除空格並轉大寫
-                    const dbName = cols[0].replace(/\s+/g, '').toUpperCase();
-                    const dbFullPhone = cols[1].replace(/\D/g, ''); // 只保留數字
-                    const dbLast4 = dbFullPhone.slice(-4); 
-
-                    // 3. 進行「純淨版」比對
-                    if (dbName === nameInput && dbLast4 === phoneInput) {
-                        document.getElementById('resName').innerText = cols[0];
-                        document.getElementById('resID').innerText = cols[2];
-                        resultDiv.style.display = 'block';
-                        errorMsg.style.display = 'none';
-                        found = true;
-                        break;
-                    }
-                }
-            }
-            if (!found) {
-                resultDiv.style.display = 'none';
-                errorMsg.style.display = 'block';
-            }
-        } catch (e) {
-            alert("系統繁忙，請稍後再試");
-        } finally {
-            btn.innerText = "立即查詢";
-        }
-    }
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心願 FM - 會員查詢</title>
+    <style>
+        :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdf2e9; }
+        body { background: var(--bg); font-family: 'PingFang SC', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background: white; width: 100%; max-width: 380px; padding: 40px 30px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; }
+        .title { font-size: 24px; font-weight: bold; color: var(--dark); margin: 10px 0; }
+        .input-group { margin-top: 20px; text-align: left; }
+        label { display: block; font-size: 14px; margin-bottom: 5px; font-weight: bold; color: var(--dark); }
+        input { width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid #eee; border-radius: 12px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        #result { margin-top: 30px; display: none; }
+        .member-card { background: var(--dark); color: white; padding: 25px; border-radius: 18px; text-align: left; position: relative; overflow: hidden; }
+        .member-card::after { content: '📻'; position: absolute; right: -15px; bottom: -15px; font-size: 100px; opacity: 0.1; transform: rotate(-15deg); }
+        .error { color: #e74c3c; margin-top: 20px; display: none; background: #fdeaea; padding: 10px; border-radius: 8px; font-size: 14px;

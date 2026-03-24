@@ -2,28 +2,127 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>緊急醫療資訊</title>
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
-        .card { background: white; width: 100%; max-width: 400px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; }
-        .header { background: #e74c3c; color: white; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; }
-        .content { padding: 20px; line-height: 1.8; color: #333; }
-        .info-row { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; }
-        .label { color: #888; }
-        .btn { display: block; background: #27ae60; color: white; text-align: center; padding: 15px; border-radius: 10px; text-decoration: none; margin-top: 20px; font-weight: bold; font-size: 18px; }
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            overflow: hidden; /* 防止捲動影響全屏感 */
+        }
+        
+        /* 設置背景圖：山水畫 */
+        .bg-image {
+            background-image: url('http://googleusercontent.com/image_collection/image_retrieval/4510064362189951074_0');
+            height: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* 毛玻璃卡片效果 */
+        .card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 350px;
+            border-radius: 25px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            overflow: hidden;
+            animation: fadeIn 1s ease;
+        }
+
+        .header {
+            background: rgba(231, 76, 60, 0.85);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .content {
+            padding: 25px;
+            color: #2c3e50;
+        }
+
+        .info-row {
+            margin-bottom: 15px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .label { font-weight: bold; color: #7f8c8d; }
+
+        .btn {
+            display: block;
+            background: #27ae60;
+            color: white;
+            text-align: center;
+            padding: 18px;
+            border-radius: 15px;
+            text-decoration: none;
+            margin-top: 25px;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 全屏提示字 */
+        .fs-hint {
+            position: absolute;
+            bottom: 10px;
+            color: rgba(0,0,0,0.3);
+            font-size: 12px;
+            text-align: center;
+            width: 100%;
+        }
     </style>
 </head>
-<body>
-    <div class="card">
-        <div class="header">🆘 緊急聯絡資訊</div>
-        <div class="content">
-            <div class="info-row"><span class="label">姓名</span> <span>Lim (林先生)</span></div>
-            <div class="info-row"><span class="label">血型</span> <span>O+</span></div>
-            <div class="info-row"><span class="label">生日</span> <span>07/03/1950</span></div>
-            <div class="info-row"><span class="label">健康狀況</span> <span>患有高血壓，需定時服藥</span></div>
-            <a href="tel:+60126952368" class="btn">📞 點擊撥打兒子電話</a>
+<body onclick="toggleFullScreen()">
+
+    <div class="bg-image">
+        <div class="card">
+            <div class="header">🆘 緊急聯絡資訊</div>
+            <div class="content">
+                <div class="info-row"><span class="label">姓名</span> <span>Lim (林先生)</span></div>
+                <div class="info-row"><span class="label">血型</span> <span>O+</span></div>
+                <div class="info-row"><span class="label">生日</span> <span>07/03/1950</span></div>
+                <div class="info-row"><span class="label">健康狀況</span> <span>患有高血壓</span></div>
+                <a href="tel:+60126952368" class="btn">📞 一鍵撥打兒子電話</a>
+            </div>
         </div>
+        <div class="fs-hint">點擊屏幕進入全屏模式</div>
     </div>
+
+    <script>
+        // 點擊屏幕切換全屏的代碼
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`全屏失敗: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+    </script>
 </body>
 </html>

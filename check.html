@@ -1,10 +1,8 @@
-<script>
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGpv5GQ4HLRd7LfPeaTrPA9LB3ct-IiHXdUEZ7Ck1av3Or4N_v1-aMa1iJFd6rfwbUlTUoZECqiaX2/pub?output=csv';
-
     async function checkMember() {
         const btn = document.getElementById('searchBtn');
-        const nameInput = document.getElementById('searchName').value.replace(/\s/g, '').toUpperCase();
-        const phoneInput = document.getElementById('searchPhone').value.trim(); // 用戶輸入的 4 位數
+        // 1. 取得輸入並徹底清除所有空格，強制轉大寫
+        const nameInput = document.getElementById('searchName').value.replace(/\s+/g, '').toUpperCase();
+        const phoneInput = document.getElementById('searchPhone').value.replace(/\s+/g, '').slice(-4);
         
         const resultDiv = document.getElementById('result');
         const errorMsg = document.getElementById('errorMsg');
@@ -14,22 +12,25 @@
             return;
         }
 
-        btn.innerText = "搜尋中...";
+        btn.innerText = "驗證中...";
         try {
+            // 加上 t= 參數強制讀取最新資料，不使用緩存
             const response = await fetch(csvUrl + '&t=' + new Date().getTime());
             const data = await response.text();
             const rows = data.split(/\r?\n/).filter(row => row.trim() !== ""); 
 
             let found = false;
             for (let i = 1; i < rows.length; i++) {
+                // 處理 CSV 格式，考慮到可能存在的逗號和引號
                 const cols = rows[i].split(',').map(c => c.replace(/"/g, '').trim());
                 
                 if (cols.length >= 3) {
-                    const dbName = cols[0].replace(/\s/g, '').toUpperCase();
-                    // 關鍵修改：截取表格內電話號碼的最後 4 位進行比對
-                    const dbFullPhone = cols[1].replace(/\D/g, ''); // 只拿數字
+                    // 2. 表格資料也徹底清除空格並轉大寫
+                    const dbName = cols[0].replace(/\s+/g, '').toUpperCase();
+                    const dbFullPhone = cols[1].replace(/\D/g, ''); // 只保留數字
                     const dbLast4 = dbFullPhone.slice(-4); 
 
+                    // 3. 進行「純淨版」比對
                     if (dbName === nameInput && dbLast4 === phoneInput) {
                         document.getElementById('resName').innerText = cols[0];
                         document.getElementById('resID').innerText = cols[2];
@@ -45,9 +46,8 @@
                 errorMsg.style.display = 'block';
             }
         } catch (e) {
-            alert("網路連線失敗");
+            alert("系統繁忙，請稍後再試");
         } finally {
             btn.innerText = "立即查詢";
         }
     }
-</script>

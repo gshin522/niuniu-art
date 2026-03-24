@@ -5,40 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>心愿 FM - 会员查询系统</title>
     <style>
-        :root { --primary: #f39c12; --gold: #ffd700; --dark: #2c3e50; --bg: #fdf2e9; }
-        body { background-color: var(--bg); font-family: "Microsoft YaHei", sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .card { background: white; padding: 35px 25px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
-        .logo-placeholder { font-size: 50px; margin-bottom: 10px; } /* 稍后换成 <img> */
-        h2 { color: var(--primary); margin: 0; font-size: 24px; }
-        .slogan { color: #95a5a6; font-size: 13px; margin: 5px 0 20px 0; }
+        /* 使用心愿 FM 色盘 */
+        :root { 
+            --primary: #E08870;  /* RED 1 主色調 */
+            --bg-soft: #E7A595;   /* RED 2 珊瑚粉背景 */
+            --gold: #ffd700; 
+            --dark: #2c3e50; 
+        }
         
-        input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #eee; border-radius: 12px; box-sizing: border-box; font-size: 16px; transition: border-color 0.3s; }
-        input:focus { outline: none; border-color: var(--primary); }
-        button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        body { 
+            background-color: var(--bg-soft); /* 融入品牌粉色 */
+            font-family: "Microsoft YaHei", "Heiti SC", sans-serif; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 20px; 
+        }
+        
+        .card { 
+            background: rgba(255, 255, 255, 0.95); /* 半透明白色，透出背景粉色 */
+            padding: 35px 25px; 
+            border-radius: 24px; 
+            box-shadow: 0 15px 35px rgba(224, 136, 112, 0.2); /* 粉色系陰影 */
+            text-align: center; 
+            width: 100%; 
+            max-width: 350px; 
+        }
+        
+        .logo-img { 
+            width: 100px; /* 調整 Logo 大小 */
+            height: auto; 
+            margin-bottom: 15px; 
+        }
+        
+        h2 { color: var(--primary); margin: 0; font-size: 24px; font-weight: bold; }
+        .slogan { color: #8e7470; font-size: 13px; margin: 5px 0 20px 0; letter-spacing: 1px;}
+        
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #f3e0dc; border-radius: 12px; box-sizing: border-box; font-size: 16px; transition: all 0.3s; background: #fffaf9; }
+        input:focus { outline: none; border-color: var(--primary); background: white; }
+        
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            background: var(--primary); /* 使用 RED 1 按鈕 */
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 18px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin-top: 10px; 
+            box-shadow: 0 5px 15px rgba(224, 136, 112, 0.3);
+            transition: transform 0.1s;
+        }
+        button:active { transform: scale(0.98); }
         
         #result { margin-top: 25px; display: none; text-align: left; }
         .member-card { background: var(--dark); color: white; padding: 25px; border-radius: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        .member-card::after { content: '🎙️'; position: absolute; right: -10px; bottom: -10px; font-size: 80px; opacity: 0.1; }
+        /* 浮水印改為 Logo 的簡約版或電台元素，這裡暫保留微弱麥克風，也可刪除 */
+        .member-card::after { content: '📻'; position: absolute; right: -10px; bottom: -10px; font-size: 80px; opacity: 0.05; }
         
-        .label { font-size: 11px; color: #bdc3c7; margin-bottom: 3px; letter-spacing: 1px; }
+        .label { font-size: 11px; color: #bdc3c7; margin-bottom: 3px; letter-spacing: 1px; text-transform: uppercase; }
         .value { font-size: 18px; font-weight: bold; margin-bottom: 12px; }
-        .id-value { font-size: 22px; color: var(--primary); }
+        .id-value { font-size: 24px; color: var(--gold); /* ID 使用金色，更顯尊貴 */ text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        
         .tag { display: inline-block; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; margin-top: 5px; }
-        .tag-forever { background: var(--gold); color: #000; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
-        .tag-normal { background: #3498db; color: #fff; }
+        .tag-forever { background: var(--gold); color: #000; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+        .tag-normal { background: #E08870; color: #fff; } /* 普通會員使用 RED 1 */
 
-        .error { color: #e74c3c; margin-top: 20px; font-size: 14px; display: none; padding: 15px; background: #fdeaea; border-radius: 12px; line-height: 1.5; }
-        .whatsapp-btn { display: inline-block; margin-top: 10px; padding: 8px 15px; background: #25d366; color: white; border-radius: 8px; text-decoration: none; font-weight: bold; }
+        .error { color: #c0392b; margin-top: 20px; font-size: 14px; display: none; padding: 15px; background: #fff0ed; border-radius: 12px; line-height: 1.6; border: 1px solid #f3e0dc; }
+        .whatsapp-btn { display: inline-block; margin-top: 10px; padding: 8px 18px; background: #25d366; color: white; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div class="logo-placeholder">🎙️</div>
+    <img src="https://i.ibb.co/ycBDJ23z/logo.png" alt="心愿 FM Logo" class="logo-img">
     <h2>心愿 FM</h2>
     <div class="slogan">聆听陪伴，共享法悦</div>
     
-    <input type="text" id="nameInput" placeholder="输入姓名 (中文或英文)">
+    <input type="text" id="nameInput" placeholder="输入注册姓名 (中/英文皆可)">
     <input type="tel" id="phoneInput" placeholder="手机号末 4 位" maxlength="4">
     <button onclick="doSearch()">立即查询</button>
     
@@ -58,7 +106,7 @@
             <div class="label">会员类别 CATEGORY</div>
             <div id="resTypeTag" class="tag">---</div>
             
-            <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; font-size: 11px; color: #95a5a6; text-align:center;">聆听陪伴 · 共享法悦</div>
+            <div style="margin-top: 18px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; font-size: 11px; color: #95a5a6; text-align:center; letter-spacing: 1px;">聆听陪伴 · 共享法悦</div>
         </div>
     </div>
 </div>
@@ -76,7 +124,9 @@
 
         if(!userInput || !phoneInput) { alert("请填写姓名和电话末4位"); return; }
 
-        btn.innerText = "查询中...";
+        btn.innerText = "正在验证...";
+        btn.disabled = true;
+
         try {
             const resp = await fetch(csvUrl + '&t=' + new Date().getTime());
             const text = await resp.text();
@@ -90,15 +140,16 @@
                     const dbEnglishName = (cols[4] || "").replace(/\s+/g, '').toUpperCase(); // E栏 英文名
                     const dbPhone = cols[1].replace(/\D/g, '').slice(-4);
 
-                    // 匹配逻辑：(中文名对 或 英文名对) 且 电话对
+                    // 匹配邏輯
                     if ((dbChineseName === userInput || dbEnglishName === userInput) && dbPhone === phoneInput) {
-                        // 显示时同时显示中英文名 (如果E栏有资料的话)
+                        // 合併顯示中英文名
                         const displayName = cols[4] ? `${cols[0]} (${cols[4]})` : cols[0];
                         document.getElementById('resName').innerText = displayName;
                         document.getElementById('resID').innerText = cols[2];
                         
                         const dbType = cols[3] || "普通会员";
-                        const isForever = (dbType.includes("永久"));
+                        // 簡繁兼容判斷
+                        const isForever = (dbType === "永久会员" || dbType === "永久會員");
                         
                         const tag = document.getElementById('resTypeTag');
                         tag.innerText = dbType;
@@ -118,9 +169,10 @@
                 document.getElementById('waLink').href = `https://wa.me/${hotLine}?text=${msg}`;
             }
         } catch (e) {
-            alert("网络连线不稳定");
+            alert("网络连接超时，请重试");
         } finally {
             btn.innerText = "立即查询";
+            btn.disabled = false;
         }
     }
 </script>

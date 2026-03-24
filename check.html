@@ -3,37 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>心愿 FM - 会员系统</title>
+    <title>心愿 FM - 会员查询系统</title>
     <style>
         :root { 
-            --primary: #E08870; /* RED 1 */
-            --bg-soft: #E7A595; /* RED 2 */
+            --primary: #E08870; 
+            --bg-soft: #E7A595; 
             --wa-green: #25d366;
         }
         body { background-color: var(--bg-soft); font-family: "Microsoft YaHei", sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; flex-direction: column; }
         
-        .search-container { background: white; padding: 30px 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
-        .logo-img { width: 80px; margin-bottom: 10px; }
-        h2 { color: var(--primary); margin: 0; }
-        .slogan { color: #8e7470; font-size: 12px; margin: 5px 0 20px 0; }
-        input { width: 100%; padding: 14px; margin: 8px 0; border: 2px solid #f3e0dc; border-radius: 12px; box-sizing: border-box; font-size: 16px; background: #fffaf9; }
-        button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 17px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        /* 查詢盒容器 */
+        .search-container { background: white; padding: 35px 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
+        .logo-img { width: 85px; margin-bottom: 12px; }
+        h2 { color: var(--primary); margin: 0; font-size: 24px; }
+        .slogan { color: #8e7470; font-size: 13px; margin: 5px 0 25px 0; letter-spacing: 1px; }
+        
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #f3e0dc; border-radius: 12px; box-sizing: border-box; font-size: 16px; background: #fffaf9; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); background: white; }
+        
+        button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; cursor: pointer; font-weight: bold; margin-top: 10px; box-shadow: 0 5px 15px rgba(224,136,112,0.3); }
 
-        /* 预览层 */
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; flex-direction: column; padding: 20px; box-sizing: border-box; }
-        #memberCardImg { width: 100%; max-width: 350px; border-radius: 15px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in; }
+        /* 會員卡彈出層 */
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; padding: 20px; box-sizing: border-box; }
+        #memberCardImg { 
+            width: 100%; 
+            max-width: 350px; 
+            border-radius: 15px; 
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            cursor: zoom-in; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+        /* 全屏模式 */
         #memberCardImg.fullscreen { max-width: 100vw; width: 100vw; border-radius: 0; cursor: zoom-out; }
 
-        .tip-text { color: rgba(255,255,255,0.6); font-size: 12px; margin-bottom: 15px; }
-        .close-btn { color: white; border: 1.5px solid rgba(255,255,255,0.5); padding: 10px 30px; border-radius: 30px; cursor: pointer; font-size: 14px; margin-top: 25px; }
+        .tip-text { color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 15px; }
+        .close-btn { color: white; border: 1.5px solid rgba(255,255,255,0.5); padding: 12px 40px; border-radius: 30px; cursor: pointer; font-size: 15px; margin-top: 30px; }
 
-        /* 错误提示框样式 */
-        .error { color: #c0392b; margin-top: 20px; font-size: 14px; display: none; background: #fff0ed; padding: 15px; border-radius: 12px; text-align: center; }
+        /* 錯誤提示 */
+        .error { color: #c0392b; margin-top: 25px; font-size: 14px; display: none; background: #fff0ed; padding: 18px; border-radius: 15px; line-height: 1.6; }
         .wa-btn { 
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-            color: var(--wa-green); font-weight: bold; text-decoration: none; margin-top: 8px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            background: var(--wa-green); color: white; padding: 10px 20px; 
+            border-radius: 25px; text-decoration: none; font-weight: bold; margin-top: 12px;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2);
         }
-        .wa-icon { width: 18px; height: 18px; fill: var(--wa-green); }
+        .wa-icon { width: 18px; height: 18px; fill: white; }
     </style>
 </head>
 <body>
@@ -47,22 +61,40 @@
         <button onclick="doSearch()">查询我的电子会员证</button>
         
         <div id="errorMsg" class="error">
-            查无资料。请检查姓名和电话末4位。<br>
-            <a href="https://wa.me/60149696608" class="wa-btn">
+            查无资料。若是资料有误或无法查询：<br>
+            <a id="waLink" href="#" target="_blank" class="wa-btn">
                 <svg class="wa-icon" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.4-11.3 2.5-2.5 5.5-6.5 8.3-9.7 2.8-3.3 3.7-5.6 5.5-9.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
-                点此联系热线
+                联系心愿热线协助
             </a>
         </div>
     </div>
 
     <div id="modal">
-        <div class="tip-text" id="tipText">点击图片放大/还原</div>
-        <img id="memberCardImg" src="" onclick="toggleFullscreen()" alt="电子会员证">
-        <div class="close-btn" id="closeBtn" onclick="closeModal()">返回修改</div>
+        <div class="tip-text" id="tipText">点击会员证可放大/还原</div>
+        <img id="memberCardImg" src="" onclick="toggleFullscreen()" alt="正在加载会员证...">
+        <div class="close-btn" id="closeBtn" onclick="closeModal()">返回修改资料</div>
     </div>
 
 <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGpv5GQ4HLRd7LfPeaTrPA9LB3ct-IiHXdUEZ7Ck1av3Or4N_v1-aMa1iJFd6rfwbUlTUoZECqiaX2/pub?output=csv';
+    const hotLine = "60149696608"; 
+
+    // 核心功能：自動把 Drive 連結轉為網頁圖片直鏈
+    function convertDriveLink(url) {
+        if (!url) return "";
+        // 如果是 view 結尾的連結，自動轉換
+        if (url.includes('drive.google.com') && (url.includes('/view') || url.includes('id='))) {
+            let id = "";
+            if (url.includes('/d/')) {
+                id = url.split('/d/')[1].split('/')[0];
+            } else {
+                const params = new URLSearchParams(url.split('?')[1]);
+                id = params.get('id');
+            }
+            return `https://drive.google.com/uc?export=view&id=${id}`;
+        }
+        return url; // 如果已經是直鏈或其它連結，直接返回
+    }
 
     async function doSearch() {
         const userInput = document.getElementById('nameInput').value.replace(/\s+/g, '').toUpperCase();
@@ -70,9 +102,9 @@
         const btn = document.querySelector('button');
         const errDiv = document.getElementById('errorMsg');
 
-        if(!userInput || !phoneInput) { alert("请填写完整信息"); return; }
+        if(!userInput || !phoneInput) { alert("请填写姓名和电话末4位"); return; }
 
-        btn.innerText = "正在查询...";
+        btn.innerText = "正在调取证件...";
         btn.disabled = true;
 
         try {
@@ -89,19 +121,29 @@
                     const dbPhone = cols[1].replace(/\D/g, '').slice(-4);
 
                     if ((dbChi === userInput || dbEng === userInput) && dbPhone === phoneInput) {
-                        const imgUrl = cols[5]; 
-                        document.getElementById('memberCardImg').src = imgUrl;
-                        document.getElementById('modal').style.display = 'flex';
-                        document.getElementById('searchBox').style.display = 'none';
-                        errDiv.style.display = 'none';
+                        const originalUrl = cols[5]; // F 欄
+                        const directUrl = convertDriveLink(originalUrl); // 自動轉換魔法
+
+                        if(directUrl) {
+                            document.getElementById('memberCardImg').src = directUrl;
+                            document.getElementById('modal').style.display = 'flex';
+                            document.getElementById('searchBox').style.display = 'none';
+                            errDiv.style.display = 'none';
+                        } else {
+                            alert("已找到资料，但您的证件图片未上传，请联系管理员。");
+                        }
                         found = true;
                         break;
                     }
                 }
             }
-            if (!found) errDiv.style.display = 'block';
+            if (!found) {
+                errDiv.style.display = 'block';
+                const msg = encodeURIComponent("心愿FM你好，我是会员但透过网页查询不到会员编号，请协助，谢谢。");
+                document.getElementById('waLink').href = `https://wa.me/${hotLine}?text=${msg}`;
+            }
         } catch (e) {
-            alert("网络错误");
+            alert("系统繁忙，请重试");
         } finally {
             btn.innerText = "查询我的电子会员证";
             btn.disabled = false;
@@ -122,6 +164,8 @@
         document.getElementById('modal').style.display = 'none';
         document.getElementById('searchBox').style.display = 'block';
         document.getElementById('memberCardImg').classList.remove('fullscreen');
+        document.getElementById('closeBtn').style.visibility = 'visible';
+        document.getElementById('tipText').style.visibility = 'visible';
     }
 </script>
 </body>

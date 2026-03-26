@@ -8,28 +8,30 @@
     <style>
         body { background-color: #f7f9fc; font-family: system-ui, -apple-system, sans-serif; }
         .big-input { width: 100%; border-radius: 14px; border: 2px solid #e5e7eb; padding: 14px; font-size: 18px; font-weight: 600; color: #1f2937; background: white; }
-        .price-input { width: 80px; border-radius: 12px; border: 2px solid #e5e7eb; padding: 12px; font-size: 16px; font-weight: bold; text-align: center; color: #2563eb; }
+        .price-input { width: 85px; border-radius: 12px; border: 2px solid #e5e7eb; padding: 12px; font-size: 16px; font-weight: bold; text-align: center; color: #2563eb; }
         .service-card { border-radius: 1.5rem; transition: all 0.2s ease; cursor: pointer; border: 3px solid transparent; }
         .service-card.selected { border-color: #2563eb; background-color: #eff6ff; }
         .check-box { width: 28px; height: 28px; border: 3px solid #d1d5db; border-radius: 8px; position: relative; background: white; }
         input:checked + .check-box { background-color: #2563eb; border-color: #2563eb; }
         input:checked + .check-box::after { content: "✓"; color: white; position: absolute; top: -2px; left: 4px; font-weight: bold; font-size: 20px; }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+        .animate-pop { animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes bounceIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
-<body class="pb-40">
+<body class="pb-44">
 
     <div id="alert-modal" class="modal">
-        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center animate-pop shadow-2xl">
             <div class="text-5xl mb-4">⚠️</div>
             <h3 class="text-xl font-black text-gray-800 mb-2">JiranGo 提示</h3>
-            <p id="alert-msg" class="text-gray-500 mb-8 font-medium"></p>
-            <button onclick="closeAlert()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">好哒 🚗</button>
+            <p id="alert-msg" class="text-gray-500 mb-8 font-medium leading-relaxed"></p>
+            <button onclick="closeAlert()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black shadow-lg">好哒 🚗</button>
         </div>
     </div>
 
     <header class="bg-white px-4 py-6 shadow-sm sticky top-0 z-20 border-b-2 border-blue-50 text-center">
-        <h1 class="text-2xl font-black text-blue-600">🚗 JiranGo 邻里跑腿</h1>
+        <h1 class="text-2xl font-black text-blue-600 tracking-tight">🚗 JiranGo 邻里跑腿</h1>
     </header>
 
     <main class="p-4 space-y-6">
@@ -46,9 +48,13 @@
 
         <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border-2 border-gray-50">
             <div id="form-buy" class="space-y-5">
-                <label class="text-xs font-black text-blue-500 uppercase ml-1">送货到哪里？</label>
-                <input type="text" id="buy-address" placeholder="例: No. 12, Jalan..." class="big-input">
+                <label class="text-xs font-black text-blue-500 uppercase ml-1">送货到哪里？(Address)</label>
+                <input type="text" id="buy-address" placeholder="例: No. 12, Jalan SG 1/22..." class="big-input">
                 <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
+                <div class="flex justify-between px-1 text-[10px] font-black text-gray-400 uppercase">
+                    <span>物品名称</span>
+                    <span class="mr-12">估价 | 有图</span>
+                </div>
                 <div id="buy-items" class="space-y-4">
                     <div class="flex items-center gap-2">
                         <input type="text" placeholder="买什么?" class="big-input flex-1 item-name" oninput="calculateTotal()">
@@ -59,11 +65,12 @@
                         </label>
                     </div>
                 </div>
-                <button onclick="addRow('buy-items')" class="text-sm font-black text-blue-600 mt-2">+ 增加项目</button>
+                <button onclick="addRow('buy-items')" class="mt-2 text-sm font-black text-blue-600">+ 增加项目</button>
             </div>
 
             <div id="form-send" class="space-y-5 hidden">
-                <input type="text" id="send-pickup" placeholder="哪里取货？" class="big-input mb-3">
+                <label class="text-xs font-black text-blue-500 uppercase ml-1">取货与送货地点</label>
+                <input type="text" id="send-pickup" placeholder="哪里取货？" class="big-input mb-2">
                 <input type="text" id="send-dropoff" placeholder="送到哪里？" class="big-input">
                 <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
                 <div id="send-items" class="space-y-4">
@@ -76,7 +83,7 @@
                         </label>
                     </div>
                 </div>
-                <button onclick="addRow('send-items')" class="text-sm font-black text-blue-600 mt-2">+ 增加项目</button>
+                <button onclick="addRow('send-items')" class="text-sm font-black text-blue-600">+ 增加项目</button>
             </div>
         </div>
     </main>
@@ -84,7 +91,7 @@
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t-4 border-blue-50 p-5 shadow-2xl z-30">
         <div class="flex justify-between items-center mb-4">
             <div>
-                <span class="text-gray-400 text-[10px] font-black uppercase">预估总额</span>
+                <span class="text-gray-400 text-[10px] font-black uppercase">预估支付总额</span>
                 <div class="text-3xl font-black text-blue-600">RM <span id="total-price">8.00</span></div>
             </div>
             <div class="text-right text-[10px] text-gray-400 font-bold leading-tight">
@@ -98,12 +105,12 @@
     </div>
 
     <div id="pay-modal" class="modal">
-        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl border-4 border-blue-50">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 animate-pop shadow-2xl border-4 border-blue-50">
             <h2 class="text-2xl font-black text-gray-800">转账给 JiranGo</h2>
             <div class="py-2 text-5xl font-black text-blue-600">RM <span id="modal-total">8.00</span></div>
-            <div class="bg-gray-100 aspect-square rounded-3xl flex items-center justify-center font-bold text-gray-400 border-4 border-dashed border-gray-200">
-                [ 放置 TNG 二维码图片 ]
-            </div>
+            <div class="bg-gray-100 aspect-square rounded-3xl flex items-center justify-center font-bold text-gray-300 border-4 border-dashed border-gray-200 overflow-hidden relative">
+                <span class="text-xs px-6">[ 放置你的 TNG QR ]</span>
+                </div>
             <button onclick="finishOrder()" class="w-full bg-green-500 text-white py-4 rounded-2xl font-black text-lg">已付款，发送通知</button>
             <button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold block mx-auto">返回修改</button>
         </div>
@@ -156,12 +163,12 @@
                 if (!addr) return jiranAlert("请填好【送货地址】哦！🏠");
                 let hasItem = false;
                 items.forEach(input => { if(input.value.trim()) hasItem = true; });
-                if (!hasItem) return jiranAlert("请告诉我买什么东西哦！🛒");
+                if (!hasItem) return jiranAlert("清单还是空的哦！告诉我们要买什么 🛒");
             } else {
-                const pickup = document.getElementById('send-pickup').value.trim();
-                const dropoff = document.getElementById('send-dropoff').value.trim();
+                const p = document.getElementById('send-pickup').value.trim();
+                const d = document.getElementById('send-dropoff').value.trim();
                 const items = document.querySelectorAll('#send-items .item-name');
-                if (!pickup || !dropoff) return jiranAlert("请把取货和送货地址填完整哦！📦");
+                if (!p || !d) return jiranAlert("请填好【取货】和【送货】地址哦！📦");
                 let hasItem = false;
                 items.forEach(input => { if(input.value.trim()) hasItem = true; });
                 if (!hasItem) return jiranAlert("请简单描述一下货品！📦");
@@ -170,33 +177,44 @@
         }
 
         function finishOrder() {
+            const phone = "60126947903";
             const total = document.getElementById('total-price').innerText;
             const fee = document.getElementById('display-fee').innerText;
-            let detail = ""; 
-            let addr = ""; 
-            let target = "";
+            const now = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+            
+            let itemsDetail = ""; 
+            let addressInfo = ""; 
+            let mapsInfo = "";
 
             if(currentType === 'buy') {
-                target = document.getElementById('buy-address').value;
-                addr = `📍 *送货到*: ${target}`;
-                document.querySelectorAll('#buy-items > div').forEach(row => {
-                    const name = row.querySelector('.item-name').value;
-                    const price = row.querySelector('.item-price').value || 0;
-                    if(name) detail += `%0A- ${name} (RM${price})`;
+                const target = document.getElementById('buy-address').value;
+                addressInfo = `📍 *送货到*: ${target}`;
+                
+                document.querySelectorAll('#buy-items > div').forEach((row) => {
+                    const name = row.querySelector('.item-name').value.trim();
+                    const price = row.querySelector('.item-price').value || "0";
+                    const photo = row.querySelector('.item-has-photo').checked ? " 📸" : "";
+                    if(name) itemsDetail += `%0A- ${name} (RM${price})${photo}`;
                 });
+                const mUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(target)}`;
+                mapsInfo = `🗺️ *一键导航*: ${mUrl}`;
             } else {
                 const p = document.getElementById('send-pickup').value;
                 const d = document.getElementById('send-dropoff').value;
-                target = d;
-                addr = `📤 *取货*: ${p}%0A📍 *送货*: ${d}`;
-                document.querySelectorAll('#send-items .item-name').forEach(input => {
-                    if(input.value) detail += `%0A- ${input.value}`;
+                addressInfo = `📤 *取货*: ${p}%0A📍 *送货*: ${d}`;
+                
+                document.querySelectorAll('#send-items > div').forEach((row) => {
+                    const name = row.querySelector('.item-name').value.trim();
+                    const photo = row.querySelector('.item-has-photo').checked ? " 📸" : "";
+                    if(name) itemsDetail += `%0A- ${name}${photo}`;
                 });
+                const pUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p)}`;
+                const dUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d)}`;
+                mapsInfo = `🗺️ *取货导航*: ${pUrl}%0A🗺️ *送货导航*: ${dUrl}`;
             }
 
-            const map = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(target)}`;
-            const text = `💰 *JiranGo 预付订单*%0A------------------%0A${addr}%0A%0A🗺️ *地图导航*: ${map}%0A%0A💵 *总计*: RM${total}%0A🛵 *跑腿费*: RM${fee}%0A📝 *清单*: ${detail}%0A%0A✅ *已按预估价付款*`;
-            window.location.href = `https://wa.me/60126947903?text=${text}`;
+            const text = `💰 *JiranGo 预付订单*%0A------------------%0A${addressInfo}%0A%0A${mapsInfo}%0A%0A💵 *支付总计*: RM${total}%0A🛵 *跑腿费用*: RM${fee}%0A📝 *货品详情*: ${itemsDetail}%0A%0A✅ *已按预估价完成转账*%0A⏰ 下单时间: ${now}`;
+            window.location.href = `https://wa.me/${phone}?text=${text}`;
         }
     </script>
 </body>

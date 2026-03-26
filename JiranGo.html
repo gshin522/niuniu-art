@@ -113,7 +113,6 @@
                         <button onclick="updateStops(1)" class="w-10 h-10 rounded-full bg-jgDeepGreen text-white shadow-md font-black text-xl flex items-center justify-center">+</button>
                     </div>
                 </div>
-                <p class="text-[9px] text-gray-400 font-bold hidden px-2 italic" id="multi-stop-tip">* Rider will ask for other addresses in WhatsApp.</p>
                 <label class="flex items-center gap-3 bg-white p-4 rounded-2xl border-2 border-gray-100 cursor-pointer active:scale-95">
                     <input type="checkbox" id="has-photo" class="w-5 h-5 accent-jgDeepGreen">
                     <span class="text-xs font-black text-jgDeepGreen uppercase tracking-wider">I have Photo Reference (Ada gambar)</span>
@@ -177,7 +176,6 @@
 
         function applyPromo() {
             const code = document.getElementById('promo-input').value.toUpperCase().trim();
-            // 这里修改为 SOKONGJIRANGO
             if (code === "SOKONGJIRANGO") {
                 discountAmount = 2.0;
                 document.getElementById('promo-status').innerText = "✅ RM2.00 OFF APPLIED!";
@@ -197,7 +195,6 @@
         function updateStops(val) {
             stopCount = Math.max(1, stopCount + val);
             document.getElementById('stop-count').innerText = stopCount;
-            document.getElementById('multi-stop-tip').classList.toggle('hidden', stopCount === 1);
             calculateTotal();
         }
 
@@ -230,7 +227,6 @@
             var finalFee = baseFee + extraFee;
             document.getElementById('display-fee').innerText = finalFee.toFixed(2);
             document.getElementById('display-items').innerText = itemsCost.toFixed(2);
-            
             var totalVal = (finalFee + itemsCost) - discountAmount;
             totalVal = Math.max(0, totalVal);
             document.getElementById('total-price').innerText = totalVal.toFixed(2);
@@ -240,7 +236,27 @@
         function openPayment() {
             var isBuy = (currentType === 'buy');
             var addr = isBuy ? document.getElementById('buy-address').value : document.getElementById('send-dropoff').value;
+            
+            // 验证地址
             if (addr.trim().length < 5) { showJiranAlert("🏠", "Address Error", "Please fill in a delivery address."); return; }
+            
+            // 验证 Buy 物品
+            if (isBuy) {
+                let hasValid = false;
+                document.querySelectorAll('#buy-items > div').forEach(row => {
+                    let n = row.querySelector('.item-name').value.trim();
+                    let p = parseFloat(row.querySelector('.item-price').value || 0);
+                    if (n !== "" && p > 0) hasValid = true;
+                });
+                if (!hasValid) { showJiranAlert("🛒", "List Empty", "Please add at least one item and its price."); return; }
+            } 
+            // 验证 Ambil 物品
+            else {
+                let p = document.getElementById('send-pickup').value.trim();
+                let d = document.getElementById('send-item-desc').value.trim();
+                if (p === "" || d === "") { showJiranAlert("📦", "Details Missing", "Please tell us where and what to pickup."); return; }
+            }
+            
             document.getElementById('pay-modal').style.display = 'flex';
         }
 
@@ -261,12 +277,10 @@
             }
             var deliverTo = isBuy ? document.getElementById('buy-address').value : document.getElementById('send-dropoff').value;
             var pickup = isBuy ? "" : "%0A🚚 *Pickup From*: " + document.getElementById('send-pickup').value;
-            
             var moneySection = "%0A🛵 *Upah Rider*: RM" + document.getElementById('display-fee').innerText;
             if (isBuy) moneySection += "%0A🛒 *Barang Cost*: RM" + itemsTotal.toFixed(2);
             if (discountAmount > 0) moneySection += "%0A🎁 *Discount*: -RM" + discountAmount.toFixed(2);
             moneySection += "%0A💵 *TOTAL PAID*: RM" + document.getElementById('total-price').innerText;
-
             var photo = document.getElementById('has-photo').checked ? "%0A📸 *Photo Reference*: YES" : "";
             var text = "💰 " + serviceTag + "%0A------------------%0A📍 *Deliver To*: " + deliverTo + pickup + "%0A🏢 *Stops*: " + stopCount + "%0A" + moneySection + photo + "%0A%0A📝 *Details*: " + items + "%0A%0A✅ *Payment Done!*";
             window.location.href = "https://wa.me/60126947903?text=" + text;

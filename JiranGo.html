@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JiranGo - Neighborhood Delivery</title>
+    <title>JiranGo - Barang Selamat, Jiran Selesa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        jgDeepGreen: '#2D7D46', 
-                        jgHelmetGreen: '#28A745', 
-                        jgOrange: '#F9A826', 
-                        jgBg: '#F9FBF9' 
+                        jgDeepGreen: '#2D7D46', // Logo 深绿
+                        jgHelmetGreen: '#28A745', // 头盔绿
+                        jgOrange: '#F9A826', // 翅膀活力橙
+                        jgBg: '#F9FBF9' // 浅绿背景
                     }
                 }
             }
@@ -33,6 +33,7 @@
         .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 100; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
         .pop-up { animation: popScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes popScale { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* 魔法代码：混合模式滤除 Logo 的白/灰背景 */
         .logo-blend { mix-blend-mode: multiply; filter: contrast(1.05); }
     </style>
 </head>
@@ -41,18 +42,18 @@
     <div id="alert-modal" class="modal">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl pop-up">
             <div id="alert-emoji" class="text-6xl mb-4">🏠</div>
-            <h3 id="alert-title" class="text-xl font-black text-gray-800 mb-2">Wait a second!</h3>
+            <h3 id="alert-title" class="text-xl font-black text-gray-800 mb-2">资料不完整哦</h3>
             <p id="alert-msg" class="text-gray-500 mb-8 font-medium leading-relaxed"></p>
-            <button onclick="closeAlert()" class="w-full bg-jgOrange text-white py-4 rounded-2xl font-black shadow-lg">Got it!</button>
+            <button onclick="closeAlert()" class="w-full bg-jgOrange text-white py-4 rounded-2xl font-black shadow-lg active:bg-orange-600">Got it!</button>
         </div>
     </div>
 
     <header class="bg-white px-4 py-4 shadow-md sticky top-0 z-20 border-b-2 border-jgDeepGreen/10 flex flex-col items-center">
-        <div class="w-full max-w-[200px] h-20 flex items-center justify-center overflow-hidden">
-            <img src="https://i.ibb.co/DHZB6mP1/file-00000000618871faa3de8745477e04c3.png" alt="JiranGo Logo" class="w-full h-full object-contain scale-[1.7] logo-blend">
+        <div class="w-full max-w-[280px] h-32 flex items-center justify-center overflow-hidden">
+            <img src="https://i.ibb.co/DHZB6mP1/file-00000000618871faa3de8745477e04c3.png" alt="JiranGo Logo" class="w-full h-full object-contain scale-[2.0] logo-blend">
         </div>
-        <p class="text-[11px] font-black text-jgDeepGreen tracking-tight mt-1">
-            <span class="text-jgOrange">Barang</span> Selamat, <span class="text-jgOrange">Jiran</span> Selesa
+        <p class="text-[12px] font-medium text-jgDeepGreen tracking-tight mt-1 courier-font italic">
+            Barang <span class="text-jgOrange font-black">S</span>elamat, Jiran <span class="text-jgOrange font-black">S</span>elesa
         </p>
     </header>
 
@@ -60,30 +61,30 @@
         <div class="grid grid-cols-2 gap-4">
             <div id="btn-buy" onclick="showForm('buy')" class="service-card service-card-buy p-6 text-center shadow-md selected">
                 <div class="text-5xl mb-2">🛒</div>
-                <div class="text-lg font-black text-jgOrange leading-tight">Buy For Me<br><span class="text-[10px] opacity-60">(Tolong Beli)</span></div>
+                <div class="text-lg font-black text-jgOrange leading-tight courier-font">Buy For Me<br><span class="text-[10px] opacity-70 courier-font">(Tolong Beli)</span></div>
             </div>
             <div id="btn-send" onclick="showForm('send')" class="service-card service-card-send p-6 text-center shadow-md">
                 <div class="text-5xl mb-2">📦</div>
-                <div class="text-lg font-black text-jgHelmetGreen leading-tight">Deliver/Pickup<br><span class="text-[10px] opacity-60">(Kirim/Ambil)</span></div>
+                <div class="text-lg font-black text-jgHelmetGreen leading-tight courier-font">Deliver/Pickup<br><span class="text-[10px] opacity-70 courier-font">(Tolong Ambil)</span></div>
             </div>
         </div>
 
         <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border-2 border-jgDeepGreen/5">
             <div id="form-buy" class="space-y-4">
-                <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Delivery Address (Alamat Hantar)</label>
-                <input type="text" id="buy-address" placeholder="e.g. 30, Jalan SG 1/22, Seri Gombak" class="big-input text-sm">
+                <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest courier-font">Delivery Address (Alamat Hantar)</label>
+                <input type="text" id="buy-address" placeholder="e.g. 30, Jalan SG 1/22, Seri Gombak" value="30, Jalan SG 1/22, Seri Gombak" class="big-input text-sm courier-font font-medium text-jgDeepGreen">
                 
                 <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
                 
-                <div class="flex justify-between text-[10px] font-black text-gray-400 uppercase px-1">
+                <div class="flex justify-between text-[10px] font-black text-gray-400 uppercase px-1 courier-font">
                     <span>What to buy? (Barang)</span>
                     <span>Est. RM</span>
                 </div>
 
                 <div id="buy-items" class="space-y-4">
                     <div class="flex items-center gap-2">
-                        <input type="text" placeholder="e.g. Nasi Lemak..." class="big-input flex-1 item-name text-sm" oninput="calculateTotal()">
-                        <input type="number" placeholder="0" class="price-input item-price" oninput="calculateTotal()">
+                        <input type="text" placeholder="e.g. Nasi Lemak..." value="Nasi Lemak / 面包" class="big-input flex-1 item-name text-sm courier-font font-medium text-jgDeepGreen" oninput="calculateTotal()">
+                        <input type="number" placeholder="RM" value="5" class="price-input item-price" oninput="calculateTotal()">
                         <label class="flex flex-col items-center">
                             <input type="checkbox" class="hidden item-has-photo">
                             <div class="check-box"></div>
@@ -91,22 +92,17 @@
                         </label>
                     </div>
                 </div>
-                <button onclick="addRow('buy-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full">+ Add Item</button>
+                <button onclick="addRow('buy-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white active:bg-jgHelmetGreen/5 courier-font">+ Add More Items</button>
             </div>
 
-            <div id="form-send" class="space-y-4 hidden">
-                <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Pickup From (Ambil Di)</label>
-                <input type="text" id="send-pickup" placeholder="Store name or full address" class="big-input mb-2 text-sm">
-                
-                <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Deliver To (Hantar Ke)</label>
-                <input type="text" id="send-dropoff" placeholder="Detailed recipient address" class="big-input text-sm">
-                
+            <div id="form-send" class="space-y-4 hidden courier-font">
+                <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest courier-font">Pickup From (Ambil Di)</label>
+                <input type="text" id="send-pickup" placeholder="e.g. Seri Gombak Chicken Rice Shop" class="big-input mb-2 text-sm courier-font font-medium text-jgDeepGreen courier-font">
+                <input type="text" id="send-dropoff" placeholder="Hantar Ke: Alamat lengkap" class="big-input text-sm courier-font font-medium text-jgDeepGreen">
                 <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
-                
-                <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Item Description (Barang)</label>
                 <div id="send-items" class="space-y-4">
-                    <div class="flex items-center gap-2">
-                        <input type="text" placeholder="e.g. Parcel/Cake/Keys..." class="big-input flex-1 item-name text-sm">
+                    <div class="flex items-center gap-2 courier-font">
+                        <input type="text" placeholder="e.g. Parcel/Cake/Keys..." class="big-input flex-1 item-name text-sm courier-font font-medium text-jgDeepGreen">
                         <label class="flex flex-col items-center">
                             <input type="checkbox" class="hidden item-has-photo">
                             <div class="check-box"></div>
@@ -114,38 +110,40 @@
                         </label>
                     </div>
                 </div>
-                <button onclick="addRow('send-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full">+ Add Item</button>
+                <button onclick="addRow('send-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white active:bg-jgHelmetGreen/5 courier-font">+ Add Item</button>
             </div>
         </div>
     </main>
 
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t-4 border-jgDeepGreen/5 p-5 shadow-2xl z-30">
-        <div class="flex justify-between items-center mb-4 px-1">
+        <div class="flex justify-between items-center mb-4 px-1 courier-font">
             <div>
-                <span class="text-gray-400 text-[10px] font-black uppercase tracking-widest leading-none">Total Est. Amount</span>
-                <div class="text-4xl font-black text-jgDeepGreen">RM <span id="total-price">8.00</span></div>
+                <span class="text-gray-400 text-[10px] font-black uppercase tracking-widest leading-none courier-font">Total Est. Amount (RM)</span>
+                <div class="text-4xl font-black text-jgDeepGreen courier-font">RM <span id="total-price">13.00</span></div>
             </div>
-            <div class="text-right text-[10px] text-gray-400 font-bold leading-tight">
-                Fee (Upah): RM <span id="display-fee">8.00</span><br>
-                Items (Barang): RM <span id="display-items">0.00</span>
+            <div class="text-right text-[10px] text-gray-400 font-bold leading-tight courier-font">
+                Upah Rider: RM <span id="display-fee">8.00</span><br>
+                Items (Barang): RM <span id="display-items">5.00</span>
             </div>
         </div>
-        <button onclick="openPayment()" class="w-full bg-jgDeepGreen text-white py-5 rounded-2xl font-black text-xl shadow-lg active:scale-95 transition-all">Order & Pay Now</button>
+        <button onclick="openPayment()" class="w-full bg-jgDeepGreen text-jgOrange py-5 rounded-2xl font-black text-xl shadow-lg active:bg-green-800 active:scale-95 transition-all tracking-tight courier-font">Confirm Order & Pay Now</button>
     </div>
 
     <div id="pay-modal" class="modal">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl pop-up border-t-8 border-jgDeepGreen">
-            <h2 class="text-2xl font-black text-gray-800 leading-tight">Pay RM <span id="modal-total">8.00</span><br><span class="text-sm font-medium text-gray-400">Scan to Confirm Order</span></h2>
-            <div class="bg-gray-50 aspect-square rounded-3xl flex items-center justify-center font-bold text-gray-300 border-4 border-dashed border-gray-200">
-                [ TNG QR IMAGE HERE ]
-            </div>
-            <p class="text-[10px] text-gray-400 font-bold leading-relaxed px-4 italic">"Please send the receipt screenshot to WhatsApp after payment!"</p>
-            <button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">Payment Done, Send WhatsApp</button>
-            <button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold block mx-auto underline">Back to List</button>
+            <h2 class="text-2xl font-black text-gray-800 courier-font leading-tight">Proceed to Payment<br><span class="text-sm font-medium text-jgDeepGreen">TNG Scan & Confirm Order</span></h2>
+            <div class="py-2 text-6xl font-black text-jgOrange courier-font">RM <span id="modal-total">13.00</span></div>
+            <div class="bg-gray-50 aspect-square rounded-3xl flex items-center justify-center font-bold text-gray-300 border-4 border-dashed border-gray-200 overflow-hidden relative courier-font">
+                <span class="text-xs px-6 courier-font">[ 放置 TNG QR ]</span>
+                </div>
+            <p class="text-[10px] text-gray-400 font-bold leading-relaxed italic courier-font px-4">"多退少补。请在 WhatsApp 发送转账截图哦！"</p>
+            <button onclick="finishOrder()" class="w-full bg-jgHelmetGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg active:bg-green-600 courier-font">Payment Done, Send to Rider</button>
+            <button onclick="closeModal('pay-modal')" class="text-jg helmetGreen text-sm font-bold block mx-auto underline courier-font">Back to Modify</button>
         </div>
     </div>
 
     <script>
+        // 预设买 Nasi Lemak RM5 的逻辑，用于匹配截图
         var currentType = 'buy';
         function showJiranAlert(emoji, title, msg) {
             document.getElementById('alert-emoji').innerText = emoji;
@@ -167,12 +165,12 @@
 
         function addRow(id) {
             var div = document.createElement('div');
-            div.className = "flex items-center gap-2";
+            div.className = "flex items-center gap-2 courier-font";
             var content = '';
             if(currentType === 'buy') {
-                content = '<input type="text" placeholder="..." class="big-input flex-1 item-name text-sm" oninput="calculateTotal()"><input type="number" placeholder="0" class="price-input item-price" oninput="calculateTotal()"><label class="flex flex-col items-center"><input type="checkbox" class="hidden item-has-photo"><div class="check-box"></div><span class="text-[9px] font-bold text-gray-400 mt-1">Photo</span></label>';
+                content = '<input type="text" placeholder="..." class="big-input flex-1 item-name text-sm courier-font font-medium text-jgDeepGreen" oninput="calculateTotal()"><input type="number" placeholder="RM" class="price-input item-price" oninput="calculateTotal()"><label class="flex flex-col items-center"><input type="checkbox" class="hidden item-has-photo"><div class="check-box"></div><span class="text-[9px] font-bold text-jgDeepGreen mt-1">Photo</span></label>';
             } else {
-                content = '<input type="text" placeholder="..." class="big-input flex-1 item-name text-sm"><label class="flex flex-col items-center"><input type="checkbox" class="hidden item-has-photo"><div class="check-box"></div><span class="text-[9px] font-bold text-gray-400 mt-1">Photo</span></label>';
+                content = '<input type="text" placeholder="..." class="big-input flex-1 item-name text-sm courier-font font-medium text-jgDeepGreen"><label class="flex flex-col items-center"><input type="checkbox" class="hidden item-has-photo"><div class="check-box"></div><span class="text-[9px] font-bold text-jgHelmetGreen mt-1">Photo</span></label>';
             }
             div.innerHTML = content;
             document.getElementById(id).appendChild(div);
@@ -195,12 +193,12 @@
         function openPayment() {
             var isBuy = (currentType === 'buy');
             var addr = isBuy ? document.getElementById('buy-address').value.trim() : document.getElementById('send-dropoff').value.trim();
-            if (addr.length < 10) { showJiranAlert("🏠", "Incomplete Address", "Please provide a more detailed address (min 10 characters) for our riders!"); return; }
-            if (!isBuy && document.getElementById('send-pickup').value.trim().length < 5) { showJiranAlert("📍", "Missing Pickup", "Please state where we should pick up the item."); return; }
+            if (addr.length < 10) { showJiranAlert("🏠", "地址不够详细哦", "跑腿员需要具体的门牌或路名才能找到你哦！🏠"); return; }
+            if (!isBuy && document.getElementById('send-pickup').value.trim().length < 5) { showJiranAlert("📍", "取货地不详", "请填写清楚取货的地点（店名或地址）。📍"); return; }
             var itemFound = false;
             var selector = isBuy ? '#buy-items .item-name' : '#send-items .item-name';
             document.querySelectorAll(selector).forEach(function(input) { if (input.value.trim().length > 0) itemFound = true; });
-            if (!itemFound) { showJiranAlert("🛒", "Empty Cart", "Please add at least one item to proceed."); return; }
+            if (!itemFound) { showJiranAlert("🛒", "清单为空", "请填写至少一项您想购买或运送的货品。🛒"); return; }
             document.getElementById('pay-modal').style.display = 'flex';
         }
 
@@ -213,27 +211,27 @@
 
             if (currentType === 'buy') {
                 var addr = document.getElementById('buy-address').value;
-                addressPart = "📍 *To Address*: " + addr;
+                addressPart = "📍 *Deliver To*: " + addr;
                 var buyItems = document.querySelectorAll('#buy-items > div');
                 buyItems.forEach(function(row) {
                     var n = row.querySelector('.item-name').value.trim();
                     var p = row.querySelector('.item-price').value || "0";
-                    var pic = row.querySelector('.item-has-photo').checked ? " [WITH PHOTO]" : "";
+                    var pic = row.querySelector('.item-has-photo').checked ? "📸 参考图片" : "";
                     if(n) itemPart += "%0A- " + n + " (RM" + p + ")" + pic;
                 });
             } else {
                 var pLoc = document.getElementById('send-pickup').value;
                 var dLoc = document.getElementById('send-dropoff').value;
-                addressPart = "📤 *From*: " + pLoc + "%0A📍 *To*: " + dLoc;
+                addressPart = "📤 *Pickup From*: " + pLoc + "%0A📍 *Deliver To*: " + dLoc;
                 var sendItems = document.querySelectorAll('#send-items > div');
                 sendItems.forEach(function(row) {
                     var n = row.querySelector('.item-name').value.trim();
-                    var pic = row.querySelector('.item-has-photo').checked ? " [WITH PHOTO]" : "";
+                    var pic = row.querySelector('.item-has-photo').checked ? "📸 参考图片" : "";
                     if(n) itemPart += "%0A- " + n + pic;
                 });
             }
 
-            var text = "💰 *NEW JiranGo ORDER* (" + typeLabel + ")%0A------------------%0A" + addressPart + "%0A%0A💵 *Total*: RM" + total + "%0A🛵 *Fee*: RM" + fee + "%0A📝 *Details*: " + itemPart + "%0A%0A✅ *Payment Made, please check receipt.*";
+            var text = "💰 *JiranGo NEW ORDER* (" + typeLabel + ")%0A------------------%0A" + addressPart + "%0A%0A💵 *Total*: RM" + total + "%0A🛵 *Fee*: RM" + fee + "%0A📝 *Details*: " + itemPart + "%0A%0A✅ *转账已完成，请在确认收据。*";
             window.location.href = "https://wa.me/60126947903?text=" + text;
         }
     </script>

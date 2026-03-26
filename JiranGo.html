@@ -3,125 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JiranGo - 邻里跑腿</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>JiranGo - 邻里物流跑腿</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f7f9fc; font-family: 'Courier New', Courier, monospace; }
-        .receipt-card { border-radius: 20px; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.05); position: relative; }
-        .receipt-card::before { content: ""; position: absolute; top: -10px; left: 0; right: 0; height: 20px; background-image: radial-gradient(circle, transparent 70%, white 70%); background-size: 20px 20px; }
-        .dot-line { border-top: 2px dashed #e5e7eb; margin: 15px 0; }
-        .item-input { border: none; border-bottom: 1px solid #f3f4f6; width: 100%; padding: 8px 0; font-size: 14px; background: transparent; }
-        .item-input:focus { outline: none; border-bottom-color: #3b82f6; }
-        .photo-toggle { cursor: pointer; transition: all 0.3s; opacity: 0.2; filter: grayscale(1); }
-        .photo-toggle.active { opacity: 1; filter: grayscale(0); transform: scale(1.2); }
+        body { background-color: #f7f9fc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        .service-card { border-radius: 1.5rem; transition: all 0.2s ease; cursor: pointer; border: 2px solid transparent; }
+        .service-card.selected { border-color: #3b82f6; background-color: #eff6ff; box-shadow: 0 4px 15px rgba(59,130,246,0.15); }
+        .input-group label { display: block; text-size: 10px; font-weight: bold; color: #3b82f6; uppercase; margin-bottom: 2px; }
+        .input-box { width: 100%; border-radius: 12px; border: 1px solid #e5e7eb; padding: 12px; font-size: 14px; color: #374151; background: white; }
+        .input-box:focus { outline: none; border-color: #3b82f6; ring: 2px solid #bfdbfe; }
+        
+        /* 针对超市清单的Couier字体 */
+        .courier-font { font-family: 'Courier New', Courier, monospace; }
+        .checkbox-container { cursor: pointer; }
+        .checkbox-container input { display: none; }
+        .check-box { width: 22px; height: 22px; border: 2px solid #d1d5db; border-radius: 6px; position: relative; transition: all 0.2s; }
+        .checkbox-container input:checked + .check-box { background-color: #3b82f6; border-color: #3b82f6; }
+        .check-box::after { content: "✓"; color: white; position: absolute; top: 0; left: 4px; font-weight: bold; font-size: 14px; opacity: 0; }
+        .checkbox-container input:checked + .check-box::after { opacity: 1; }
     </style>
 </head>
-<body class="p-4 pb-24">
+<body class="pb-24 courier-font">
 
-    <div class="text-center mb-6 pt-4">
-        <h1 class="text-2xl font-black text-blue-600 tracking-tighter">🚗 JiranGo</h1>
-        <p class="text-xs text-gray-400 uppercase tracking-widest">Neighborhood Runner Service</p>
+    <div class="text-center py-5 border-b border-gray-100 bg-white sticky top-0 z-20">
+        <h1 class="text-xl font-black text-blue-600 tracking-tight flex items-center justify-center gap-2">🚗 JiranGo</h1>
+        <p class="text-[9px] text-gray-400 uppercase tracking-widest mt-1">Neighborhood Runner Service</p>
     </div>
 
-    <div class="receipt-card p-6 pb-8">
-        <div class="flex justify-between items-center mb-4">
-            <span class="text-sm font-bold text-gray-500">SERVICE ORDER</span>
-            <span id="order-date" class="text-xs text-gray-400"></span>
+    <main class="p-4 space-y-5">
+        
+        <div class="grid grid-cols-2 gap-4">
+            <div id="btn-buy" onclick="showForm('buy')" class="service-card p-4 text-center shadow-sm bg-orange-100 selected">
+                <div class="text-3xl mb-1">🍜</div>
+                <div class="text-xs font-bold text-orange-800">代购美食</div>
+            </div>
+            <div id="btn-send" onclick="showForm('send')" class="service-card p-4 text-center shadow-sm bg-blue-100">
+                <div class="text-3xl mb-1">📦</div>
+                <div class="text-xs font-bold text-blue-800">包裹派送</div>
+            </div>
         </div>
 
-        <div class="mb-6">
-            <label class="text-[10px] font-bold text-blue-500 uppercase">Delivery Address</label>
-            <input type="text" id="address" placeholder="No. 12, Jalan SG 1/..." class="item-input font-sans font-medium text-gray-800">
-        </div>
-
-        <div class="dot-line"></div>
-
-        <div class="mb-4">
-            <label class="text-[10px] font-bold text-blue-500 uppercase mb-2 block">Shopping List</label>
-            <div id="items-list" class="space-y-4">
-                <div class="flex items-center gap-3">
-                    <span class="text-gray-300 text-xs">01</span>
-                    <input type="text" placeholder="想要买什么?" class="item-input font-sans text-gray-700">
-                    <div onclick="togglePhoto(this)" class="photo-toggle text-xl">📸</div>
+        <div id="form-container" class="bg-white p-6 rounded-3xl shadow-lg relative border border-blue-50">
+            
+            <div id="form-buy" class="space-y-4">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm font-bold text-gray-500">SERVICE ORDER (BUY)</span>
+                    <span id="order-date" class="text-xs text-gray-400"></span>
                 </div>
-                <div class="flex items-center gap-3">
-                    <span class="text-gray-300 text-xs">02</span>
-                    <input type="text" placeholder="想要买什么?" class="item-input font-sans text-gray-700">
-                    <div onclick="togglePhoto(this)" class="photo-toggle text-xl">📸</div>
+                
+                <div class="input-group">
+                    <label>Delivery To (Address)</label>
+                    <input type="text" id="buy-address" placeholder="No. 12, Jalan SG 1/..." class="input-box courier-font font-medium text-gray-800">
                 </div>
-                <div class="flex items-center gap-3">
-                    <span class="text-gray-300 text-xs">03</span>
-                    <input type="text" placeholder="想要买什么?" class="item-input font-sans text-gray-700">
-                    <div onclick="togglePhoto(this)" class="photo-toggle text-xl">📸</div>
+
+                <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-blue-500 uppercase mb-3 block">Shopping List</label>
+                    <div id="buy-items" class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-300 text-xs">01</span>
+                            <input type="text" placeholder="想要买什么?" class="input-box courier-font font-medium flex-1">
+                            <label class="checkbox-container flex items-center gap-1.5">
+                                <input type="checkbox" class="item-has-photo">
+                                <div class="check-box"></div>
+                                <span class="text-xs text-gray-400">图</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-300 text-xs">02</span>
+                            <input type="text" placeholder="想要买什么?" class="input-box courier-font font-medium flex-1">
+                            <label class="checkbox-container flex items-center gap-1.5">
+                                <input type="checkbox" class="item-has-photo">
+                                <div class="check-box"></div>
+                                <span class="text-xs text-gray-400">图</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-300 text-xs">03</span>
+                            <input type="text" placeholder="想要买什么?" class="input-box courier-font font-medium flex-1">
+                            <label class="checkbox-container flex items-center gap-1.5">
+                                <input type="checkbox" class="item-has-photo">
+                                <div class="check-box"></div>
+                                <span class="text-xs text-gray-400">图</span>
+                            </label>
+                        </div>
+                    </div>
+                    <button onclick="addBuyRow()" class="mt-3 text-[9px] text-blue-500 font-bold border border-blue-200 px-3 py-1 rounded-full">+ ADD MORE ITEM</button>
                 </div>
             </div>
-            
-            <button onclick="addItemRow()" class="mt-4 text-[10px] text-blue-500 font-bold border border-blue-200 px-3 py-1 rounded-full">+ ADD MORE ITEM</button>
+
+            <div id="form-send" class="space-y-4 hidden">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm font-bold text-gray-500">SERVICE ORDER (SEND/PICKUP)</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="input-group">
+                        <label>Pickup Location</label>
+                        <input type="text" id="send-pickup" placeholder="From where?" class="input-box courier-font font-medium text-gray-800">
+                    </div>
+                    <div class="input-group">
+                        <label>Dropoff Location</label>
+                        <input type="text" id="send-dropoff" placeholder="To where?" class="input-box courier-font font-medium text-gray-800">
+                    </div>
+                </div>
+
+                <div class="input-group my-3">
+                    <label>Item Description (什么是货物？)</label>
+                    <input type="text" id="send-item" placeholder="面包、包裹、药..." class="input-box courier-font font-medium text-gray-800">
+                </div>
+
+                <div class="border-t border-dashed border-gray-100 my-4"></div>
+
+                <div class="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                    <label class="checkbox-container flex items-center gap-3">
+                        <input type="checkbox" id="send-has-photo">
+                        <div class="check-box"></div>
+                        <span class="text-sm font-bold text-blue-600 font-sans">我有这个货品的照片/取货码</span>
+                    </label>
+                </div>
+            </div>
+
+            <p class="text-[9px] text-gray-400 italic text-center my-6">"Connecting Neighbors, Delivering Care"</p>
+
+            <button onclick="submitOrder()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="h-6 w-6" alt="WA">
+                CONFIRM & WHATSAPP
+            </button>
         </div>
-
-        <div class="dot-line mt-6"></div>
-        
-        <p class="text-[10px] text-gray-400 italic text-center mb-6">"Connecting Neighbors, Delivering Care"</p>
-
-        <button onclick="sendOrder()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform">
-            <span>CONFIRM & WHATSAPP</span>
-        </button>
-    </div>
+    </main>
 
     <script>
-        // 设置日期
+        let currentType = 'buy';
         document.getElementById('order-date').innerText = new Date().toLocaleDateString();
 
-        // 切换照片标记
-        function togglePhoto(el) {
-            el.classList.toggle('active');
+        // 切换服务表单
+        function showForm(type) {
+            currentType = type;
+            // 切换服务卡片样式
+            document.getElementById('btn-buy').classList.toggle('selected', type === 'buy');
+            document.getElementById('btn-send').classList.toggle('selected', type === 'send');
+            // 切换表单内容
+            document.getElementById('form-buy').classList.toggle('hidden', type !== 'buy');
+            document.getElementById('form-send').classList.toggle('hidden', type !== 'send');
         }
 
-        // 增加行
-        function addItemRow() {
-            const list = document.getElementById('items-list');
+        // 代购表单增加项目
+        function addBuyRow() {
+            const list = document.getElementById('buy-items');
             const count = list.children.length + 1;
-            if(count > 6) return alert("最多 6 个项目哦！");
+            if(count > 6) return alert("为了配送效率，最多 6 个项目哦！");
             
             const div = document.createElement('div');
             div.className = "flex items-center gap-3";
             div.innerHTML = `
                 <span class="text-gray-300 text-xs">0${count}</span>
-                <input type="text" placeholder="想要买什么?" class="item-input font-sans text-gray-700">
-                <div onclick="togglePhoto(this)" class="photo-toggle text-xl">📸</div>
+                <input type="text" placeholder="想要买什么?" class="input-box courier-font font-medium flex-1">
+                <label class="checkbox-container flex items-center gap-1.5">
+                    <input type="checkbox" class="item-has-photo">
+                    <div class="check-box"></div>
+                    <span class="text-xs text-gray-400">图</span>
+                </label>
             `;
             list.appendChild(div);
         }
 
-        // 下单到 WhatsApp
-        function sendOrder() {
-            const address = document.getElementById('address').value;
-            if(!address) return alert("老板，还没填地址呢！");
+        // 统一提交
+        function submitOrder() {
+            let text = "";
+            let photoAlert = false;
+            const phone = "60126947903"; 
 
-            const rows = document.querySelectorAll('#items-list > div');
-            let itemList = "";
-            let hasPhoto = false;
+            if (currentType === 'buy') {
+                const address = document.getElementById('buy-address').value;
+                if(!address) return alert("老板，还没填地址呢！");
 
-            rows.forEach((row, index) => {
-                const input = row.querySelector('input');
-                const isPhoto = row.querySelector('.photo-toggle').classList.contains('active');
-                if(input.value.trim() !== "") {
-                    const icon = isPhoto ? " 📸 (有图参考)" : "";
-                    if(isPhoto) hasPhoto = true;
-                    itemList += `%0A${index+1}. ${input.value}${icon}`;
-                }
-            });
+                const rows = document.querySelectorAll('#buy-items > div');
+                let itemList = "";
 
-            if(!itemList) return alert("清单还是空的哦！");
+                rows.forEach((row, index) => {
+                    const input = row.querySelector('input');
+                    const isPhoto = row.querySelector('.item-has-photo').checked;
+                    if(input.value.trim() !== "") {
+                        const icon = isPhoto ? " 📸 (有图参考)" : "";
+                        if(isPhoto) photoAlert = true;
+                        itemList += `%0A${index+1}. ${input.value}${icon}`;
+                    }
+                });
 
-            const phone = "60126947903";
-            const photoNote = hasPhoto ? "%0A%0A⚠️ *温馨提醒：跑腿员收到讯息后，请记得补发参考照片哦！*" : "";
-            
-            const text = `🚗 *JiranGo 邻里新订单*%0A------------------%0A📍 *地址*: ${address}%0A📝 *购物清单*:${itemList}${photoNote}`;
-            
-            window.location.href = `https://wa.me/${phone}?text=${text}`;
+                if(!itemList) return alert("清单还是空的哦！");
+
+                text = `🚗 *JiranGo 邻里代购* 🍜%0A------------------%0A📍 *送货地址*: ${address}%0A📝 *购物清单*:${itemList}`;
+
+            } else {
+                // 派送逻辑
+                const pickup = document.getElementById('send-pickup').value;
+                const dropoff = document.getElementById('send-dropoff').value;
+                const item = document.getElementById('send-item').value;
+                const isPhoto = document.getElementById('send-has-photo').checked;
+
+                if(!pickup || !dropoff || !item) return alert("请把派送信息填完整哦！");
+                if(isPhoto) photoAlert = true;
+
+                text = `🚗 *JiranGo 邻里派送* 📦%0A------------------%0A📍 *取货地点*: ${pickup}%0A📍 *送货地点*: ${dropoff}%0A📝 *货物描述*: ${item}`;
+            }
+
+            const photoNote = photoAlert ? "%0A%0A⚠️ *温馨提醒：您标记了有照片/参考，请记得顺便在 WhatsApp 发给我哦！*" : "";
+            window.location.href = `https://wa.me/${phone}?text=${text}${photoNote}`;
         }
     </script>
 </body>

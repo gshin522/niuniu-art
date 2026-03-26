@@ -69,7 +69,6 @@
         </div>
 
         <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border-2 border-jgDeepGreen/5">
-            
             <p class="text-[10px] text-jgHelmetGreen font-bold mb-4 text-center leading-tight">
                 * Please include estimated price & check [Photo] if you have references. <br>
                 (Sila letak anggaran harga & tandakan [Photo] jika ada rujukan.)
@@ -81,35 +80,33 @@
                 
                 <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
                 
-                <div class="flex justify-between items-end text-[10px] font-black text-gray-400 uppercase px-1">
-                    <span class="mb-1">What to buy? (Barang Apa)</span>
-                    <span class="text-right leading-tight">EST. RM<br><span class="text-[8px] text-jgOrange">(Anggaran Harga)</span></span>
-                </div>
-
                 <div id="buy-items" class="space-y-4">
-                    <div class="flex items-center gap-2">
-                        <input type="text" placeholder="e.g. Nasi Lemak, Bread..." class="big-input flex-1 item-name text-sm font-medium" oninput="calculateTotal()">
-                        <input type="number" placeholder="0" class="price-input item-price" oninput="calculateTotal()">
-                        <label class="flex flex-col items-center">
+                    <div class="flex items-end gap-2">
+                        <div class="flex-1">
+                            <label class="text-[9px] font-black text-gray-400 uppercase ml-1">What to buy? (Barang)</label>
+                            <input type="text" placeholder="e.g. Nasi Lemak..." class="big-input item-name text-sm font-medium" oninput="calculateTotal()">
+                        </div>
+                        <div class="w-[85px]">
+                            <label class="text-[8px] font-black text-jgOrange uppercase text-center block leading-tight">EST. RM<br>(Anggaran)</label>
+                            <input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()">
+                        </div>
+                        <label class="flex flex-col items-center pb-1">
                             <input type="checkbox" class="hidden item-has-photo">
                             <div class="check-box"></div>
                             <span class="text-[9px] font-bold text-gray-400 mt-1">Photo</span>
                         </label>
                     </div>
                 </div>
-                <button onclick="addRow('buy-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white active:bg-jgHelmetGreen/5">+ Add More Items</button>
+                <button onclick="addRow('buy-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white">+ Add More Items</button>
             </div>
 
             <div id="form-send" class="space-y-4 hidden">
                 <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Pickup From (Ambil Di)</label>
                 <input type="text" id="send-pickup" placeholder="e.g. Seri Gombak Chicken Rice Shop" class="big-input mb-2 text-sm font-medium">
-                
                 <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Deliver To (Hantar Ke)</label>
                 <input type="text" id="send-dropoff" placeholder="Detailed recipient address" class="big-input text-sm font-medium">
-                
                 <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
-                
-                <label class="text-[10px] font-black text-gray-400 uppercase ml-1 tracking-widest px-1">Item Description (Barang)</label>
+                <label class="text-[10px] font-black text-gray-400 uppercase ml-1 px-1">Item Description (Barang)</label>
                 <div id="send-items" class="space-y-4">
                     <div class="flex items-center gap-2">
                         <input type="text" placeholder="e.g. Parcel/Cake/Documents..." class="big-input flex-1 item-name text-sm font-medium">
@@ -120,7 +117,7 @@
                         </label>
                     </div>
                 </div>
-                <button onclick="addRow('send-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white active:bg-jgHelmetGreen/5">+ Add More Items</button>
+                <button onclick="addRow('send-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white">+ Add More Items</button>
             </div>
         </div>
     </main>
@@ -137,6 +134,10 @@
             </div>
         </div>
         <button onclick="openPayment()" class="w-full bg-jgDeepGreen text-white py-5 rounded-2xl font-black text-xl shadow-lg active:scale-95 transition-all">Order & Pay Now</button>
+        <p class="text-[9px] text-jgOrange font-bold text-center mt-3 tracking-wide leading-tight">
+            🛡️ Any price difference will be settled upon delivery! <br>
+            (Lebihan akan dipulangkan, kekurangan perlu dibayar!)
+        </p>
     </div>
 
     <div id="pay-modal" class="modal">
@@ -146,7 +147,7 @@
             <div class="bg-gray-50 aspect-square rounded-3xl flex items-center justify-center font-bold text-gray-300 border-4 border-dashed border-gray-200">
                 [ PLACE TNG QR IMAGE ]
             </div>
-            <p class="text-[10px] text-gray-400 font-bold leading-relaxed px-4 italic text-center">"Please send the receipt screenshot to WhatsApp after scanning!"</p>
+            <p class="text-[10px] text-gray-400 font-bold leading-relaxed px-4 italic">"Please send the receipt screenshot to WhatsApp after scanning!"</p>
             <button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">Payment Done, Send to Rider</button>
             <button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold block mx-auto underline">Back to List</button>
         </div>
@@ -174,14 +175,12 @@
 
         function addRow(id) {
             var div = document.createElement('div');
-            div.className = "flex items-center gap-2";
-            var content = '';
+            div.className = "flex items-end gap-2 mt-4";
             if(currentType === 'buy') {
-                content = '<input type="text" placeholder="..." class="big-input flex-1 item-name text-sm font-medium" oninput="calculateTotal()"><input type="number" placeholder="0" class="price-input item-price" oninput="calculateTotal()"><label class="flex flex-col items-center"><input type="checkbox" class="hidden item-has-photo"><div class="check-box"></div><span class="text-[9px] font-bold text-gray-400 mt-1">Photo</span></label>';
+                div.innerHTML = '<div class="flex-1"><input type="text" placeholder="..." class="big-input item-name text-sm font-medium" oninput="calculateTotal()"></div><div class="w-[85px]"><input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()"></div><label class="flex flex-col items-center pb-1"><input type="checkbox" class="hidden item-has-photo"><div class="check-box"></div><span class="text-[9px] font-bold text-gray-400 mt-1">Photo</span></label>';
             } else {
-                content = '<input type="text" placeholder="..." class="big-input flex-1 item-name text-sm font-medium"><label class="flex flex-col items-center"><input type="checkbox" class="hidden item-has-photo"><div class="check-box"></div><span class="text-[9px] font-bold text-gray-400 mt-1">Photo</span></label>';
+                div.innerHTML = '<input type="text" placeholder="..." class="big-input flex-1 item-name text-sm font-medium"><label class="flex flex-col items-center pb-1"><input type="checkbox" class="hidden item-has-photo"><div class="check-box"></div><span class="text-[9px] font-bold text-gray-400 mt-1">Photo</span></label>';
             }
-            div.innerHTML = content;
             document.getElementById(id).appendChild(div);
         }
 
@@ -202,20 +201,23 @@
         function openPayment() {
             var isBuy = (currentType === 'buy');
             var addr = isBuy ? document.getElementById('buy-address').value.trim() : document.getElementById('send-dropoff').value.trim();
-            
-            if (addr.length < 10) { 
-                showJiranAlert("🏠", "Address Incomplete", "Please provide a detailed address for our riders. (Alamat tidak lengkap)"); 
-                return; 
-            }
+            if (addr.length < 10) { showJiranAlert("🏠", "Address Incomplete", "Please provide a detailed address. (Alamat tidak lengkap)"); return; }
             
             var itemFound = false;
-            var selector = isBuy ? '#buy-items .item-name' : '#send-items .item-name';
-            document.querySelectorAll(selector).forEach(function(input) { if (input.value.trim().length > 0) itemFound = true; });
-            
-            if (!itemFound) { 
-                showJiranAlert("🛒", "List is Empty", "Please add at least one item to your list. (Sila tambah barang)"); 
-                return; 
+            var priceFilled = true;
+            if (isBuy) {
+                document.querySelectorAll('#buy-items > div').forEach(function(row) {
+                    var n = row.querySelector('.item-name').value.trim();
+                    var p = parseFloat(row.querySelector('.item-price').value || 0);
+                    if (n.length > 0) { itemFound = true; if (p <= 0) priceFilled = false; }
+                });
+            } else {
+                document.querySelectorAll('#send-items .item-name').forEach(function(i) { if (i.value.trim().length > 0) itemFound = true; });
             }
+            
+            if (!itemFound) { showJiranAlert("🛒", "List is Empty", "Please add items first. (Sila tambah barang)"); return; }
+            if (isBuy && !priceFilled) { showJiranAlert("💰", "Price Missing", "Please enter the estimated price. (Sila letak anggaran harga)"); return; }
+            
             document.getElementById('pay-modal').style.display = 'flex';
         }
 
@@ -227,28 +229,22 @@
             var itemPart = "";
 
             if (currentType === 'buy') {
-                var addr = document.getElementById('buy-address').value;
-                addressPart = "📍 *Deliver To*: " + addr;
-                var buyItems = document.querySelectorAll('#buy-items > div');
-                buyItems.forEach(function(row) {
+                addressPart = "📍 *Deliver To*: " + document.getElementById('buy-address').value;
+                document.querySelectorAll('#buy-items > div').forEach(function(row) {
                     var n = row.querySelector('.item-name').value.trim();
                     var p = row.querySelector('.item-price').value || "0";
-                    var pic = row.querySelector('.item-has-photo').checked ? " [WITH PHOTO]" : "";
+                    var pic = row.querySelector('.item-has-photo').checked ? " [PHOTO REF]" : "";
                     if(n) itemPart += "%0A- " + n + " (RM" + p + ")" + pic;
                 });
             } else {
-                var pLoc = document.getElementById('send-pickup').value;
-                var dLoc = document.getElementById('send-dropoff').value;
-                addressPart = "📤 *From*: " + pLoc + "%0A📍 *To*: " + dLoc;
-                var sendItems = document.querySelectorAll('#send-items > div');
-                sendItems.forEach(function(row) {
-                    var n = row.querySelector('.item-name').value.trim();
-                    var pic = row.querySelector('.item-has-photo').checked ? " [WITH PHOTO]" : "";
-                    if(n) itemPart += "%0A- " + n + pic;
+                addressPart = "📤 *From*: " + document.getElementById('send-pickup').value + "%0A📍 *To*: " + document.getElementById('send-dropoff').value;
+                document.querySelectorAll('#send-items .item-name').forEach(function(i) {
+                    if(i.value) itemPart += "%0A- " + i.value;
                 });
             }
 
-            var text = "💰 *JiranGo NEW ORDER* (" + typeLabel + ")%0A------------------%0A" + addressPart + "%0A%0A💵 *Total*: RM" + total + "%0A🛵 *Fee*: RM" + fee + "%0A📝 *Details*: " + itemPart + "%0A%0A✅ *Payment made. Please check receipt below.*%0A(Bayaran telah dibuat. Sila semak resit.)";
+            // WhatsApp 内容增加“多退少补”说明
+            var text = "💰 *JiranGo NEW ORDER* (" + typeLabel + ")%0A------------------%0A" + addressPart + "%0A%0A💵 *Paid*: RM" + total + "%0A🛵 *Fee*: RM" + fee + "%0A📝 *Details*: " + itemPart + "%0A%0A⚠️ *Note*: Price difference will be settled upon delivery.%0A(Sebarang perbezaan harga akan diselesaikan semasa penghantaran.)%0A%0A✅ *Payment made. Receipt attached.*";
             window.location.href = "https://wa.me/60126947903?text=" + text;
         }
     </script>

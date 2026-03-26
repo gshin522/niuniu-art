@@ -101,15 +101,20 @@
             </div>
 
             <div id="form-send" class="space-y-4 hidden">
-                <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Pickup From (Ambil Di)</label>
-                <input type="text" id="send-pickup" placeholder="e.g. Parcel point / Shop name" class="big-input text-sm font-medium">
+                <div>
+                    <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest" id="pickup-address-label">Pickup From (Ambil Di)</label>
+                    <input type="text" id="send-pickup" placeholder="e.g. Parcel point / Shop name" class="big-input text-sm font-medium">
+                    <p class="text-[9px] text-gray-400 font-bold hidden ml-2 mt-1" id="pickup-multi-tip">
+                        * Rider will ask for other pickup address in WhatsApp.
+                    </p>
+                </div>
                 <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Deliver To (Hantar Ke)</label>
                 <input type="text" id="send-dropoff" placeholder="e.g. 30, Jalan SG 1/22" class="big-input text-sm font-medium">
                 
                 <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
                 
                 <div id="send-items" class="space-y-4">
-                    <input type="text" placeholder="What are we picking up?" class="big-input item-name text-sm font-medium">
+                    <input type="text" id="send-item-desc" placeholder="What are we picking up?" class="big-input item-name text-sm font-medium">
                 </div>
             </div>
         </div>
@@ -163,7 +168,24 @@
         function updateStops(val) {
             stopCount = Math.max(1, stopCount + val);
             document.getElementById('stop-count').innerText = stopCount;
+            updateAmbilLabels();
             calculateTotal();
+        }
+
+        // 💡 新增：根据 stopCount 动态更新 Tolong Ambil 的 Label 和提示
+        function updateAmbilLabels() {
+            if (currentType === 'send') {
+                var label = document.getElementById('pickup-address-label');
+                var tip = document.getElementById('pickup-multi-tip');
+                
+                if (stopCount > 1) {
+                    label.innerText = '1st Pickup From (Point Pertama Di)';
+                    tip.classList.remove('hidden');
+                } else {
+                    label.innerText = 'Pickup From (Ambil Di)';
+                    tip.classList.add('hidden');
+                }
+            }
         }
 
         function showForm(type) {
@@ -176,9 +198,10 @@
             document.getElementById('form-buy').classList.toggle('hidden', type !== 'buy');
             document.getElementById('form-send').classList.toggle('hidden', type !== 'send');
             
-            // Update Label
+            // Update shared Counter Labels
             document.getElementById('location-label').innerText = (type === 'buy') ? 'Shop Locations' : 'Pickup Points';
             
+            updateAmbilLabels(); // Ensure Ambil labels are correct for count 1
             calculateTotal();
         }
 
@@ -208,8 +231,36 @@
         }
 
         function openPayment() {
-            var addr = (currentType === 'buy') ? document.getElementById('buy-address').value.trim() : document.getElementById('send-dropoff').value.trim();
-            if (addr.length < 5) { showJiranAlert("🏠", "Address Incomplete", "Please provide a detailed address."); return; }
+            var isBuy = (currentType === 'buy');
+            var addr = isBuy ? document.getElementById('buy-address').value.trim() : document.getElementById('send-dropoff').value.trim();
+            
+            if (addr.length < 5) { showJiranAlert("🏠", "Address Incomplete", "Please provide a detailed deliver address."); return; }
+            
+            // 💡 修复验证 BUG：强制检查货物填写情况
+            if (isBuy) {
+                var itemRows = document.querySelectorAll('#buy-items > div');
+                var validItemFound = false;
+                itemRows.forEach(function(row) {
+                    var name = row.querySelector('.item-name').value.trim();
+                    var price = parseFloat(row.querySelector('.item-price').value || 0);
+                    if (name.length > 0 && price > 0) {
+                        validItemFound = true;
+                    }
+                });
+                
+                if (!validItemFound) {
+                    showJiranAlert("🛒", "List Incomplete", "Please add at least 1 item with *name* and *EST. RM*.");
+                    return;
+                }
+            } else {
+                // Ambil 模式：检查物品描述输入框
+                var itemDesc = document.getElementById('send-item-desc').value.trim();
+                if (itemDesc.length < 1) {
+                    showJiranAlert("📦", "Item?", "Sila letak description barang.");
+                    return;
+                }
+            }
+
             document.getElementById('pay-modal').style.display = 'flex';
         }
 

@@ -97,7 +97,7 @@
                         </label>
                     </div>
                 </div>
-                <button onclick="addRow('buy-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white">+ Add More Items</button>
+                <button onclick="addRow('buy-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white active:bg-jgHelmetGreen/5">+ Add More Items</button>
             </div>
 
             <div id="form-send" class="space-y-4 hidden">
@@ -117,7 +117,7 @@
                         </label>
                     </div>
                 </div>
-                <button onclick="addRow('send-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white">+ Add More Items</button>
+                <button onclick="addRow('send-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white active:bg-jgHelmetGreen/5">+ Add More Items</button>
             </div>
         </div>
     </main>
@@ -142,12 +142,20 @@
 
     <div id="pay-modal" class="modal">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl pop-up border-t-8 border-jgDeepGreen">
-            <h2 class="text-2xl font-black text-gray-800 leading-tight">Proceed to Payment<br><span class="text-sm font-medium text-jgDeepGreen uppercase tracking-tighter">TNG Scan to Confirm Order</span></h2>
+            <h2 class="text-2xl font-black text-gray-800 leading-tight">Confirm Payment<br><span class="text-xs font-medium text-jgDeepGreen uppercase tracking-tighter">Scan with TNG or Any Bank App</span></h2>
+            
             <div class="py-2 text-6xl font-black text-jgOrange">RM <span id="modal-total">8.00</span></div>
-            <div class="bg-gray-50 aspect-square rounded-3xl flex items-center justify-center font-bold text-gray-300 border-4 border-dashed border-gray-200">
-                [ PLACE TNG QR IMAGE ]
+            
+            <div class="bg-gray-50 aspect-square rounded-3xl flex flex-col items-center justify-center border-4 border-dashed border-gray-200 p-4 relative overflow-hidden">
+                <span class="text-gray-300 font-bold mb-4">[ PLACE QR CODE HERE ]</span>
+                <div class="bg-jgDeepGreen text-white text-[9px] font-black px-4 py-2 rounded-full shadow-md">
+                    💡 TIP: Long-press to pay OR Screenshot to scan
+                </div>
             </div>
-            <p class="text-[10px] text-gray-400 font-bold leading-relaxed px-4 italic">"Please send the receipt screenshot to WhatsApp after scanning!"</p>
+
+            <p class="text-[10px] text-gray-400 font-bold leading-relaxed px-4 italic">
+                "Please Screenshot & pay using TNG or Bank App. Send receipt after payment!"
+            </p>
             <button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">Payment Done, Send to Rider</button>
             <button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold block mx-auto underline">Back to List</button>
         </div>
@@ -214,10 +222,8 @@
             } else {
                 document.querySelectorAll('#send-items .item-name').forEach(function(i) { if (i.value.trim().length > 0) itemFound = true; });
             }
-            
             if (!itemFound) { showJiranAlert("🛒", "List is Empty", "Please add items first. (Sila tambah barang)"); return; }
             if (isBuy && !priceFilled) { showJiranAlert("💰", "Price Missing", "Please enter the estimated price. (Sila letak anggaran harga)"); return; }
-            
             document.getElementById('pay-modal').style.display = 'flex';
         }
 
@@ -243,7 +249,6 @@
                 });
             }
 
-            // WhatsApp 内容增加“多退少补”说明
             var text = "💰 *JiranGo NEW ORDER* (" + typeLabel + ")%0A------------------%0A" + addressPart + "%0A%0A💵 *Paid*: RM" + total + "%0A🛵 *Fee*: RM" + fee + "%0A📝 *Details*: " + itemPart + "%0A%0A⚠️ *Note*: Price difference will be settled upon delivery.%0A(Sebarang perbezaan harga akan diselesaikan semasa penghantaran.)%0A%0A✅ *Payment made. Receipt attached.*";
             window.location.href = "https://wa.me/60126947903?text=" + text;
         }

@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <header class="bg-white px-4 pb-1 pt-4 shadow-md sticky top-0 z-20 border-b-2 border-jgDeepGreen/10 flex flex-col items-center">
+    <header class="bg-white px-4 pb-1 pt-4 shadow-md sticky top-0 z-20 border-b-2 border-jgDeepGreen/10 flex flex-col items-center text-center">
         <div class="w-full max-w-[280px] h-28 flex items-center justify-center overflow-hidden">
             <img src="https://i.ibb.co/DHZB6mP1/file-00000000618871faa3de8745477e04c3.png" alt="JiranGo Logo" class="w-full h-full object-contain scale-[2.0] logo-blend">
         </div>
@@ -80,33 +80,45 @@
             </div>
 
             <div id="form-buy" class="space-y-4">
-                <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Delivery Address (Alamat Hantar)</label>
-                <input type="text" id="buy-address" placeholder="e.g. 30, Jalan SG 1/22, Seri Gombak" class="big-input text-sm font-medium">
+                <div>
+                    <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest" id="buy-addr-label">Delivery Address (Alamat Hantar)</label>
+                    <input type="text" id="buy-address" placeholder="e.g. 30, Jalan SG 1/22, Seri Gombak" class="big-input text-sm font-medium">
+                    <p class="text-[9px] text-gray-400 font-bold hidden ml-2 mt-1" id="buy-multi-tip">* Rider will ask for other shop addresses in WhatsApp.</p>
+                </div>
                 
                 <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
                 
+                <p class="text-[10px] text-jgHelmetGreen font-bold text-center leading-tight">
+                    * Please include estimated price & check [Photo] if you have references.<br>
+                    (Sila letak anggaran harga & tandakan [Photo] jika ada rujukan.)
+                </p>
+
                 <div id="buy-items" class="space-y-4">
                     <div class="flex items-end gap-2">
                         <div class="flex-1">
                             <label class="text-[9px] font-black text-gray-400 uppercase ml-1">What to buy? (Barang & Kedai)</label>
-                            <input type="text" placeholder="e.g. Nasi Lemak (Kedai Ali)" class="big-input item-name text-sm font-medium" oninput="calculateTotal()">
+                            <input type="text" placeholder="e.g. Nasi Lemak (Leave shop blank for Rider's Choice)" class="big-input item-name text-sm font-medium" oninput="calculateTotal()">
                         </div>
                         <div class="w-[85px]">
-                            <label class="text-[8px] font-black text-jgOrange uppercase text-center block">EST. RM</label>
+                            <label class="text-[8px] font-black text-jgOrange uppercase text-center block">EST. RM<br>(Anggaran)</label>
                             <input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()">
                         </div>
                     </div>
                 </div>
-                <button onclick="addRow('buy-items')" class="mt-2 text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white">+ Add More Items</button>
+                <div class="flex justify-between items-center mt-2">
+                    <button onclick="addRow('buy-items')" class="text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white">+ Add More Items</button>
+                    <label class="flex items-center gap-2 bg-jgDeepGreen/5 px-3 py-1.5 rounded-xl border border-jgDeepGreen/10 cursor-pointer active:scale-95">
+                        <input type="checkbox" id="has-photo" class="w-4 h-4 accent-jgDeepGreen">
+                        <span class="text-[10px] font-black text-jgDeepGreen uppercase">Photo Reference</span>
+                    </label>
+                </div>
             </div>
 
             <div id="form-send" class="space-y-4 hidden">
                 <div>
                     <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest" id="pickup-address-label">Pickup From (Ambil Di)</label>
                     <input type="text" id="send-pickup" placeholder="e.g. Parcel point / Shop name" class="big-input text-sm font-medium">
-                    <p class="text-[9px] text-gray-400 font-bold hidden ml-2 mt-1" id="pickup-multi-tip">
-                        * Rider will ask for other pickup address in WhatsApp.
-                    </p>
+                    <p class="text-[9px] text-gray-400 font-bold hidden ml-2 mt-1" id="pickup-multi-tip">* Rider will ask for other pickup address in WhatsApp.</p>
                 </div>
                 <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Deliver To (Hantar Ke)</label>
                 <input type="text" id="send-dropoff" placeholder="e.g. 30, Jalan SG 1/22" class="big-input text-sm font-medium">
@@ -114,34 +126,29 @@
                 <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
                 
                 <div id="send-items" class="space-y-4">
-                    <input type="text" id="send-item-desc" placeholder="What are we picking up?" class="big-input item-name text-sm font-medium">
+                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1">What are we picking up? (Barang Apa?)</label>
+                    <input type="text" id="send-item-desc" placeholder="e.g. 2 Shopee Parcels" class="big-input item-name text-sm font-medium">
                 </div>
             </div>
-        </div>
-
-        <div class="p-6 bg-jgDeepGreen/5 rounded-[2.5rem] border-2 border-dashed border-jgDeepGreen/20 mx-4 mb-4 text-[11px] text-jgDeepGreen font-medium">
-            <h4 class="font-black text-center mb-2 uppercase tracking-widest">📌 JiranGo Service Rules</h4>
-            <ul class="space-y-2 list-disc px-4">
-                <li><b>Buy (Beli):</b> RM8 base fee for 1st shop.</li>
-                <li><b>Ambil:</b> RM5 base fee for 1st pickup point.</li>
-                <li><b>Extra Stops:</b> RM2 extra per additional location.</li>
-                <li><b>Size:</b> Must fit in a car / 1 shopping basket size.</li>
-            </ul>
         </div>
     </main>
 
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t-4 border-jgDeepGreen/5 p-5 shadow-2xl z-30">
         <div class="flex justify-between items-center mb-4 px-1">
             <div>
-                <span class="text-gray-400 text-[10px] font-black uppercase tracking-widest leading-none">Total Est. Amount</span>
+                <span class="text-gray-400 text-[10px] font-black uppercase tracking-widest leading-none tracking-tighter">Total Est. Amount (Jumlah)</span>
                 <div class="text-4xl font-black text-jgDeepGreen">RM <span id="total-price">8.00</span></div>
             </div>
             <div class="text-right text-[10px] text-gray-400 font-bold leading-tight">
-                Service Fee: RM <span id="display-fee">8.00</span><br>
-                Items (Est): RM <span id="display-items">0.00</span>
+                Upah Rider: RM <span id="display-fee">8.00</span><br>
+                Items (Barang): RM <span id="display-items">0.00</span>
             </div>
         </div>
         <button onclick="openPayment()" class="w-full bg-jgDeepGreen text-white py-5 rounded-2xl font-black text-xl shadow-lg active:scale-95 transition-all">Order & Pay Now</button>
+        <p class="text-[9px] text-jgOrange font-black text-center mt-3 leading-tight">
+            🎁 Any price difference will be settled upon delivery!<br>
+            (Lebihan akan dipulangkan, kekurangan perlu dibayar!)
+        </p>
     </div>
 
     <div id="pay-modal" class="modal">
@@ -150,7 +157,7 @@
             <div class="py-2 text-6xl font-black text-jgOrange">RM <span id="modal-total">8.00</span></div>
             
             <div class="bg-gray-50 aspect-square rounded-3xl flex flex-col items-center justify-center border-4 border-dashed border-gray-200 p-4 relative overflow-hidden">
-                <span class="text-gray-300 font-bold mb-4">[ DUITNOW QR ]</span>
+                <span class="text-gray-300 font-bold mb-4">[ YOUR QR HERE ]</span>
                 <div class="bg-jgDeepGreen text-white text-[9px] font-black px-4 py-2 rounded-full shadow-md">
                     💡 Long-press or Screenshot to pay
                 </div>
@@ -168,40 +175,39 @@
         function updateStops(val) {
             stopCount = Math.max(1, stopCount + val);
             document.getElementById('stop-count').innerText = stopCount;
-            updateAmbilLabels();
+            updateDynamicLabels();
             calculateTotal();
         }
 
-        // 💡 新增：根据 stopCount 动态更新 Tolong Ambil 的 Label 和提示
-        function updateAmbilLabels() {
-            if (currentType === 'send') {
-                var label = document.getElementById('pickup-address-label');
-                var tip = document.getElementById('pickup-multi-tip');
-                
-                if (stopCount > 1) {
-                    label.innerText = '1st Pickup From (Point Pertama Di)';
-                    tip.classList.remove('hidden');
-                } else {
-                    label.innerText = 'Pickup From (Ambil Di)';
-                    tip.classList.add('hidden');
-                }
+        function updateDynamicLabels() {
+            var buyLabel = document.getElementById('buy-addr-label');
+            var buyTip = document.getElementById('buy-multi-tip');
+            var sendLabel = document.getElementById('pickup-address-label');
+            var sendTip = document.getElementById('pickup-multi-tip');
+
+            if (stopCount > 1) {
+                buyLabel.innerText = '1st Delivery Address (Point Pertama Hantar)';
+                buyTip.classList.remove('hidden');
+                sendLabel.innerText = '1st Pickup From (Point Pertama Di)';
+                sendTip.classList.remove('hidden');
+            } else {
+                buyLabel.innerText = 'Delivery Address (Alamat Hantar)';
+                buyTip.classList.add('hidden');
+                sendLabel.innerText = 'Pickup From (Ambil Di)';
+                sendTip.classList.add('hidden');
             }
         }
 
         function showForm(type) {
             currentType = type;
-            stopCount = 1; // Reset stop count when switching
+            stopCount = 1;
             document.getElementById('stop-count').innerText = stopCount;
-            
             document.getElementById('btn-buy').classList.toggle('selected', type === 'buy');
             document.getElementById('btn-send').classList.toggle('selected', type === 'send');
             document.getElementById('form-buy').classList.toggle('hidden', type !== 'buy');
             document.getElementById('form-send').classList.toggle('hidden', type !== 'send');
-            
-            // Update shared Counter Labels
             document.getElementById('location-label').innerText = (type === 'buy') ? 'Shop Locations' : 'Pickup Points';
-            
-            updateAmbilLabels(); // Ensure Ambil labels are correct for count 1
+            updateDynamicLabels();
             calculateTotal();
         }
 
@@ -216,13 +222,10 @@
             var baseFee = (currentType === 'buy') ? 8.0 : 5.0;
             var extraStopFee = (stopCount - 1) * 2.0;
             var finalServiceFee = baseFee + extraStopFee;
-            
             var itemsCost = 0;
             if(currentType === 'buy') {
-                var prices = document.querySelectorAll('#form-buy .item-price');
-                prices.forEach(function(p) { itemsCost += parseFloat(p.value || 0); });
+                document.querySelectorAll('#form-buy .item-price').forEach(p => itemsCost += parseFloat(p.value || 0));
             }
-            
             document.getElementById('display-fee').innerText = finalServiceFee.toFixed(2);
             document.getElementById('display-items').innerText = itemsCost.toFixed(2);
             var totalVal = finalServiceFee + itemsCost;
@@ -233,46 +236,27 @@
         function openPayment() {
             var isBuy = (currentType === 'buy');
             var addr = isBuy ? document.getElementById('buy-address').value.trim() : document.getElementById('send-dropoff').value.trim();
-            
             if (addr.length < 5) { showJiranAlert("🏠", "Address Incomplete", "Please provide a detailed deliver address."); return; }
             
-            // 💡 修复验证 BUG：强制检查货物填写情况
             if (isBuy) {
-                var itemRows = document.querySelectorAll('#buy-items > div');
-                var validItemFound = false;
-                itemRows.forEach(function(row) {
-                    var name = row.querySelector('.item-name').value.trim();
-                    var price = parseFloat(row.querySelector('.item-price').value || 0);
-                    if (name.length > 0 && price > 0) {
-                        validItemFound = true;
-                    }
+                var valid = false;
+                document.querySelectorAll('#buy-items > div').forEach(row => {
+                    var n = row.querySelector('.item-name').value.trim();
+                    var p = parseFloat(row.querySelector('.item-price').value || 0);
+                    if (n.length > 0 && p > 0) valid = true;
                 });
-                
-                if (!validItemFound) {
-                    showJiranAlert("🛒", "List Incomplete", "Please add at least 1 item with *name* and *EST. RM*.");
-                    return;
-                }
+                if (!valid) { showJiranAlert("🛒", "List Incomplete", "Please add at least 1 item with *name* and *price*."); return; }
             } else {
-                // Ambil 模式：检查物品描述输入框
-                var itemDesc = document.getElementById('send-item-desc').value.trim();
-                if (itemDesc.length < 1) {
-                    showJiranAlert("📦", "Item?", "Sila letak description barang.");
-                    return;
-                }
+                if (document.getElementById('send-item-desc').value.trim().length < 1) { showJiranAlert("📦", "Item?", "Sila letak description barang."); return; }
             }
-
             document.getElementById('pay-modal').style.display = 'flex';
         }
 
         function finishOrder() {
-            var total = document.getElementById('total-price').innerText;
-            var fee = document.getElementById('display-fee').innerText;
             var items = "";
-            document.querySelectorAll(currentType === 'buy' ? '#buy-items .item-name' : '#send-items .item-name').forEach(i => {
-                if(i.value) items += "%0A- " + i.value;
-            });
-
-            var text = "💰 *JiranGo NEW ORDER*%0A------------------%0A📍 *Deliver To*: " + document.getElementById(currentType === 'buy' ? 'buy-address' : 'send-dropoff').value + "%0A🏢 *Stops*: " + stopCount + "%0A%0A💵 *Total Paid*: RM" + total + "%0A🛵 *Service Fee*: RM" + fee + "%0A📝 *Details*: " + items + "%0A%0A✅ *Payment Done. Ready for pickup!*";
+            document.querySelectorAll(currentType === 'buy' ? '#buy-items .item-name' : '#send-items .item-name').forEach(i => { if(i.value) items += "%0A- " + i.value; });
+            var photo = document.getElementById('has-photo') && document.getElementById('has-photo').checked ? "%0A📸 *Photo Reference*: YES" : "";
+            var text = "💰 *JiranGo NEW ORDER*%0A------------------%0A📍 *Deliver To*: " + document.getElementById(currentType === 'buy' ? 'buy-address' : 'send-dropoff').value + "%0A🏢 *Stops*: " + stopCount + "%0A%0A💵 *Total Paid*: RM" + document.getElementById('total-price').innerText + "%0A🛵 *Upah Rider*: RM" + document.getElementById('display-fee').innerText + photo + "%0A📝 *Details*: " + items + "%0A%0A✅ *Payment Done!*";
             window.location.href = "https://wa.me/60126947903?text=" + text;
         }
 
@@ -284,8 +268,6 @@
         }
         function closeAlert() { document.getElementById('alert-modal').style.display = 'none'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        
-        // Initial Calculation
         calculateTotal();
     </script>
 </body>

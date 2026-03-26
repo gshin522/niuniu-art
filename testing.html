@@ -148,7 +148,6 @@
             </div>
         </div>
         <button onclick="openPayment()" class="w-full bg-jgDeepGreen text-white py-5 rounded-2xl font-black text-xl shadow-lg active:scale-95 transition-all">Order & Pay Now</button>
-        
         <p class="text-[9px] text-jgOrange font-black text-center mt-3 leading-tight">
             🎁 Any price difference will be settled upon delivery!<br>
             (Lebihan akan dipulangkan, kekurangan perlu dibayar!)
@@ -168,14 +167,10 @@
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl pop-up border-t-8 border-jgDeepGreen">
             <h2 class="text-2xl font-black text-gray-800 leading-tight">Confirm Payment</h2>
             <div class="py-2 text-6xl font-black text-jgOrange">RM <span id="modal-total">8.00</span></div>
-            
             <div class="bg-gray-50 aspect-square rounded-3xl flex flex-col items-center justify-center border-4 border-dashed border-gray-200 p-4 relative overflow-hidden">
-                <span class="text-gray-300 font-bold mb-4">[ YOUR QR HERE ]</span>
-                <div class="bg-jgDeepGreen text-white text-[9px] font-black px-4 py-2 rounded-full shadow-md">
-                    💡 Long-press or Screenshot to pay
-                </div>
+                <span class="text-gray-300 font-bold mb-4 text-center">👇 Long-press or Screenshot<br>Scan QR to Pay</span>
+                <div class="bg-jgDeepGreen text-white text-[9px] font-black px-4 py-2 rounded-full shadow-md">QR PAYMENT HERE</div>
             </div>
-
             <button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">Payment Done, Send WhatsApp</button>
             <button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold block mx-auto underline">Back to Edit</button>
         </div>
@@ -250,15 +245,40 @@
             var serviceTag = isBuy ? "🛒 *[TOLONG BELI / 买]*" : "📦 *[TOLONG AMBIL / 拿]*";
             
             var items = "";
-            var itemNodes = isBuy ? '#buy-items .item-name' : '#send-items .item-name';
-            document.querySelectorAll(itemNodes).forEach(i => { if(i.value) items += "%0A- " + i.value; });
+            var itemsTotal = 0;
+            
+            // 处理货品清单逻辑
+            if (isBuy) {
+                document.querySelectorAll('#buy-items > div').forEach(row => {
+                    var name = row.querySelector('.item-name').value.trim();
+                    var price = parseFloat(row.querySelector('.item-price').value || 0);
+                    if (name) {
+                        items += "%0A- " + name + " (RM" + price.toFixed(2) + ")";
+                        itemsTotal += price;
+                    }
+                });
+            } else {
+                var desc = document.getElementById('send-item-desc').value.trim();
+                if (desc) items = "%0A- " + desc;
+            }
             
             var deliverTo = isBuy ? document.getElementById('buy-address').value : document.getElementById('send-dropoff').value;
             var pickupInfo = isBuy ? "" : "%0A🚚 *Pickup From*: " + document.getElementById('send-pickup').value;
 
+            // 金额计算
+            var upahRider = document.getElementById('display-fee').innerText;
+            var totalPaid = document.getElementById('total-price').innerText;
+            
+            // 组装金额信息栏
+            var moneySection = "%0A🛵 *Upah Rider*: RM" + upahRider;
+            if (isBuy) {
+                moneySection += "%0A🛒 *Barang Cost*: RM" + itemsTotal.toFixed(2);
+            }
+            moneySection += "%0A💵 *TOTAL PAID*: RM" + totalPaid;
+
             var photo = document.getElementById('has-photo').checked ? "%0A📸 *Photo Reference*: YES" : "";
             
-            var text = "💰 " + serviceTag + "%0A------------------%0A📍 *Deliver To*: " + deliverTo + pickupInfo + "%0A🏢 *Stops*: " + stopCount + "%0A%0A💵 *Total Paid*: RM" + document.getElementById('total-price').innerText + "%0A🛵 *Upah Rider*: RM" + document.getElementById('display-fee').innerText + photo + "%0A📝 *Details*: " + items + "%0A%0A✅ *Payment Done!*";
+            var text = "💰 " + serviceTag + "%0A------------------%0A📍 *Deliver To*: " + deliverTo + pickupInfo + "%0A🏢 *Stops*: " + stopCount + "%0A" + moneySection + photo + "%0A%0A📝 *Details*: " + items + "%0A%0A✅ *Payment Done!*";
             
             window.location.href = "https://wa.me/60126947903?text=" + text;
         }

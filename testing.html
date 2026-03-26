@@ -33,11 +33,13 @@
         .logo-blend { mix-blend-mode: multiply; filter: contrast(1.05); }
     </style>
 </head>
-<body class="pb-72"> <header class="bg-white px-4 pb-1 pt-4 shadow-md sticky top-0 z-20 border-b-2 border-jgDeepGreen/10 flex flex-col items-center">
+<body class="pb-72">
+
+    <header class="bg-white px-4 pb-1 pt-4 shadow-md sticky top-0 z-20 border-b-2 border-jgDeepGreen/10 flex flex-col items-center">
         <div class="w-full max-w-[280px] h-28 flex items-center justify-center overflow-hidden">
             <img src="https://i.ibb.co/DHZB6mP1/file-00000000618871faa3de8745477e04c3.png" alt="JiranGo Logo" class="w-full h-full object-contain scale-[2.0] logo-blend">
         </div>
-        <p class="text-[11px] font-medium text-jgDeepGreen tracking-tight -mt-5 mb-2 italic">
+        <p class="text-[11px] font-medium text-jgDeepGreen tracking-tight -mt-5 mb-2 italic text-center">
             Barang <span class="text-jgOrange font-black">S</span>elamat, Jiran <span class="text-jgOrange font-black">S</span>elesa
         </p>
     </header>
@@ -63,6 +65,7 @@
                 </div>
 
                 <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
+                
                 <p class="text-[10px] text-jgHelmetGreen font-bold text-center leading-tight">
                     * Please include estimated price & check [Photo] if you have references.<br>
                     (Sila letak anggaran harga & tandakan [Photo] jika ada rujukan.)
@@ -75,12 +78,12 @@
                             <input type="text" placeholder="e.g. Nasi Lemak (Rider choice if blank)" class="big-input item-name text-sm font-medium" oninput="calculateTotal()">
                         </div>
                         <div class="w-[85px]">
-                            <label class="text-[8px] font-black text-jgOrange uppercase text-center block">EST. RM<br>(ANGGARAN)</label>
+                            <label class="text-[8px] font-black text-jgOrange uppercase text-center block leading-tight">EST. RM<br>(ANGGARAN)</label>
                             <input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()">
                         </div>
                     </div>
                 </div>
-                <button onclick="addRow('buy-items')" class="text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white">+ Add More Items</button>
+                <button onclick="addRow('buy-items')" class="text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white shadow-sm">+ Add More Items</button>
             </div>
 
             <div id="form-send" class="space-y-4 hidden">
@@ -114,7 +117,10 @@
 
                 <label class="flex items-center gap-3 bg-white p-4 rounded-2xl border-2 border-gray-100 cursor-pointer active:scale-95">
                     <input type="checkbox" id="has-photo" class="w-5 h-5 accent-jgDeepGreen">
-                    <span class="text-xs font-black text-jgDeepGreen uppercase tracking-wider">I have Photo Reference (Saya ada rujukan gambar)</span>
+                    <div class="flex flex-col">
+                        <span class="text-xs font-black text-jgDeepGreen uppercase tracking-wider leading-none">I have Photo Reference</span>
+                        <span class="text-[10px] text-gray-400 font-bold">(Saya ada rujukan gambar)</span>
+                    </div>
                 </label>
             </div>
         </div>
@@ -162,10 +168,14 @@
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl pop-up border-t-8 border-jgDeepGreen">
             <h2 class="text-2xl font-black text-gray-800 leading-tight">Confirm Payment</h2>
             <div class="py-2 text-6xl font-black text-jgOrange">RM <span id="modal-total">8.00</span></div>
-            <div class="bg-gray-50 aspect-square rounded-3xl flex flex-col items-center justify-center border-4 border-dashed border-gray-200 p-4">
+            
+            <div class="bg-gray-50 aspect-square rounded-3xl flex flex-col items-center justify-center border-4 border-dashed border-gray-200 p-4 relative overflow-hidden">
                 <span class="text-gray-300 font-bold mb-4">[ YOUR QR HERE ]</span>
-                <div class="bg-jgDeepGreen text-white text-[9px] font-black px-4 py-2 rounded-full shadow-md">💡 Long-press or Screenshot to pay</div>
+                <div class="bg-jgDeepGreen text-white text-[9px] font-black px-4 py-2 rounded-full shadow-md">
+                    💡 Long-press or Screenshot to pay
+                </div>
             </div>
+
             <button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">Payment Done, Send WhatsApp</button>
             <button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold block mx-auto underline">Back to Edit</button>
         </div>
@@ -178,7 +188,6 @@
         function updateStops(val) {
             stopCount = Math.max(1, stopCount + val);
             document.getElementById('stop-count').innerText = stopCount;
-            // 💡 只有当 stopCount > 1 时显示提示
             document.getElementById('multi-stop-tip').classList.toggle('hidden', stopCount === 1);
             calculateTotal();
         }
@@ -219,11 +228,11 @@
         }
 
         function openPayment() {
-            var addr = (currentType === 'buy') ? document.getElementById('buy-address').value : document.getElementById('send-dropoff').value;
-            if (addr.trim().length < 5) { showJiranAlert("🏠", "Address Incomplete", "Please provide a detailed deliver address."); return; }
+            var isBuy = (currentType === 'buy');
+            var addr = isBuy ? document.getElementById('buy-address').value.trim() : document.getElementById('send-dropoff').value.trim();
+            if (addr.length < 5) { showJiranAlert("🏠", "Address Incomplete", "Please provide a detailed deliver address."); return; }
             
-            // 强制检查物品逻辑
-            if (currentType === 'buy') {
+            if (isBuy) {
                 let valid = false;
                 document.querySelectorAll('#buy-items > div').forEach(row => {
                     if (row.querySelector('.item-name').value.trim() && parseFloat(row.querySelector('.item-price').value || 0) > 0) valid = true;
@@ -231,17 +240,26 @@
                 if (!valid) { showJiranAlert("🛒", "List Empty", "Add at least 1 item with price."); return; }
             } else {
                 if (!document.getElementById('send-item-desc').value.trim()) { showJiranAlert("📦", "What item?", "Please tell us what to pickup."); return; }
+                if (!document.getElementById('send-pickup').value.trim()) { showJiranAlert("🚚", "Pickup From?", "Please tell us where to pickup."); return; }
             }
-
             document.getElementById('pay-modal').style.display = 'flex';
         }
 
         function finishOrder() {
+            var isBuy = (currentType === 'buy');
+            var serviceTag = isBuy ? "🛒 *[TOLONG BELI / 买]*" : "📦 *[TOLONG AMBIL / 拿]*";
+            
             var items = "";
-            var itemNodes = (currentType === 'buy') ? '#buy-items .item-name' : '#send-items .item-name';
+            var itemNodes = isBuy ? '#buy-items .item-name' : '#send-items .item-name';
             document.querySelectorAll(itemNodes).forEach(i => { if(i.value) items += "%0A- " + i.value; });
+            
+            var deliverTo = isBuy ? document.getElementById('buy-address').value : document.getElementById('send-dropoff').value;
+            var pickupInfo = isBuy ? "" : "%0A🚚 *Pickup From*: " + document.getElementById('send-pickup').value;
+
             var photo = document.getElementById('has-photo').checked ? "%0A📸 *Photo Reference*: YES" : "";
-            var text = "💰 *JiranGo NEW ORDER*%0A------------------%0A📍 *Deliver To*: " + ((currentType === 'buy') ? document.getElementById('buy-address').value : document.getElementById('send-dropoff').value) + "%0A🏢 *Stops*: " + stopCount + "%0A%0A💵 *Total Paid*: RM" + document.getElementById('total-price').innerText + "%0A🛵 *Upah Rider*: RM" + document.getElementById('display-fee').innerText + photo + "%0A📝 *Details*: " + items + "%0A%0A✅ *Payment Done!*";
+            
+            var text = "💰 " + serviceTag + "%0A------------------%0A📍 *Deliver To*: " + deliverTo + pickupInfo + "%0A🏢 *Stops*: " + stopCount + "%0A%0A💵 *Total Paid*: RM" + document.getElementById('total-price').innerText + "%0A🛵 *Upah Rider*: RM" + document.getElementById('display-fee').innerText + photo + "%0A📝 *Details*: " + items + "%0A%0A✅ *Payment Done!*";
+            
             window.location.href = "https://wa.me/60126947903?text=" + text;
         }
 

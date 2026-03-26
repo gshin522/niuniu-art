@@ -1,1 +1,92 @@
 
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JiranGo - 邻里物流</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .app-card { border-radius: 1.5rem; transition: transform 0.2s; }
+        .app-card:active { transform: scale(0.95); }
+        .nav-active { color: #2563eb; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <header class="bg-white p-4 shadow-sm sticky top-0 z-10">
+        <h1 class="text-xl font-bold text-gray-800 text-center">🚗 JiranGo 邻里跑腿</h1>
+    </header>
+
+    <main class="p-4 space-y-4">
+        <div class="grid grid-cols-3 gap-3">
+            <button onclick="selectService('代购美食')" class="app-card bg-orange-100 p-4 text-center shadow-sm">
+                <div class="text-2xl mb-1">🍜</div>
+                <div class="text-xs font-bold text-orange-800">代购美食</div>
+            </button>
+            <button onclick="selectService('包裹派送')" class="app-card bg-blue-100 p-4 text-center shadow-sm">
+                <div class="text-2xl mb-1">📦</div>
+                <div class="text-xs font-bold text-blue-800">包裹派送</div>
+            </button>
+            <button onclick="selectService('生活代办')" class="app-card bg-green-100 p-4 text-center shadow-sm">
+                <div class="text-2xl mb-1">💊</div>
+                <div class="text-xs font-bold text-green-800">生活代办</div>
+            </button>
+        </div>
+
+        <div id="order-form" class="bg-white p-6 rounded-3xl shadow-md space-y-4">
+            <h2 id="service-title" class="text-lg font-bold text-gray-700">请选择服务</h2>
+            
+            <div>
+                <label class="block text-sm text-gray-500 mb-1">您的地址 (只限本社区)</label>
+                <input type="text" id="address" placeholder="例如：No. 12, Jalan 1/2" class="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-400">
+            </div>
+
+            <div>
+                <label class="block text-sm text-gray-500 mb-1">详情描述</label>
+                <textarea id="details" rows="3" placeholder="想买什么？或包裹尺寸？" class="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-400"></textarea>
+            </div>
+
+            <button onclick="submitToWA()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:bg-blue-700">
+                ✅ 确认下单 (WhatsApp)
+            </button>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 shadow-lg">
+        <div class="text-center nav-active">
+            <div class="text-xl">🏠</div>
+            <div class="text-[10px]">首页</div>
+        </div>
+        <div class="text-center text-gray-400">
+            <div class="text-xl">📋</div>
+            <div class="text-[10px]">订单</div>
+        </div>
+        <div class="text-center text-gray-400">
+            <div class="text-xl">👤</div>
+            <div class="text-[10px]">我的</div>
+        </div>
+    </nav>
+
+    <script>
+        let currentService = "代购美食";
+
+        function selectService(name) {
+            currentService = name;
+            document.getElementById('service-title').innerText = "正在预约：" + name;
+        }
+
+        function submitToWA() {
+            const address = document.getElementById('address').value;
+            const details = document.getElementById('details').value;
+            if(!address || !details) return alert("请填好地址和详情哦！");
+
+            const phone = "60123456789"; // 这里换成阿新的 WhatsApp 号码
+            const text = `🚗 *JiranGo 新订单* %0A------------------%0A项目: ${currentService}%0A地址: ${address}%0A描述: ${details}`;
+            
+            window.location.href = `https://wa.me/${phone}?text=${text}`;
+        }
+    </script>
+</body>
+</html>

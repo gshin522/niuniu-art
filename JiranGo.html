@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JiranGo - Neighborhood Service 4.0</title>
+    <title>JiranGo - Neighborhood Service 4.0.1 (Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -27,15 +27,11 @@
         .service-card { border-radius: 1.5rem; transition: all 0.2s ease; cursor: pointer; border: 3px solid transparent; background: white; }
         .service-card-buy.selected { border-color: #F9A826; background-color: #FFF9F0; transform: scale(1.02); }
         .service-card-send.selected { border-color: #28A745; background-color: #F0F9F1; transform: scale(1.02); }
-        
         .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 100; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
         .pop-up { animation: popScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes popScale { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
         .logo-blend { mix-blend-mode: multiply; filter: contrast(1.05); }
         .capsule-btn { text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white active:scale-95 transition-all; }
-        
-        /* 💡 滑动器样式 */
         .slider-container { overflow: hidden; position: relative; width: 100%; border-radius: 1.5rem; }
         .slider-wrapper { display: flex; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); width: 300%; }
         .slide { width: 33.333%; flex-shrink: 0; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; }
@@ -227,7 +223,6 @@
             document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === currentSlideIndex));
         }
 
-        // 💡 智能监听 URL 参数
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('promo') === 'true') { setTimeout(openPromoModal, 800); }
@@ -278,27 +273,57 @@
             document.getElementById('modal-total').innerText = totalVal.toFixed(2);
         }
 
+        // 💡 修复 1：空单拦截逻辑
         function openPayment() {
             var isBuy = (currentType === 'buy');
-            var addr = isBuy ? document.getElementById('buy-address').value : document.getElementById('send-dropoff').value;
-            if (addr.trim().length < 5) { showJiranAlert("🏠", "Address Error", "Please fill in delivery address."); return; }
+            if (isBuy) {
+                var addr = document.getElementById('buy-address').value.trim();
+                var firstItem = document.querySelector('.item-name').value.trim();
+                var firstPrice = document.querySelector('.item-price').value.trim();
+                if (addr.length < 5) { showJiranAlert("🏠", "Address Required", "Please fill in a valid delivery address."); return; }
+                if (firstItem === "" || firstPrice === "" || parseFloat(firstPrice) <= 0) { 
+                    showJiranAlert("🛒", "Missing Items", "Please add at least one item and its estimated price."); 
+                    return; 
+                }
+            } else {
+                var pFrom = document.getElementById('send-pickup').value.trim();
+                var pTo = document.getElementById('send-dropoff').value.trim();
+                var desc = document.getElementById('send-item-desc').value.trim();
+                if (pFrom === "" || pTo === "") { showJiranAlert("🚚", "Route Missing", "Please fill in both Pickup and Delivery points."); return; }
+                if (desc === "") { showJiranAlert("📦", "Item Missing", "Please describe what we need to collect."); return; }
+            }
             document.getElementById('pay-modal').style.display = 'flex';
         }
 
+        // 💡 修复 2：WhatsApp 信息补全逻辑
         function finishOrder() {
             var isBuy = (currentType === 'buy');
-            var items = ""; var itemsTotal = 0;
+            var riderFee = document.getElementById('display-fee').innerText;
+            var itemsTotal = document.getElementById('display-items').innerText;
+            var finalPay = document.getElementById('total-price').innerText;
+            
+            var text = "💰 *" + (isBuy ? "JiranGo Beli" : "JiranGo Ambil") + "*%0A";
+            
             if (isBuy) {
+                text += "📍 *Deliver To*: " + document.getElementById('buy-address').value + "%0A%0A📝 *Details*:";
                 document.querySelectorAll('#buy-items > div').forEach(row => {
-                    var n = row.querySelector('.item-name').value; var p = parseFloat(row.querySelector('.item-price').value || 0);
+                    var n = row.querySelector('.item-name').value;
+                    var p = parseFloat(row.querySelector('.item-price').value || 0);
                     var photo = row.querySelector('.item-has-photo').checked ? " (📸)" : "";
-                    if (n) { items += "%0A- " + n + " (RM" + p.toFixed(2) + ")" + photo; itemsTotal += p; }
+                    if (n) { text += "%0A- " + n + " (RM" + p.toFixed(2) + ")" + photo; }
                 });
             } else { 
+                var pFrom = document.getElementById('send-pickup').value;
+                var pTo = document.getElementById('send-dropoff').value;
+                var desc = document.getElementById('send-item-desc').value;
                 var photo = document.getElementById('send-has-photo').checked ? " (📸)" : "";
-                items = "%0A- " + document.getElementById('send-item-desc').value + photo; 
+                text += "🚚 *Pickup From*: " + pFrom + "%0A📍 *Deliver To*: " + pTo + "%0A%0A📝 *Details*:%0A- " + desc + photo; 
             }
-            var text = "💰 *" + (isBuy ? "JiranGo Beli" : "JiranGo Ambil") + "*%0A📍 *Deliver To*: " + (isBuy ? document.getElementById('buy-address').value : document.getElementById('send-dropoff').value) + "%0A💵 *TOTAL PAID*: RM" + document.getElementById('total-price').innerText + "%0A📝 *Details*:" + items;
+
+            text += "%0A%0A--------------------%0A🛵 *Upah*: RM" + riderFee + "%0A🛒 *Items Total*: RM" + itemsTotal;
+            if (discountAmount > 0) text += "%0A🎁 *Promo*: -RM" + discountAmount.toFixed(2);
+            text += "%0A💵 *TOTAL PAID*: RM" + finalPay + "%0A✅ *Payment Done!*";
+            
             window.location.href = "https://wa.me/60126947903?text=" + text;
         }
 

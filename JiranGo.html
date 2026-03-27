@@ -5,16 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>JiranGo - Neighborhood Service 4.5</title>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>JiranGo - Neighborhood Service 4.6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { theme: { extend: { colors: { jgDeepGreen: '#2D7D46', jgHelmetGreen: '#28A745', jgOrange: '#F9A826', jgBg: '#F9FBF9' } } } }
     </script>
     <style>
         body { background-color: #F9FBF9; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
-        #splash-screen { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.6s ease-out; cursor: pointer; }
+        
+        /* 🚀 启动画面定制样式 */
+        #splash-screen {
+            position: fixed; inset: 0; background: white; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.6s ease-out; cursor: pointer;
+        }
+        /* 定制放大版 Logo */
+        .splash-logo-container {
+            width: 320px; /* 从 280px 放大 */
+            height: 160px; /* 从 140px 放大 */
+            display: flex; items-center; justify-content: center; overflow: hidden;
+            margin-bottom: -10px; /* 让口号靠得更近 */
+        }
+        .splash-logo-img { width: 100%; height: 100%; object-fit: contain; transform: scale(2.4); /* 从 2.0 放大 */ }
+        
+        /* 只让 Logo 跳动，口号不跳 */
         .logo-bounce { animation: bounceCustom 2s infinite; }
         @keyframes bounceCustom { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        
+        /* 旧的 UI 样式 (保持 4.3 版本不变) */
         .big-input { width: 100%; border-radius: 14px; border: 2px solid #e5e7eb; padding: 14px; font-size: 16px; font-weight: 600; color: #1f2937; background: white; transition: all 0.2s; }
         .big-input:focus { border-color: #2D7D46; outline: none; box-shadow: 0 0 0 4px rgba(45, 125, 70, 0.1); }
         .price-input { width: 85px; border-radius: 12px; border: 2px solid #e5e7eb; padding: 12px; font-size: 16px; font-weight: bold; text-align: center; color: #2D7D46; }
@@ -37,14 +56,15 @@
 <body class="pb-80">
 
     <div id="splash-screen" onclick="startApp()">
-        <div class="w-64 h-64 flex items-center justify-center overflow-hidden">
-            <img src="https://i.ibb.co/DHZB6mP1/file-00000000618871faa3de8745477e04c3.png" alt="Logo" class="w-full h-full object-contain scale-[2.2] logo-blend logo-bounce">
+        <div class="splash-logo-container logo-bounce">
+            <img src="https://i.ibb.co/DHZB6mP1/file-00000000618871faa3de8745477e04c3.png" alt="Logo" class="splash-logo-img logo-blend">
         </div>
-        <div class="text-center -mt-8">
-            <h2 class="text-jgDeepGreen font-black text-2xl tracking-tighter">JiranGo</h2>
-            <p class="text-jgOrange font-bold text-xs italic mt-1">Barang Selamat, Jiran Selesa</p>
+        <div class="text-center px-4 z-10 relative">
+            <p class="text-[15px] font-bold text-jgDeepGreen tracking-tight italic">
+                Barang <span class="text-jgOrange font-black">S</span>elamat, Jiran <span class="text-jgOrange font-black">S</span>elesa
+            </p>
         </div>
-        <div class="mt-20 flex flex-col items-center">
+        <div class="mt-28 flex flex-col items-center">
             <div class="w-1.5 h-1.5 bg-jgDeepGreen rounded-full animate-ping mb-2"></div>
             <p class="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Tap to start</p>
         </div>
@@ -180,7 +200,7 @@
     <script>
         var currentType = 'buy'; var stopCount = 1; var discountAmount = 0; var currentSlideIndex = 0;
 
-        // 🚀 新增全屏启动逻辑
+        // 🚀 全屏启动逻辑
         function startApp() {
             const doc = document.documentElement;
             if (doc.requestFullscreen) { doc.requestFullscreen(); }

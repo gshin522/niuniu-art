@@ -69,7 +69,6 @@
                     <input type="text" id="buy-address" placeholder="e.g. 30, Jalan SG 1/22, Seri Gombak" class="big-input text-sm font-medium">
                 </div>
                 <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
-                
                 <p class="text-[9px] font-bold text-gray-400 italic px-1">Please add items, estimated price and tick if you have a photo.</p>
 
                 <div id="buy-items" class="space-y-4">
@@ -92,13 +91,25 @@
             </div>
 
             <div id="form-send" class="space-y-4 hidden">
-                <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Pickup From (Ambil Di)</label>
-                <input type="text" id="send-pickup" placeholder="e.g. Parcel point / Shop name" class="big-input text-sm font-medium">
-                <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Deliver To (Hantar Ke)</label>
-                <input type="text" id="send-dropoff" placeholder="e.g. 30, Jalan SG 1/22" class="big-input text-sm font-medium">
+                <div>
+                    <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Pickup From (Ambil Di)</label>
+                    <input type="text" id="send-pickup" placeholder="e.g. Parcel point / Shop name" class="big-input text-sm font-medium">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Deliver To (Hantar Ke)</label>
+                    <input type="text" id="send-dropoff" placeholder="e.g. 30, Jalan SG 1/22" class="big-input text-sm font-medium">
+                </div>
                 <div id="send-items" class="mt-4">
-                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1 tracking-widest">Item Description (e.g. 3 Shopee Parcels)</label>
-                    <input type="text" id="send-item-desc" placeholder="e.g. 2 Shopee Parcels" class="big-input text-sm font-medium">
+                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1 tracking-widest">Item Description (e.g. 3 Parcels)</label>
+                    <div class="flex items-end gap-2">
+                        <div class="flex-1">
+                            <input type="text" id="send-item-desc" placeholder="e.g. 2 Shopee Parcels" class="big-input text-sm font-medium">
+                        </div>
+                        <label class="flex items-center gap-1.5 border border-gray-100 p-2 rounded-lg cursor-pointer h-[56px] -mb-px">
+                            <input type="checkbox" id="send-has-photo" class="w-4 h-4 accent-jgDeepGreen">
+                            <span class="text-[9px] font-black text-gray-400 leading-tight">Photo<br>Ref.</span>
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -125,10 +136,6 @@
                         <button onclick="updateStops(1)" class="w-10 h-10 rounded-full bg-jgDeepGreen text-white shadow-md font-black text-xl flex items-center justify-center active:scale-90">+</button>
                     </div>
                 </div>
-                <label class="flex items-center gap-3 bg-white p-4 rounded-2xl border-2 border-gray-100 cursor-pointer active:scale-95">
-                    <input type="checkbox" id="has-photo" class="w-5 h-5 accent-jgDeepGreen">
-                    <span class="text-xs font-black text-jgDeepGreen uppercase tracking-wider leading-none">I HAVE PHOTO REFERENCE (ADA GAMBAR)</span>
-                </label>
             </div>
         </div>
 
@@ -159,7 +166,7 @@
         <p class="text-[9px] text-jgOrange text-center mt-2 font-bold italic">🎁 Any price difference will be settled upon delivery!</p>
     </div>
 
-    <div id="alert-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl pop-up"><div id="alert-emoji" class="text-6xl mb-4">⚠️</div><h3 id="alert-title" class="text-xl font-black text-gray-800 mb-2">Wait a second</h3><p id="alert-msg" class="text-gray-500 mb-8 font-medium"></p><button onclick="closeAlert()" class="w-full bg-jgOrange text-white py-4 rounded-2xl font-black">Got it!</button></div></div>
+    <div id="alert-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl pop-up"><div id="alert-emoji" class="text-6xl mb-4">⚠️</div><h3 id="alert-title" class="text-xl font-black text-gray-800 mb-2">Wait a second</h3><p id="alert-msg" class="text-gray-500 mb-8 font-medium"></p><button onclick="closeAlert()" class="w-full bg-jgOrange text-white py-4 rounded-2xl font-black shadow-lg">Got it!</button></div></div>
     <div id="pay-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl pop-up border-t-8 border-jgDeepGreen"><h2 class="text-2xl font-black text-gray-800 leading-tight">Confirm Payment</h2><div class="py-2 text-6xl font-black text-jgOrange">RM <span id="modal-total">8.00</span></div><div class="bg-gray-100 rounded-3xl p-6 border-4 border-dashed border-gray-300 relative text-center"><div class="text-gray-400 font-black mb-2 text-xs uppercase tracking-widest">[ YOUR QR CODE HERE ]</div><p class="text-[10px] text-gray-400 mb-4">Screenshot or Scan to Pay</p><div class="bg-white px-4 py-2 rounded-full shadow-sm inline-block text-[10px] font-black text-jgDeepGreen">SCAN TO PAY</div></div><button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">Payment Done, Send WhatsApp</button><button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold underline">Back to Edit</button></div></div>
 
     <script>
@@ -204,7 +211,6 @@
         function addRow(id) {
             var div = document.createElement('div');
             div.className = "flex items-end gap-2 mt-4";
-            // 复原：动态行也带双语 anggaran harga 提示
             div.innerHTML = '<div class="flex-1"><input type="text" placeholder="..." class="big-input item-name text-sm font-medium" oninput="calculateTotal()"></div><div class="w-[85px]"><label class="text-[8px] font-black text-jgOrange uppercase text-center block leading-tight">EST. RM<br><span class="text-[7px] lowercase opacity-60">(anggaran harga)</span></label><input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()"></div><label class="flex items-center gap-1.5 border border-gray-100 p-2 rounded-lg cursor-pointer h-[56px] -mb-px"><input type="checkbox" class="w-4 h-4 accent-jgDeepGreen item-has-photo"><span class="text-[9px] font-black text-gray-400 leading-tight">Photo<br>Ref.</span></label>';
             document.getElementById(id).appendChild(div);
         }
@@ -251,6 +257,7 @@
             var serviceTag = isBuy ? "🛒 *[JiranGo Beli]*" : "📦 *[JiranGo Ambil]*";
             var items = "";
             var itemsTotal = 0;
+            
             if (isBuy) {
                 document.querySelectorAll('#buy-items > div').forEach(row => {
                     var n = row.querySelector('.item-name').value.trim();
@@ -263,16 +270,18 @@
                 });
             } else {
                 var d = document.getElementById('send-item-desc').value.trim();
-                if (d) items = "%0A- " + d;
+                var photoRef = document.getElementById('send-has-photo').checked ? " (📸)" : "";
+                if (d) items = "%0A- " + d + photoRef;
             }
+            
             var deliverTo = isBuy ? document.getElementById('buy-address').value : document.getElementById('send-dropoff').value;
             var pickup = isBuy ? "" : "%0A🚚 *Pickup From*: " + document.getElementById('send-pickup').value;
             var moneySection = "%0A🛵 *Upah Rider*: RM" + document.getElementById('display-fee').innerText;
             if (isBuy) moneySection += "%0A🛒 *Barang Cost*: RM" + itemsTotal.toFixed(2);
             if (discountAmount > 0) moneySection += "%0A🎁 *Discount*: -RM" + discountAmount.toFixed(2);
             moneySection += "%0A💵 *TOTAL PAID*: RM" + document.getElementById('total-price').innerText;
-            var photo = document.getElementById('has-photo').checked ? "%0A📸 *Photo Reference*: YES" : "";
-            var text = "💰 " + serviceTag + "%0A------------------%0A📍 *Deliver To*: " + deliverTo + pickup + "%0A🏢 *Stops*: " + stopCount + "%0A" + moneySection + photo + "%0A%0A📝 *Details*: " + items + "%0A%0A✅ *Payment Done!*";
+            
+            var text = "💰 " + serviceTag + "%0A------------------%0A📍 *Deliver To*: " + deliverTo + pickup + "%0A🏢 *Stops*: " + stopCount + "%0A" + moneySection + "%0A%0A📝 *Details*: " + items + "%0A%0A✅ *Payment Done!*";
             window.location.href = "https://wa.me/60126947903?text=" + text;
         }
 

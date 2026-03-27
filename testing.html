@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JiranGo - Seri Gombak Neighborhood Service</title>
+    <title>JiranGo - Neighborhood Service</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -31,12 +31,13 @@
         .pop-up { animation: popScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes popScale { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .logo-blend { mix-blend-mode: multiply; filter: contrast(1.05); }
+        .capsule-btn { text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white active:scale-95 transition-all; }
     </style>
 </head>
 <body class="pb-80">
 
     <div class="bg-jgDeepGreen text-white text-center py-2.5 text-[10px] font-black uppercase tracking-[0.15em] sticky top-0 z-30 shadow-sm">
-        🕒 Order: 9am - 6pm | 🛵 Delivery: 8pm - 10pm
+        🕒 ORDER: 9AM - 6PM | 🛵 DELIVERY: 8PM - 10PM
     </div>
 
     <header class="bg-white px-4 pb-1 pt-4 border-b-2 border-jgDeepGreen/10 flex flex-col items-center">
@@ -68,6 +69,9 @@
                     <input type="text" id="buy-address" placeholder="e.g. 30, Jalan SG 1/22, Seri Gombak" class="big-input text-sm font-medium">
                 </div>
                 <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
+                
+                <p class="text-[9px] font-bold text-gray-400 italic px-1">Please add items, estimated price and tick if you have a photo.</p>
+
                 <div id="buy-items" class="space-y-4">
                     <div class="flex items-end gap-2">
                         <div class="flex-1">
@@ -75,12 +79,16 @@
                             <input type="text" placeholder="e.g. Panadol (Farmasi Ali)" class="big-input item-name text-sm font-medium" oninput="calculateTotal()">
                         </div>
                         <div class="w-[85px]">
-                            <label class="text-[8px] font-black text-jgOrange uppercase text-center block leading-tight">EST. RM</label>
+                            <label class="text-[8px] font-black text-jgOrange uppercase text-center block leading-tight">EST. RM<br><span class="text-[7px] lowercase opacity-60">(anggaran harga)</span></label>
                             <input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()">
                         </div>
+                        <label class="flex items-center gap-1.5 border border-gray-100 p-2 rounded-lg cursor-pointer h-[56px] -mb-px">
+                            <input type="checkbox" class="w-4 h-4 accent-jgDeepGreen item-has-photo">
+                            <span class="text-[9px] font-black text-gray-400 leading-tight">Photo<br>Ref.</span>
+                        </label>
                     </div>
                 </div>
-                <button onclick="addRow('buy-items')" class="text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full">+ Add More Items</button>
+                <button onclick="addRow('buy-items')" class="capsule-btn shadow-sm">+ Add More Items</button>
             </div>
 
             <div id="form-send" class="space-y-4 hidden">
@@ -89,7 +97,7 @@
                 <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Deliver To (Hantar Ke)</label>
                 <input type="text" id="send-dropoff" placeholder="e.g. 30, Jalan SG 1/22" class="big-input text-sm font-medium">
                 <div id="send-items" class="mt-4">
-                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1">Item Description</label>
+                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1 tracking-widest">Item Description (e.g. 3 Shopee Parcels)</label>
                     <input type="text" id="send-item-desc" placeholder="e.g. 2 Shopee Parcels" class="big-input text-sm font-medium">
                 </div>
             </div>
@@ -112,14 +120,14 @@
                         <p class="text-[9px] text-gray-400 font-bold">+RM2.00 for every extra stop</p>
                     </div>
                     <div class="flex items-center gap-4">
-                        <button onclick="updateStops(-1)" class="w-10 h-10 rounded-full bg-white shadow-sm text-jgDeepGreen font-black text-xl flex items-center justify-center border border-gray-100">-</button>
+                        <button onclick="updateStops(-1)" class="w-10 h-10 rounded-full bg-white shadow-sm text-jgDeepGreen font-black text-xl flex items-center justify-center border border-gray-100 active:scale-90">-</button>
                         <span id="stop-count" class="font-black text-2xl text-jgDeepGreen min-w-[20px] text-center">1</span>
-                        <button onclick="updateStops(1)" class="w-10 h-10 rounded-full bg-jgDeepGreen text-white shadow-md font-black text-xl flex items-center justify-center">+</button>
+                        <button onclick="updateStops(1)" class="w-10 h-10 rounded-full bg-jgDeepGreen text-white shadow-md font-black text-xl flex items-center justify-center active:scale-90">+</button>
                     </div>
                 </div>
                 <label class="flex items-center gap-3 bg-white p-4 rounded-2xl border-2 border-gray-100 cursor-pointer active:scale-95">
                     <input type="checkbox" id="has-photo" class="w-5 h-5 accent-jgDeepGreen">
-                    <span class="text-xs font-black text-jgDeepGreen uppercase tracking-wider">I have Photo Reference (Ada gambar)</span>
+                    <span class="text-xs font-black text-jgDeepGreen uppercase tracking-wider leading-none">I HAVE PHOTO REFERENCE (ADA GAMBAR)</span>
                 </label>
             </div>
         </div>
@@ -141,17 +149,18 @@
                 <span class="text-gray-400 text-[10px] font-black uppercase tracking-widest">Total Est. Amount</span>
                 <div class="text-4xl font-black text-jgDeepGreen">RM <span id="total-price">8.00</span></div>
             </div>
-            <div class="text-right text-[10px] text-gray-400 font-bold">
+            <div class="text-right text-[10px] text-gray-400 font-bold leading-tight">
                 Upah: RM <span id="display-fee">8.00</span><br>
                 Items: RM <span id="display-items">0.00</span><br>
                 <span id="display-discount-row" class="text-jgOrange hidden">Promo: -RM <span id="display-discount">0.00</span></span>
             </div>
         </div>
         <button onclick="openPayment()" class="w-full bg-jgDeepGreen text-white py-5 rounded-2xl font-black text-xl shadow-lg active:scale-95">Order & Pay Now</button>
+        <p class="text-[9px] text-jgOrange text-center mt-2 font-bold italic">🎁 Any price difference will be settled upon delivery!</p>
     </div>
 
     <div id="alert-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl pop-up"><div id="alert-emoji" class="text-6xl mb-4">⚠️</div><h3 id="alert-title" class="text-xl font-black text-gray-800 mb-2">Wait a second</h3><p id="alert-msg" class="text-gray-500 mb-8 font-medium"></p><button onclick="closeAlert()" class="w-full bg-jgOrange text-white py-4 rounded-2xl font-black">Got it!</button></div></div>
-    <div id="pay-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl pop-up border-t-8 border-jgDeepGreen"><h2 class="text-2xl font-black text-gray-800">Confirm Payment</h2><div class="py-2 text-6xl font-black text-jgOrange">RM <span id="modal-total">8.00</span></div><div class="bg-gray-100 rounded-3xl p-6 border-4 border-dashed border-gray-300 relative text-center"><div class="text-gray-400 font-black mb-2 text-xs uppercase">[ YOUR QR CODE HERE ]</div><p class="text-[10px] text-gray-400 mb-4">Screenshot or Scan to Pay</p><div class="bg-white px-4 py-2 rounded-full shadow-sm inline-block text-[10px] font-black text-jgDeepGreen">SCAN TO PAY</div></div><button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg">Payment Done, Send WhatsApp</button><button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold underline">Back to Edit</button></div></div>
+    <div id="pay-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl pop-up border-t-8 border-jgDeepGreen"><h2 class="text-2xl font-black text-gray-800 leading-tight">Confirm Payment</h2><div class="py-2 text-6xl font-black text-jgOrange">RM <span id="modal-total">8.00</span></div><div class="bg-gray-100 rounded-3xl p-6 border-4 border-dashed border-gray-300 relative text-center"><div class="text-gray-400 font-black mb-2 text-xs uppercase tracking-widest">[ YOUR QR CODE HERE ]</div><p class="text-[10px] text-gray-400 mb-4">Screenshot or Scan to Pay</p><div class="bg-white px-4 py-2 rounded-full shadow-sm inline-block text-[10px] font-black text-jgDeepGreen">SCAN TO PAY</div></div><button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">Payment Done, Send WhatsApp</button><button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold underline">Back to Edit</button></div></div>
 
     <script>
         var currentType = 'buy';
@@ -195,12 +204,13 @@
         function addRow(id) {
             var div = document.createElement('div');
             div.className = "flex items-end gap-2 mt-4";
-            div.innerHTML = '<div class="flex-1"><input type="text" placeholder="..." class="big-input item-name text-sm font-medium" oninput="calculateTotal()"></div><div class="w-[85px]"><input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()"></div>';
+            // 复原：动态行也带双语 anggaran harga 提示
+            div.innerHTML = '<div class="flex-1"><input type="text" placeholder="..." class="big-input item-name text-sm font-medium" oninput="calculateTotal()"></div><div class="w-[85px]"><label class="text-[8px] font-black text-jgOrange uppercase text-center block leading-tight">EST. RM<br><span class="text-[7px] lowercase opacity-60">(anggaran harga)</span></label><input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()"></div><label class="flex items-center gap-1.5 border border-gray-100 p-2 rounded-lg cursor-pointer h-[56px] -mb-px"><input type="checkbox" class="w-4 h-4 accent-jgDeepGreen item-has-photo"><span class="text-[9px] font-black text-gray-400 leading-tight">Photo<br>Ref.</span></label>';
             document.getElementById(id).appendChild(div);
         }
 
         function calculateTotal() {
-            var baseFee = (currentType === 'buy') ? 8.0 : 6.0; // UPDATED PRICE
+            var baseFee = (currentType === 'buy') ? 8.0 : 6.0; 
             var extraFee = (stopCount - 1) * 2.0;
             var itemsCost = 0;
             if(currentType === 'buy') {
@@ -245,7 +255,11 @@
                 document.querySelectorAll('#buy-items > div').forEach(row => {
                     var n = row.querySelector('.item-name').value.trim();
                     var p = parseFloat(row.querySelector('.item-price').value || 0);
-                    if (n) { items += "%0A- " + n + " (RM" + p.toFixed(2) + ")"; itemsTotal += p; }
+                    var photoRef = row.querySelector('.item-has-photo').checked ? " (📸)" : "";
+                    if (n) { 
+                        items += "%0A- " + n + " (RM" + p.toFixed(2) + ")" + photoRef; 
+                        itemsTotal += p; 
+                    }
                 });
             } else {
                 var d = document.getElementById('send-item-desc').value.trim();

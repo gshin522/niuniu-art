@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JiranGo 4.4 - Full Details Fix</title>
+    <title>JiranGo 4.5 - Pure Perfect Version</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { theme: { extend: { colors: { jgDeepGreen: '#2D7D46', jgHelmetGreen: '#28A745', jgOrange: '#F9A826', jgBg: '#F9FBF9' } } } }
@@ -21,15 +21,10 @@
         @keyframes popScale { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .logo-blend { mix-blend-mode: multiply; filter: contrast(1.05); }
         .classic-box { background: #f3f4f6; border-radius: 1.5rem; padding: 16px; border: 1px solid #e5e7eb; }
+        .capsule-btn { text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white active:scale-95 transition-all; }
     </style>
 </head>
 <body class="pb-80">
-
-    <div class="fixed top-14 right-4 z-50">
-        <button onclick="toggleLang()" class="bg-white border-2 border-jgDeepGreen text-jgDeepGreen font-black px-4 py-2 rounded-full shadow-lg text-xs active:scale-90 transition-all">
-            <span id="lang-btn-text">中文 / 中文</span>
-        </button>
-    </div>
 
     <div class="bg-jgDeepGreen text-white text-center py-2.5 text-[10px] font-black uppercase tracking-[0.15em] sticky top-0 z-30 shadow-sm">
         🕒 ORDER: 9AM - 6PM | 🛵 DELIVERY: 8PM - 10PM
@@ -40,8 +35,7 @@
             <img src="https://i.ibb.co/DHZB6mP1/file-00000000618871faa3de8745477e04c3.png" alt="JiranGo Logo" class="w-full h-full object-contain scale-[2.0] logo-blend">
         </div>
         <p class="text-[11px] font-medium text-jgDeepGreen tracking-tight -mt-5 mb-2 italic text-center">
-            <span class="lang-en">Barang <span class="text-jgOrange font-black">S</span>elamat, Jiran <span class="text-jgOrange font-black">S</span>elesa</span>
-            <span class="lang-zh hidden text-[10px] font-bold">邻里相助，安心托付</span>
+            Barang <span class="text-jgOrange font-black">S</span>elamat, Jiran <span class="text-jgOrange font-black">S</span>elesa
         </p>
     </header>
 
@@ -49,29 +43,27 @@
         <div class="grid grid-cols-2 gap-4">
             <div id="btn-buy" onclick="showForm('buy')" class="service-card service-card-buy p-6 text-center shadow-md selected">
                 <div class="text-5xl mb-2">🛒</div>
-                <div class="text-lg font-black text-jgOrange leading-tight">JiranGo Beli<br><span class="text-[10px] opacity-70 font-bold lang-en">(Tolong Beli)</span><span class="text-[10px] opacity-70 font-bold lang-zh hidden">(帮您买)</span></div>
+                <div class="text-lg font-black text-jgOrange leading-tight">JiranGo Beli<br><span class="text-[10px] opacity-70 font-bold">(Tolong Beli)</span></div>
             </div>
             <div id="btn-send" onclick="showForm('send')" class="service-card service-card-send p-6 text-center shadow-md">
                 <div class="text-5xl mb-2">📦</div>
-                <div class="text-lg font-black text-jgHelmetGreen leading-tight">JiranGo Ambil<br><span class="text-[10px] opacity-70 font-bold lang-en">(Tolong Ambil)</span><span class="text-[10px] opacity-70 font-bold lang-zh hidden">(帮您取)</span></div>
+                <div class="text-lg font-black text-jgHelmetGreen leading-tight">JiranGo Ambil<br><span class="text-[10px] opacity-70 font-bold">(Tolong Ambil)</span></div>
             </div>
         </div>
 
         <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border-2 border-jgDeepGreen/5 space-y-6">
+            
             <div id="form-buy" class="space-y-4">
-                <label class="text-[11px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest lang-en">Delivery Address (Alamat Hantar)</label>
-                <label class="text-[11px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest lang-zh hidden">送货地址 (Alamat Hantar)</label>
+                <label class="text-[11px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest">Delivery Address (Alamat Hantar)</label>
                 <input type="text" id="buy-address" placeholder="e.g. 30, Jalan SG 1/22, Seri Gombak" class="big-input text-sm font-medium">
                 
                 <div class="border-t border-dashed border-gray-100 my-4"></div>
-                <p class="text-[10px] font-bold text-gray-400 italic text-center lang-en">Please add items, estimated price and tick if you have a photo.</p>
-                <p class="text-[10px] font-bold text-gray-400 italic text-center lang-zh hidden">请添加物品，输入估价并勾选是否有照片。</p>
+                <p class="text-[10px] font-bold text-gray-400 italic text-center">Please add items, estimated price and tick if you have a photo.</p>
 
                 <div id="buy-items" class="space-y-6">
                     <div class="flex items-end gap-2">
                         <div class="flex-1">
-                            <label class="text-[9px] font-black text-gray-400 uppercase ml-1 lang-en">Items & Shop Name</label>
-                            <label class="text-[9px] font-black text-gray-400 uppercase ml-1 lang-zh hidden">物品与店名</label>
+                            <label class="text-[9px] font-black text-gray-400 uppercase ml-1">Items & Shop Name</label>
                             <input type="text" placeholder="e.g. Panadol (Farmasi Ali)" class="big-input item-name text-sm font-medium" oninput="calculateTotal()">
                         </div>
                         <div class="w-[85px]">
@@ -118,8 +110,7 @@
 
             <div class="classic-box flex items-center justify-between">
                 <div>
-                    <h4 class="text-[11px] font-black text-jgDeepGreen uppercase lang-en">Shop Locations</h4>
-                    <h4 class="text-[11px] font-black text-jgDeepGreen uppercase lang-zh hidden">地点数量</h4>
+                    <h4 class="text-[11px] font-black text-jgDeepGreen uppercase">Shop Locations</h4>
                     <p class="text-[9px] font-bold text-jgHelmetGreen">+RM2.00 for every extra stop</p>
                 </div>
                 <div class="flex items-center gap-4">
@@ -132,7 +123,7 @@
 
         <div class="bg-jgDeepGreen/5 rounded-[2rem] p-6 border-2 border-dashed border-jgDeepGreen/20">
             <h4 class="text-xs font-black text-jgDeepGreen mb-3 text-center uppercase tracking-widest">📌 JiranGo Service Rules</h4>
-            <ul class="text-[11px] font-bold text-gray-500 space-y-2">
+            <ul class="text-[11px] font-bold text-gray-500 space-y-2 text-center">
                 <li>• Beli: RM8 base fee for 1st shop.</li>
                 <li>• Ambil: RM6 base fee for 1st pickup.</li>
                 <li>• Extra Stops: RM2 extra per stop.</li>
@@ -156,29 +147,33 @@
         <p class="text-[9px] font-bold text-jgOrange text-center mt-3 animate-pulse">🎁 Any price difference will be settled upon delivery!</p>
     </div>
 
-    <div id="alert-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center pop-up shadow-2xl"><div id="alert-emoji" class="text-6xl mb-4">⚠️</div><h3 id="alert-title" class="text-xl font-black mb-2">Wait!</h3><p id="alert-msg" class="text-gray-500 mb-8 font-medium"></p><button onclick="closeAlert()" class="w-full bg-jgOrange text-white py-4 rounded-2xl font-black shadow-lg">OK</button></div></div>
-    
-    <div id="pay-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl pop-up border-t-8 border-jgDeepGreen text-center">
-        <h2 class="text-xl font-black text-gray-800">确认付款 / Confirm Payment</h2>
-        <div class="py-2 text-6xl font-black text-jgOrange">RM <span id="modal-total">8.00</span></div>
-        <div class="bg-gray-100 rounded-3xl p-6 border-4 border-dashed border-gray-300 relative">
-            <div class="text-gray-400 font-black mb-2 text-xs uppercase">[ QR CODE ]</div>
-            <p class="text-[10px] text-gray-400 mb-4">请扫描付款并截图保存 / Screenshot or Scan to Pay</p>
-            <button class="bg-white border border-gray-300 px-4 py-2 rounded-full text-[10px] font-black text-jgDeepGreen uppercase shadow-sm">Scan to Pay</button>
+    <div id="alert-modal" class="modal">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center pop-up shadow-2xl">
+            <div id="alert-emoji" class="text-6xl mb-4">⚠️</div>
+            <h3 id="alert-title" class="text-xl font-black mb-2">Wait!</h3>
+            <p id="alert-msg" class="text-gray-500 mb-8 font-medium"></p>
+            <button onclick="closeAlert()" class="w-full bg-jgOrange text-white py-4 rounded-2xl font-black shadow-lg">OK</button>
         </div>
-        <button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">已完成付款，发送订单</button>
-        <button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold underline">返回修改 Back to Edit</button>
-    </div></div>
+    </div>
+    
+    <div id="pay-modal" class="modal">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl pop-up border-t-8 border-jgDeepGreen">
+            <h2 class="text-xl font-black text-gray-800">Confirm Payment / 确认付款</h2>
+            <div class="py-2 text-6xl font-black text-jgOrange">RM <span id="modal-total">8.00</span></div>
+            <div class="bg-gray-100 rounded-3xl p-6 border-4 border-dashed border-gray-300">
+                <div class="text-gray-400 font-black mb-2 text-xs uppercase">[ QR CODE ]</div>
+                <p class="text-[10px] text-gray-400 mb-4 font-bold">Screenshot and pay via TNG/Bank</p>
+                <div class="w-24 h-24 bg-white mx-auto flex items-center justify-center border-2 border-gray-200 rounded-xl mb-2">
+                   <span class="text-[10px] text-gray-300 uppercase">QR HERE</span>
+                </div>
+            </div>
+            <button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">Payment Done, Send Order</button>
+            <button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold underline">Back to Edit</button>
+        </div>
+    </div>
 
     <script>
-        var currentType = 'buy'; var stopCount = 1; var discountAmount = 0; var currentLang = 'en';
-
-        function toggleLang() {
-            currentLang = (currentLang === 'en') ? 'zh' : 'en';
-            document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('hidden', currentLang === 'zh'));
-            document.querySelectorAll('.lang-zh').forEach(el => el.classList.toggle('hidden', currentLang === 'en'));
-            document.getElementById('lang-btn-text').innerText = (currentLang === 'en') ? '中文 / 中文' : 'English / 英文';
-        }
+        var currentType = 'buy'; var stopCount = 1; var discountAmount = 0;
 
         function calculateTotal() {
             var baseFee = (currentType === 'buy') ? 8.0 : 6.0;
@@ -196,14 +191,14 @@
                 let firstItem = document.querySelector('#buy-items .item-name').value.trim();
                 let firstPrice = document.querySelector('#buy-items .item-price').value.trim();
                 if (addr.length < 5 || firstItem === "" || firstPrice === "") {
-                    showJiranAlert("🏠", "Wait!", "Please fill Delivery Address, Item AND Estimated Price!");
+                    showJiranAlert("🏠", "Wait!", "Please fill Address, Item name and Estimated Price!");
                     return;
                 }
             } else {
                 let pFrom = document.getElementById('send-pickup').value.trim();
                 let pTo = document.getElementById('send-dropoff').value.trim();
                 if (pFrom === "" || pTo === "") {
-                    showJiranAlert("📦", "Missing Info", "Please fill Pickup and Delivery point!");
+                    showJiranAlert("📦", "Wait!", "Please fill Pickup and Delivery point!");
                     return;
                 }
             }

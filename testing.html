@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JiranGo - Neighborhood Service 4.2</title>
+    <title>JiranGo - Neighborhood Service 4.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { theme: { extend: { colors: { jgDeepGreen: '#2D7D46', jgHelmetGreen: '#28A745', jgOrange: '#F9A826', jgBg: '#F9FBF9' } } } }
@@ -102,21 +102,10 @@
                 <p id="send-multi-tip" class="text-[9px] font-bold text-jgOrange italic px-1 mt-1 hidden"></p>
             </div>
 
-            <div class="bg-jgBg p-4 rounded-2xl border-2 border-dashed border-jgDeepGreen/20 space-y-2">
-                <div class="flex justify-between items-center px-1">
-                    <label class="text-[9px] font-black text-jgDeepGreen uppercase tracking-widest leading-none">Promo Code</label>
-                    <span id="promo-status" class="text-[9px] font-bold text-gray-400 leading-none italic">Apply to save!</span>
-                </div>
-                <div class="flex gap-2">
-                    <input type="text" id="promo-input" placeholder="e.g. SOKONGJIRANGO" class="flex-1 bg-white rounded-xl px-4 py-3 text-sm font-black uppercase border border-gray-100 outline-none">
-                    <button onclick="applyPromo()" id="promo-btn" class="bg-jgDeepGreen text-white px-5 py-3 rounded-xl text-xs font-black shadow-md active:scale-95 transition-all">APPLY</button>
-                </div>
-            </div>
-
             <div class="pt-4 border-t-2 border-gray-50 space-y-4">
                 <div class="flex items-center justify-between bg-jgDeepGreen/5 p-4 rounded-2xl border border-jgDeepGreen/10">
                     <div>
-                        <label class="text-[10px] font-black text-jgDeepGreen uppercase tracking-widest block" id="location-label">Shop Locations</label>
+                        <label class="text-[10px] font-black text-jgDeepGreen uppercase tracking-widest block">Shop Locations</label>
                         <p class="text-[9px] text-gray-400 font-bold">+RM2.00 for every extra stop</p>
                     </div>
                     <div class="flex items-center gap-4">
@@ -124,6 +113,17 @@
                         <span id="stop-count" class="font-black text-2xl text-jgDeepGreen min-w-[20px] text-center">1</span>
                         <button onclick="updateStops(1)" class="w-10 h-10 rounded-full bg-jgDeepGreen text-white shadow-md font-black text-xl flex items-center justify-center active:scale-90">+</button>
                     </div>
+                </div>
+            </div>
+
+            <div class="bg-jgOrange/5 p-4 rounded-2xl border-2 border-dashed border-jgOrange/30 space-y-2">
+                <div class="flex justify-between items-center px-1">
+                    <label class="text-[9px] font-black text-jgOrange uppercase tracking-widest leading-none">Promo Code</label>
+                    <span id="promo-status" class="text-[9px] font-bold text-gray-400 leading-none italic">Apply to save!</span>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="promo-input" placeholder="e.g. SOKONGJIRANGO" class="flex-1 bg-white rounded-xl px-4 py-3 text-sm font-black uppercase border border-gray-100 outline-none">
+                    <button onclick="applyPromo()" id="promo-btn" class="bg-jgOrange text-white px-5 py-3 rounded-xl text-xs font-black shadow-md active:scale-95 transition-all">APPLY</button>
                 </div>
             </div>
         </div>
@@ -155,7 +155,7 @@
     </div>
 
     <div id="alert-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl pop-up"><div id="alert-emoji" class="text-6xl mb-4">⚠️</div><h3 id="alert-title" class="text-xl font-black text-gray-800 mb-2">Wait a second</h3><p id="alert-msg" class="text-gray-500 mb-8 font-medium whitespace-pre-line"></p><button onclick="closeAlert()" class="w-full bg-jgOrange text-white py-4 rounded-2xl font-black shadow-lg">Got it!</button></div></div>
-    <div id="pay-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl pop-up border-t-8 border-jgDeepGreen"><h2 class="text-2xl font-black text-gray-800 leading-tight">Confirm Payment</h2><div class="py-2 text-6xl font-black text-jgOrange">RM <span id="modal-total">8.00</span></div><div class="bg-gray-100 rounded-3xl p-6 border-4 border-dashed border-gray-300 relative text-center"><div class="text-gray-400 font-black mb-2 text-xs uppercase tracking-widest">[ QR CODE ]</div><p class="text-[10px] text-gray-400 mb-4">Screenshot or Scan to Pay</p><div class="bg-white px-4 py-2 rounded-full shadow-sm inline-block text-[10px] font-black text-jgDeepGreen">SCAN TO PAY</div></div><button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">Payment Done, Send WhatsApp</button><button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold underline">Back to Edit</button></div></div>
+    <div id="pay-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl pop-up border-t-8 border-jgDeepGreen"><h2 class="text-2xl font-black text-gray-800 leading-tight">Confirm Payment</h2><div class="py-2 text-6xl font-black text-jgOrange">RM <span id="modal-total">8.00</span></div><div class="bg-gray-100 rounded-3xl p-6 border-4 border-dashed border-gray-300 relative text-center"><div class="text-gray-400 font-black mb-2 text-xs uppercase tracking-widest text-center">[ QR CODE ]</div><p class="text-[10px] text-gray-400 mb-4">Screenshot or Scan to Pay</p><div class="bg-white px-4 py-2 rounded-full shadow-sm inline-block text-[10px] font-black text-jgDeepGreen">SCAN TO PAY</div></div><button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">Payment Done, Send WhatsApp</button><button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold underline">Back to Edit</button></div></div>
     <div id="promo-modal" class="modal"><div class="bg-white w-full max-w-md rounded-[2.5rem] p-6 text-center space-y-5 shadow-2xl pop-up border-4 border-jgOrange"><h2 class="text-xl font-black text-jgOrange flex items-center justify-center gap-2 mt-2"><span>🔥</span> JiranGo Deals</h2><div class="slider-container bg-jgBg shadow-inner"><div class="slider-wrapper" id="slider-wrapper"><div class="slide"><div class="text-5xl mb-3">🎁</div><h4 class="text-lg font-black text-gray-800">Your RM2.00 Gift!</h4><p class="text-xs text-gray-500 my-2">Use code on first order:</p><div class="bg-white px-4 py-2 rounded-xl border border-jgOrange text-lg font-black text-jgOrange tracking-widest">SOKONGJIRANGO</div></div><div class="slide"><img src="https://i.ibb.co/DHZB6mP1/file-00000000618871faa3de8745477e04c3.png" alt="Logo" class="w-20 h-20 object-contain logo-blend mb-2"><h4 class="text-lg font-black text-jgDeepGreen">Neighborhood Love</h4><p class="text-[11px] text-gray-500 leading-relaxed">Real neighbors helping you save time. Reliable & Trusted!</p></div><div class="slide"><div class="text-5xl mb-3">🛵</div><h4 class="text-lg font-black text-jgHelmetGreen">Follow Our Status</h4><p class="text-[11px] text-gray-500 leading-relaxed">Check our WhatsApp status for special <b>RM6 deals</b> every day!</p></div></div><button class="slider-btn left-2" onclick="moveSlide(-1)">❮</button><button class="slider-btn right-2" onclick="moveSlide(1)">❯</button></div><div class="slider-dots"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div><button onclick="closePromoModal()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">Start Ordering</button></div></div>
 
     <script>
@@ -180,15 +180,11 @@
         function updateStops(val) { 
             stopCount = Math.max(1, stopCount + val); 
             document.getElementById('stop-count').innerText = stopCount; 
-            
-            // 💡 动态提示：如果是 Ambil 且点数 > 1，显示黄色文字
             var tip = document.getElementById('send-multi-tip');
             if (currentType === 'send' && stopCount > 1) {
                 tip.innerText = "*You selected " + stopCount + " locations. Our rider will contact you via WhatsApp for the extra pickup details.";
                 tip.classList.remove('hidden');
-            } else {
-                tip.classList.add('hidden');
-            }
+            } else { tip.classList.add('hidden'); }
             calculateTotal(); 
         }
         
@@ -198,7 +194,6 @@
             document.getElementById('btn-send').classList.toggle('selected', type === 'send');
             document.getElementById('form-buy').classList.toggle('hidden', type !== 'buy');
             document.getElementById('form-send').classList.toggle('hidden', type !== 'send');
-            // 切换 Tab 时重置提示
             updateStops(0);
         }
 
@@ -243,7 +238,6 @@
             var itemsTotal = document.getElementById('display-items').innerText;
             var finalPay = document.getElementById('total-price').innerText;
             var text = "💰 *" + (isBuy ? "JiranGo Beli" : "JiranGo Ambil") + "*%0A";
-            
             if (isBuy) {
                 text += "📍 *Deliver To*: " + document.getElementById('buy-address').value + "%0A%0A📝 *Details*:";
                 document.querySelectorAll('#buy-items > div').forEach(row => {
@@ -255,15 +249,11 @@
             } else { 
                 text += "🚚 *Pickup From*: " + document.getElementById('send-pickup').value + "%0A📍 *Deliver To*: " + document.getElementById('send-dropoff').value + "%0A%0A📝 *Details*:%0A- " + document.getElementById('send-item-desc').value + (document.getElementById('send-has-photo').checked ? " (📸)" : ""); 
             }
-
             text += "%0A%0A--------------------%0A🛵 *Upah*: RM" + riderFee;
             if (isBuy) text += "%0A🛒 *Items Total*: RM" + itemsTotal;
             if (discountAmount > 0) text += "%0A🎁 *Promo*: -RM" + discountAmount.toFixed(2);
             text += "%0A💵 *TOTAL PAID*: RM" + finalPay + "%0A✅ *Payment Done!*";
-            
-            if (stopCount > 1) {
-                text += "%0A%0A⚠️ *Note: User selected " + stopCount + " locations. Rider please confirm extra address via WhatsApp.*";
-            }
+            if (stopCount > 1) { text += "%0A%0A⚠️ *Note: User selected " + stopCount + " locations. Rider please confirm extra address via WhatsApp.*"; }
             window.location.href = "https://wa.me/60126947903?text=" + text;
         }
 

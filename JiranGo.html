@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JiranGo 5.0 - Pro & Bilingual</title>
+    <title>JiranGo 4.0 Pro - Verified & Bilingual</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -26,8 +26,7 @@
         .pop-up { animation: popScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes popScale { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .logo-blend { mix-blend-mode: multiply; filter: contrast(1.05); }
-        
-        /* 滑动器样式 */
+        .capsule-btn { text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white active:scale-95 transition-all; }
         .slider-container { overflow: hidden; position: relative; width: 100%; border-radius: 1.5rem; }
         .slider-wrapper { display: flex; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); width: 300%; }
         .slide { width: 33.333%; flex-shrink: 0; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; }
@@ -62,11 +61,17 @@
         <div class="grid grid-cols-2 gap-4">
             <div id="btn-buy" onclick="showForm('buy')" class="service-card service-card-buy p-6 text-center shadow-md selected">
                 <div class="text-5xl mb-2">🛒</div>
-                <div class="text-lg font-black text-jgOrange leading-tight">JiranGo Beli<br><span class="text-[10px] opacity-70 font-bold lang-en">(Tolong Beli)</span><span class="text-[10px] opacity-70 font-bold lang-zh hidden">(帮您买)</span></div>
+                <div class="text-lg font-black text-jgOrange leading-tight">JiranGo Beli<br>
+                    <span class="text-[10px] opacity-70 font-bold lang-en">(Tolong Beli)</span>
+                    <span class="text-[10px] opacity-70 font-bold lang-zh hidden">(帮您买)</span>
+                </div>
             </div>
             <div id="btn-send" onclick="showForm('send')" class="service-card service-card-send p-6 text-center shadow-md">
                 <div class="text-5xl mb-2">📦</div>
-                <div class="text-lg font-black text-jgHelmetGreen leading-tight">JiranGo Ambil<br><span class="text-[10px] opacity-70 font-bold lang-en">(Tolong Ambil)</span><span class="text-[10px] opacity-70 font-bold lang-zh hidden">(帮您取)</span></div>
+                <div class="text-lg font-black text-jgHelmetGreen leading-tight">JiranGo Ambil<br>
+                    <span class="text-[10px] opacity-70 font-bold lang-en">(Tolong Ambil)</span>
+                    <span class="text-[10px] opacity-70 font-bold lang-zh hidden">(帮您取)</span>
+                </div>
             </div>
         </div>
 
@@ -75,132 +80,193 @@
                 <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest lang-en">Delivery Address (Alamat Hantar)</label>
                 <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest lang-zh hidden">送货地址 (Delivery Address)</label>
                 <input type="text" id="buy-address" placeholder="e.g. 30, Jalan SG 1/22, Seri Gombak" class="big-input text-sm font-medium">
-                
-                <div id="buy-items" class="space-y-4 pt-4 border-t-2 border-dashed border-gray-100">
+                <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
+                <p class="text-[9px] font-bold text-gray-400 italic px-1 lang-en">Please add items, estimated price and tick if you have a photo.</p>
+                <p class="text-[9px] font-bold text-gray-400 italic px-1 lang-zh hidden">请输入物品、店名与估价，如有照片请打勾。</p>
+                <div id="buy-items" class="space-y-4">
                     <div class="flex items-end gap-2">
                         <div class="flex-1">
                             <label class="text-[9px] font-black text-gray-400 uppercase ml-1 lang-en">Items & Shop Name</label>
-                            <label class="text-[9px] font-black text-gray-400 uppercase ml-1 lang-zh hidden">项目与店名 (Items & Shop)</label>
+                            <label class="text-[9px] font-black text-gray-400 uppercase ml-1 lang-zh hidden">物品与店名</label>
                             <input type="text" placeholder="e.g. Panadol (Farmasi Ali)" class="big-input item-name text-sm font-medium" oninput="calculateTotal()">
                         </div>
                         <div class="w-[85px]">
-                            <label class="text-[8px] font-black text-jgOrange uppercase text-center block leading-tight lang-en">EST. RM</label>
-                            <label class="text-[8px] font-black text-jgOrange uppercase text-center block leading-tight lang-zh hidden">估价 RM</label>
+                            <label class="text-[8px] font-black text-jgOrange uppercase text-center block leading-tight lang-en">EST. RM<br><span class="text-[7px] lowercase opacity-60">(anggaran)</span></label>
+                            <label class="text-[8px] font-black text-jgOrange uppercase text-center block leading-tight lang-zh hidden">估价 RM<br><span class="text-[7px] lowercase opacity-60">(约数)</span></label>
                             <input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()">
                         </div>
+                        <label class="flex items-center gap-1.5 border border-gray-100 p-2 rounded-lg cursor-pointer h-[56px] -mb-px">
+                            <input type="checkbox" class="w-4 h-4 accent-jgDeepGreen item-has-photo">
+                            <span class="text-[9px] font-black text-gray-400 leading-tight">Photo<br>Ref.</span>
+                        </label>
                     </div>
                 </div>
-                <button onclick="addRow('buy-items')" class="text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white active:scale-95 lang-en">+ Add More Items</button>
-                <button onclick="addRow('buy-items')" class="text-xs font-black text-jgHelmetGreen px-4 py-1.5 border-2 border-jgHelmetGreen/10 rounded-full bg-white active:scale-95 lang-zh hidden">+ 添加更多项目</button>
+                <button onclick="addRow('buy-items')" class="capsule-btn shadow-sm lang-en">+ Add More Items</button>
+                <button onclick="addRow('buy-items')" class="capsule-btn shadow-sm lang-zh hidden">+ 添加更多物品</button>
             </div>
 
             <div id="form-send" class="space-y-4 hidden">
                 <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest lang-en">Pickup From (Ambil Di)</label>
                 <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest lang-zh hidden">取货地点 (Pickup From)</label>
                 <input type="text" id="send-pickup" placeholder="e.g. Parcel point / Shop name" class="big-input text-sm font-medium">
-                
                 <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest lang-en">Deliver To (Hantar Ke)</label>
                 <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest lang-zh hidden">送到哪里 (Deliver To)</label>
                 <input type="text" id="send-dropoff" placeholder="e.g. 30, Jalan SG 1/22" class="big-input text-sm font-medium">
-                
-                <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest lang-en tracking-tight">Item Description (e.g. 3 Parcels)</label>
-                <label class="text-[10px] font-black text-jgDeepGreen uppercase ml-1 tracking-widest lang-zh hidden">物品描述 (Item Description)</label>
-                <input type="text" id="send-item-desc" placeholder="e.g. 2 Shopee Parcels" class="big-input text-sm font-medium">
+                <div id="send-items" class="mt-4">
+                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1 tracking-widest lang-en italic">Item Description (e.g. 3 Parcels)</label>
+                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1 tracking-widest lang-zh hidden italic">物品描述 (如: 3个包裹)</label>
+                    <div class="flex items-end gap-2">
+                        <div class="flex-1">
+                            <input type="text" id="send-item-desc" placeholder="e.g. 2 Shopee Parcels" class="big-input text-sm font-medium">
+                        </div>
+                        <label class="flex items-center gap-1.5 border border-gray-100 p-2 rounded-lg cursor-pointer h-[56px] -mb-px">
+                            <input type="checkbox" id="send-has-photo" class="w-4 h-4 accent-jgDeepGreen">
+                            <span class="text-[9px] font-black text-gray-400 leading-tight">Photo<br>Ref.</span>
+                        </label>
+                    </div>
+                </div>
             </div>
 
-            <div class="bg-jgBg p-4 rounded-2xl border-2 border-dashed border-jgDeepGreen/20">
+            <div class="bg-jgBg p-4 rounded-2xl border-2 border-dashed border-jgDeepGreen/20 space-y-2">
+                <div class="flex justify-between items-center px-1">
+                    <label class="text-[9px] font-black text-jgDeepGreen uppercase tracking-widest leading-none lang-en">Promo Code</label>
+                    <label class="text-[9px] font-black text-jgDeepGreen uppercase tracking-widest leading-none lang-zh hidden">优惠码</label>
+                    <span id="promo-status" class="text-[9px] font-bold text-gray-400 leading-none italic">Apply to save!</span>
+                </div>
                 <div class="flex gap-2">
-                    <input type="text" id="promo-input" placeholder="SOKONGJIRANGO" class="flex-1 bg-white rounded-xl px-4 py-3 text-sm font-black uppercase outline-none">
-                    <button onclick="applyPromo()" id="promo-btn" class="bg-jgDeepGreen text-white px-5 py-3 rounded-xl text-xs font-black shadow-md">APPLY</button>
+                    <input type="text" id="promo-input" placeholder="e.g. SOKONGJIRANGO" class="flex-1 bg-white rounded-xl px-4 py-3 text-sm font-black uppercase border border-gray-100 outline-none">
+                    <button onclick="applyPromo()" id="promo-btn" class="bg-jgDeepGreen text-white px-5 py-3 rounded-xl text-xs font-black shadow-md active:scale-95">APPLY</button>
                 </div>
             </div>
 
-            <div class="pt-4 border-t-2 border-gray-50 flex items-center justify-between">
-                <div>
-                    <label class="text-[10px] font-black text-jgDeepGreen uppercase lang-en">Extra Stops?</label>
-                    <label class="text-[10px] font-black text-jgDeepGreen uppercase lang-zh hidden">多加地点?</label>
-                </div>
-                <div class="flex items-center gap-4">
-                    <button onclick="updateStops(-1)" class="w-10 h-10 rounded-full bg-white shadow-sm text-jgDeepGreen font-black border border-gray-100">-</button>
-                    <span id="stop-count" class="font-black text-2xl text-jgDeepGreen">1</span>
-                    <button onclick="updateStops(1)" class="w-10 h-10 rounded-full bg-jgDeepGreen text-white shadow-md font-black">+</button>
+            <div class="pt-4 border-t-2 border-gray-50 space-y-4">
+                <div class="flex items-center justify-between bg-jgDeepGreen/5 p-4 rounded-2xl border border-jgDeepGreen/10">
+                    <div>
+                        <label class="text-[10px] font-black text-jgDeepGreen uppercase tracking-widest block lang-en">Shop Locations</label>
+                        <label class="text-[10px] font-black text-jgDeepGreen uppercase tracking-widest block lang-zh hidden">地点数量</label>
+                        <p class="text-[9px] text-gray-400 font-bold">+RM2.00 per extra stop</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="updateStops(-1)" class="w-10 h-10 rounded-full bg-white shadow-sm text-jgDeepGreen font-black text-xl flex items-center justify-center border border-gray-100 active:scale-90">-</button>
+                        <span id="stop-count" class="font-black text-2xl text-jgDeepGreen min-w-[20px] text-center">1</span>
+                        <button onclick="updateStops(1)" class="w-10 h-10 rounded-full bg-jgDeepGreen text-white shadow-md font-black text-xl flex items-center justify-center active:scale-90">+</button>
+                    </div>
                 </div>
             </div>
+        </div>
+
+        <div class="bg-jgDeepGreen/5 rounded-[2rem] p-6 border-2 border-dashed border-jgDeepGreen/20">
+            <h4 class="text-xs font-black text-jgDeepGreen mb-3 text-center uppercase tracking-widest">📌 Service Rules (服务守则)</h4>
+            <ul class="text-[11px] font-bold text-gray-500 space-y-2">
+                <li class="flex items-start gap-2">• Beli: RM8 base fee (帮买 RM8 起)</li>
+                <li class="flex items-start gap-2">• Ambil: RM6 base fee (帮拿 RM6 起)</li>
+                <li class="flex items-start gap-2 text-jgOrange font-black">• NO Raw Meat / Seafood / Alcohol. (不接生鲜酒精)</li>
+            </ul>
+        </div>
+
+        <div class="mt-8 px-2 pb-10">
+            <button onclick="openPromoModal()" class="w-full py-5 rounded-[2rem] bg-jgOrange/10 border-2 border-jgOrange/30 text-jgOrange flex items-center justify-center gap-4 shadow-sm active:scale-95 transition-all">
+                <span class="text-2xl animate-bounce">🎁</span>
+                <div class="text-left">
+                    <p class="text-[11px] font-black uppercase tracking-widest leading-none lang-en">Promotions & About Us</p>
+                    <p class="text-[11px] font-black uppercase tracking-widest leading-none lang-zh hidden">优惠活动与简介</p>
+                    <p class="text-[9px] font-bold opacity-70 italic">Click to see today's hot deals!</p>
+                </div>
+            </button>
         </div>
     </main>
 
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t-4 border-jgDeepGreen/5 p-5 shadow-2xl z-30">
         <div class="flex justify-between items-center mb-4 px-1">
             <div>
-                <span class="text-gray-400 text-[10px] font-black uppercase lang-en">Total Amount</span>
-                <span class="text-gray-400 text-[10px] font-black uppercase lang-zh hidden">预计总额</span>
+                <span class="text-gray-400 text-[10px] font-black uppercase tracking-widest lang-en">Total Amount</span>
+                <span class="text-gray-400 text-[10px] font-black uppercase tracking-widest lang-zh hidden">预计总额</span>
                 <div class="text-4xl font-black text-jgDeepGreen">RM <span id="total-price">8.00</span></div>
             </div>
             <div class="text-right text-[10px] text-gray-400 font-bold leading-tight">
-                Upah: RM <span id="display-fee">8.00</span><br>
-                Items: RM <span id="display-items">0.00</span>
+                Fee: RM <span id="display-fee">8.00</span><br>
+                Items: RM <span id="display-items">0.00</span><br>
+                <span id="display-discount-row" class="text-jgOrange hidden">Promo: -RM <span id="display-discount">0.00</span></span>
             </div>
         </div>
-        <button onclick="openPayment()" class="w-full bg-jgDeepGreen text-white py-5 rounded-2xl font-black text-xl shadow-lg">
+        <button onclick="openPayment()" class="w-full bg-jgDeepGreen text-white py-5 rounded-2xl font-black text-xl shadow-lg active:scale-95">
             <span class="lang-en">Order & Pay Now</span>
             <span class="lang-zh hidden">立即下单 & 付款</span>
         </button>
+        <p class="text-[9px] text-jgOrange text-center mt-2 font-bold italic">🎁 Price difference settled upon delivery!</p>
     </div>
 
-    <div id="alert-modal" class="modal"><div class="bg-white w-full max-sm rounded-[2.5rem] p-8 text-center pop-up"><div id="alert-emoji" class="text-6xl mb-4">⚠️</div><h3 id="alert-title" class="text-xl font-black mb-2">Wait!</h3><p id="alert-msg" class="text-gray-500 mb-8 font-medium"></p><button onclick="closeAlert()" class="w-full bg-jgOrange text-white py-4 rounded-2xl font-black">OK</button></div></div>
+    <div id="alert-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl pop-up"><div id="alert-emoji" class="text-6xl mb-4">⚠️</div><h3 id="alert-title" class="text-xl font-black text-gray-800 mb-2">Wait!</h3><p id="alert-msg" class="text-gray-500 mb-8 font-medium whitespace-pre-line"></p><button onclick="closeAlert()" class="w-full bg-jgOrange text-white py-4 rounded-2xl font-black shadow-lg">OK!</button></div></div>
     
     <div id="pay-modal" class="modal"><div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-5 shadow-2xl pop-up border-t-8 border-jgDeepGreen">
         <h2 class="text-2xl font-black text-gray-800 lang-en">Confirm Payment</h2>
         <h2 class="text-2xl font-black text-gray-800 lang-zh hidden">确认付款</h2>
         <div class="py-2 text-6xl font-black text-jgOrange">RM <span id="modal-total">8.00</span></div>
-        <div class="bg-gray-100 rounded-3xl p-6 border-4 border-dashed border-gray-300">
-            <div class="text-gray-400 font-black mb-2 text-xs uppercase">[ QR CODE ]</div>
-            <p class="text-[10px] text-gray-400 lang-en">Screenshot or Scan to Pay</p>
-            <p class="text-[10px] text-gray-400 lang-zh hidden">请扫描或截图付款</p>
+        <div class="bg-gray-100 rounded-3xl p-6 border-4 border-dashed border-gray-300 relative text-center">
+            <div class="text-gray-400 font-black mb-2 text-xs uppercase tracking-widest">[ QR CODE ]</div>
+            <p class="text-[10px] text-gray-400 mb-4 lang-en">Screenshot or Scan to Pay</p>
+            <p class="text-[10px] text-gray-400 mb-4 lang-zh hidden">请扫描或截图付款</p>
+            <div class="bg-white px-4 py-2 rounded-full shadow-sm inline-block text-[10px] font-black text-jgDeepGreen uppercase">Scan to pay</div>
         </div>
         <button onclick="finishOrder()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">
             <span class="lang-en">Payment Done, Send WhatsApp</span>
-            <span class="lang-zh hidden">已付好，发送订单</span>
+            <span class="lang-zh hidden">已付好，发送 WhatsApp</span>
         </button>
         <button onclick="closeModal('pay-modal')" class="text-gray-400 text-sm font-bold underline">Back</button>
     </div></div>
 
-    <div id="promo-modal" class="modal"><div class="bg-white w-full max-w-md rounded-[2.5rem] p-6 text-center space-y-5 pop-up border-4 border-jgOrange">
-        <h2 class="text-xl font-black text-jgOrange flex items-center justify-center gap-2"><span>🔥</span> JiranGo Deals</h2>
-        <div class="slider-container bg-jgBg"><div class="slider-wrapper" id="slider-wrapper">
-            <div class="slide"><div class="text-5xl mb-3">🎁</div><h4 class="text-lg font-black lang-en">RM2.00 Gift!</h4><h4 class="text-lg font-black lang-zh hidden">见面礼 RM2.00!</h4><div class="bg-white px-4 py-2 rounded-xl border border-jgOrange text-lg font-black text-jgOrange mt-2">SOKONGJIRANGO</div></div>
-            <div class="slide"><img src="https://i.ibb.co/DHZB6mP1/file-00000000618871faa3de8745477e04c3.png" class="w-20 logo-blend"><h4 class="text-lg font-black text-jgDeepGreen">Seri Gombak!</h4><p class="text-[11px] text-gray-500 lang-en">Real neighbors helping you.</p><p class="text-[11px] text-gray-500 lang-zh hidden">您的邻居开车为您跑腿。</p></div>
-        </div></div>
-        <button onclick="closePromoModal()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black">Let's Go!</button>
-    </div></div>
+    <div id="promo-modal" class="modal">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-6 text-center space-y-5 shadow-2xl pop-up border-4 border-jgOrange">
+            <h2 class="text-xl font-black text-jgOrange flex items-center justify-center gap-2 mt-2"><span>🔥</span> JiranGo Deals</h2>
+            <div class="slider-container bg-jgBg shadow-inner">
+                <div class="slider-wrapper" id="slider-wrapper">
+                    <div class="slide">
+                        <div class="text-5xl mb-3">🎁</div>
+                        <h4 class="text-lg font-black text-gray-800 lang-en">Your RM2.00 Gift!</h4>
+                        <h4 class="text-lg font-black text-gray-800 lang-zh hidden">首单立减 RM2.00!</h4>
+                        <div class="bg-white px-4 py-2 rounded-xl border border-jgOrange text-lg font-black text-jgOrange mt-2">SOKONGJIRANGO</div>
+                    </div>
+                    <div class="slide">
+                        <img src="https://i.ibb.co/DHZB6mP1/file-00000000618871faa3de8745477e04c3.png" class="w-20 logo-blend mb-2">
+                        <h4 class="text-lg font-black text-jgDeepGreen">Seri Gombak!</h4>
+                        <p class="text-[11px] text-gray-500 lang-en">Real neighbors helping you save time.</p>
+                        <p class="text-[11px] text-gray-500 lang-zh hidden">您的邻居开车为您跑腿，省心省力。</p>
+                    </div>
+                    <div class="slide">
+                        <div class="text-5xl mb-3">🛵</div>
+                        <h4 class="text-lg font-black text-jgHelmetGreen">Daily Status</h4>
+                        <p class="text-[11px] text-gray-500 lang-en">Check WhatsApp Status for <b>RM6 deals</b>!</p>
+                        <p class="text-[11px] text-gray-500 lang-zh hidden">关注 WhatsApp 状态，抓取 <b>RM6 特价</b>！</p>
+                    </div>
+                </div>
+                <button class="slider-btn left-2" onclick="moveSlide(-1)">❮</button>
+                <button class="slider-btn right-2" onclick="moveSlide(1)">❯</button>
+            </div>
+            <div class="slider-dots">
+                <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+            <button onclick="closePromoModal()" class="w-full bg-jgDeepGreen text-white py-4 rounded-2xl font-black text-lg shadow-lg">Start Ordering</button>
+        </div>
+    </div>
 
     <script>
-        let currentType = 'buy'; let stopCount = 1; let discountAmount = 0; let currentLang = 'en';
+        var currentType = 'buy'; var stopCount = 1; var discountAmount = 0; var currentSlideIndex = 0; var currentLang = 'en';
 
+        // 💡 4.0Pro 特色功能：切换语言
         function toggleLang() {
-            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            currentLang = (currentLang === 'en') ? 'zh' : 'en';
             document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('hidden', currentLang === 'zh'));
             document.querySelectorAll('.lang-zh').forEach(el => el.classList.toggle('hidden', currentLang === 'en'));
-            document.getElementById('lang-btn-text').innerText = currentLang === 'en' ? '中文 / 中文' : 'English / 英文';
+            document.getElementById('lang-btn-text').innerText = (currentLang === 'en') ? '中文 / 中文' : 'English / 英文';
         }
 
-        function calculateTotal() {
-            let baseFee = currentType === 'buy' ? 8.0 : 6.0;
-            let itemsCost = 0;
-            if(currentType === 'buy') document.querySelectorAll('#form-buy .item-price').forEach(p => itemsCost += parseFloat(p.value || 0));
-            let total = (baseFee + (stopCount - 1) * 2.0 + itemsCost) - discountAmount;
-            document.getElementById('total-price').innerText = total.toFixed(2);
-            document.getElementById('display-fee').innerText = (baseFee + (stopCount-1)*2).toFixed(2);
-            document.getElementById('display-items').innerText = itemsCost.toFixed(2);
-        }
-
+        // 💡 4.0Pro 特色功能：空单验证
         function openPayment() {
-            // 💡 严格空单验证逻辑
             if (currentType === 'buy') {
                 let addr = document.getElementById('buy-address').value.trim();
-                let firstItem = document.querySelector('#form-buy .item-name').value.trim();
-                if (addr === "" || firstItem === "") {
-                    showJiranAlert("❌", "Empty Order", currentLang === 'en' ? "Please fill in address and at least 1 item!" : "请填写地址和至少一个项目！");
+                let firstItem = document.querySelector('#buy-items .item-name').value.trim();
+                if (addr.length < 5 || firstItem === "") {
+                    showJiranAlert("🏠", "Incomplete", currentLang === 'en' ? "Please fill in Address & Item name!" : "请填写完整的地址和物品名！");
                     return;
                 }
             } else {
@@ -208,41 +274,77 @@
                 let dropoff = document.getElementById('send-dropoff').value.trim();
                 let desc = document.getElementById('send-item-desc').value.trim();
                 if (pickup === "" || dropoff === "" || desc === "") {
-                    showJiranAlert("📦", "Incomplete", currentLang === 'en' ? "Please fill in pickup, delivery point and item!" : "请填写取货、送货地点和物品描述！");
+                    showJiranAlert("📦", "Missing info", currentLang === 'en' ? "Please fill in Pickup, Delivery & Item description!" : "请填好取货、送货地址和物品描述！");
                     return;
                 }
             }
-            document.getElementById('modal-total').innerText = document.getElementById('total-price').innerText;
             document.getElementById('pay-modal').style.display = 'flex';
         }
 
-        function finishOrder() {
-            let isBuy = currentType === 'buy';
-            let addr = isBuy ? document.getElementById('buy-address').value : document.getElementById('send-dropoff').value;
-            let details = "";
-            if(isBuy) {
-                document.querySelectorAll('#buy-items > div').forEach(row => {
-                    let n = row.querySelector('.item-name').value;
-                    let p = row.querySelector('.item-price').value || 0;
-                    if(n) details += `%0A- ${n} (RM${p})`;
-                });
-            } else { details = `%0A- ${document.getElementById('send-item-desc').value}`; }
-            
-            let text = `💰 *JiranGo ${isBuy?'Beli':'Ambil'}*%0A📍 *To*: ${addr}%0A💵 *Total*: RM${document.getElementById('total-price').innerText}%0A📝 *Items*: ${details}`;
-            window.location.href = "https://wa.me/60126947903?text=" + text;
+        // 4.0 核心逻辑 (完全不动)
+        function calculateTotal() {
+            var baseFee = (currentType === 'buy') ? 8.0 : 6.0;
+            var itemsCost = 0;
+            if(currentType === 'buy') document.querySelectorAll('#form-buy .item-price').forEach(p => itemsCost += parseFloat(p.value || 0));
+            var finalFee = baseFee + (stopCount - 1) * 2.0;
+            document.getElementById('display-fee').innerText = finalFee.toFixed(2);
+            document.getElementById('display-items').innerText = itemsCost.toFixed(2);
+            var totalVal = Math.max(0, (finalFee + itemsCost) - discountAmount);
+            document.getElementById('total-price').innerText = totalVal.toFixed(2);
+            document.getElementById('modal-total').innerText = totalVal.toFixed(2);
         }
 
-        // 基本控制逻辑 (与4.0类似)
-        function showForm(type) { currentType = type; document.getElementById('btn-buy').classList.toggle('selected', type==='buy'); document.getElementById('btn-send').classList.toggle('selected', type==='send'); document.getElementById('form-buy').classList.toggle('hidden', type!=='buy'); document.getElementById('form-send').classList.toggle('hidden', type!=='send'); calculateTotal(); }
-        function addRow(id) { let div = document.createElement('div'); div.className = "flex items-end gap-2 mt-4"; div.innerHTML = `<div class="flex-1"><input type="text" placeholder="..." class="big-input item-name text-sm font-medium" oninput="calculateTotal()"></div><div class="w-[85px]"><input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()"></div>`; document.getElementById(id).appendChild(div); }
-        function applyPromo() { if(document.getElementById('promo-input').value.toUpperCase()==="SOKONGJIRANGO") { discountAmount = 2; document.getElementById('promo-btn').innerText="OK"; calculateTotal(); } }
-        function updateStops(val) { stopCount = Math.max(1, stopCount+val); document.getElementById('stop-count').innerText = stopCount; calculateTotal(); }
-        function openPromoModal() { document.getElementById('promo-modal').style.display='flex'; }
-        function closePromoModal() { document.getElementById('promo-modal').style.display='none'; }
-        function closeModal(id) { document.getElementById(id).style.display='none'; }
-        function showJiranAlert(emoji, title, msg) { document.getElementById('alert-emoji').innerText=emoji; document.getElementById('alert-title').innerText=title; document.getElementById('alert-msg').innerText=msg; document.getElementById('alert-modal').style.display='flex'; }
-        function closeAlert() { document.getElementById('alert-modal').style.display='none'; }
-        window.onload = () => { if(new URLSearchParams(window.location.search).get('promo')==='true') setTimeout(openPromoModal, 800); };
+        function showForm(type) {
+            currentType = type;
+            document.getElementById('btn-buy').classList.toggle('selected', type === 'buy');
+            document.getElementById('btn-send').classList.toggle('selected', type === 'send');
+            document.getElementById('form-buy').classList.toggle('hidden', type !== 'buy');
+            document.getElementById('form-send').classList.toggle('hidden', type !== 'send');
+            calculateTotal();
+        }
+
+        function addRow(id) {
+            var div = document.createElement('div');
+            div.className = "flex items-end gap-2 mt-4";
+            div.innerHTML = '<div class="flex-1"><input type="text" placeholder="..." class="big-input item-name text-sm font-medium" oninput="calculateTotal()"></div><div class="w-[85px]"><input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()"></div><label class="flex items-center gap-1.5 border border-gray-100 p-2 rounded-lg cursor-pointer h-[56px] -mb-px"><input type="checkbox" class="w-4 h-4 accent-jgDeepGreen item-has-photo"><span class="text-[9px] font-black text-gray-400 leading-tight">Photo<br>Ref.</span></label>';
+            document.getElementById(id).appendChild(div);
+        }
+
+        function applyPromo() {
+            if (document.getElementById('promo-input').value.toUpperCase().trim() === "SOKONGJIRANGO") {
+                discountAmount = 2.0;
+                document.getElementById('promo-status').innerText = "✅ RM2 OFF!";
+                document.getElementById('display-discount-row').classList.remove('hidden');
+                document.getElementById('display-discount').innerText = "2.00";
+                calculateTotal();
+            }
+        }
+
+        function updateStops(val) { stopCount = Math.max(1, stopCount + val); document.getElementById('stop-count').innerText = stopCount; calculateTotal(); }
+        function openPromoModal() { document.getElementById('promo-modal').style.display = 'flex'; currentSlide(0); }
+        function closePromoModal() { document.getElementById('promo-modal').style.display = 'none'; }
+        function moveSlide(direction) { currentSlideIndex = (currentSlideIndex + direction + 3) % 3; updateSlider(); }
+        function currentSlide(index) { currentSlideIndex = index; updateSlider(); }
+        function updateSlider() { document.getElementById('slider-wrapper').style.transform = `translateX(-${currentSlideIndex * 33.333}%)`; document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === currentSlideIndex)); }
+        function finishOrder() {
+            var isBuy = (currentType === 'buy');
+            var addr = isBuy ? document.getElementById('buy-address').value : document.getElementById('send-dropoff').value;
+            var details = "";
+            if(isBuy) {
+                document.querySelectorAll('#buy-items > div').forEach(row => {
+                    var n = row.querySelector('.item-name').value; var p = parseFloat(row.querySelector('.item-price').value || 0);
+                    var photo = row.querySelector('.item-has-photo').checked ? " (📸)" : "";
+                    if(n) details += "%0A- " + n + " (RM" + p.toFixed(2) + ")" + photo;
+                });
+            } else { details = "%0A- " + document.getElementById('send-item-desc').value; }
+            var text = "💰 *" + (isBuy ? "JiranGo Beli" : "JiranGo Ambil") + "*%0A📍 *To*: " + addr + "%0A💵 *Total*: RM" + document.getElementById('total-price').innerText + "%0A📝 *Details*:" + details;
+            window.location.href = "https://wa.me/60126947903?text=" + text;
+        }
+        function showJiranAlert(emoji, title, msg) { document.getElementById('alert-emoji').innerText = emoji; document.getElementById('alert-title').innerText = title; document.getElementById('alert-msg').innerText = msg; document.getElementById('alert-modal').style.display = 'flex'; }
+        function closeAlert() { document.getElementById('alert-modal').style.display = 'none'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        window.onload = function() { if (new URLSearchParams(window.location.search).get('promo') === 'true') setTimeout(openPromoModal, 800); };
+        calculateTotal();
     </script>
 </body>
 </html>

@@ -429,31 +429,46 @@
             document.getElementById(id).appendChild(div);
         }
 
-                        function calculateTotal() {
-            // 第一处修改：把 (currentType === 'buy') ? 8.0 : 6.0 这一行写得更清晰
+                                function calculateTotal() {
+            // 1. 【核心修正】确保基础费切换正确
+            // Beli (buy) = 8.0, Ambil (send) = 6.0
             var baseFee = (currentType === 'buy') ? 8.0 : 6.0; 
             var itemsCost = 0;
 
-            // 第二处修改：确保只有在 Beli 模式才算商品钱
+            // 2. 只有在 Beli 模式下才累加商品价格
             if(currentType === 'buy') {
-                document.querySelectorAll('.item-price').forEach(p => itemsCost += parseFloat(p.value || 0));
+                document.querySelectorAll('.item-price').forEach(p => {
+                    var val = parseFloat(p.value);
+                    if (!isNaN(val)) {
+                        itemsCost += val;
+                    }
+                });
             }
             
+            // 3. 计算服务费（基础费 + 多站点的额外 2 块）
             var finalFee = baseFee + (stopCount - 1) * 2.0;
 
-            // 第三处修改：明细显示的逻辑保护
-            var df = document.getElementById('display-fee');
-            var di = document.getElementById('display-items');
-            if(df) df.innerText = finalFee.toFixed(2);
-            if(di) di.innerText = (currentType === 'buy') ? itemsCost.toFixed(2) : "0.00";
+            // 4. 更新右侧明细显示
+            var feeDisplay = document.getElementById('display-fee');
+            var itemsDisplay = document.getElementById('display-items');
+            
+            if(feeDisplay) feeDisplay.innerText = finalFee.toFixed(2);
+            if(itemsDisplay) {
+                // 如果是 Ambil 模式，Items 强制显示 0.00，不让它加钱
+                itemsDisplay.innerText = (currentType === 'buy') ? itemsCost.toFixed(2) : "0.00";
+            }
 
+            // 5. 计算总额：(服务费 + 商品费) - 折扣
             var totalVal = Math.max(0, (finalFee + itemsCost) - discountAmount);
             
+            // 6. 更新大字总额，加个 if 保护防止 ID 找不到导致卡死
             var tp = document.getElementById('total-price');
             if(tp) tp.innerText = totalVal.toFixed(2);
             
             var mt = document.getElementById('modal-total');
             if(mt) mt.innerText = totalVal.toFixed(2);
+
+            console.log("Current Mode:", currentType, "Base Fee:", baseFee, "Total:", totalVal);
         }
 
 

@@ -349,15 +349,44 @@
     });
 }
 
-        function applyPromo() {
+                function applyPromo() {
             const code = document.getElementById('promo-input').value.toUpperCase().trim();
             if (code === "SOKONGJIRANGO") {
-                discountAmount = 2.0; document.getElementById('promo-status').innerText = "✅ RM2.00 OFF!"; document.getElementById('promo-status').className = "text-[9px] font-bold text-jgHelmetGreen italic";
-                document.getElementById('promo-btn').innerText = "USED"; document.getElementById('promo-btn').disabled = true;
-                document.getElementById('display-discount-row').classList.remove('hidden'); document.getElementById('display-discount').innerText = "2.00";
-                showJiranAlert("🎉", "Applied!", "Discount RM2.00 used!"); calculateTotal();
-            } else { showJiranAlert("❌", "Invalid Code", "Please check your code."); }
+                // 1. 先把钱算好，这一步最重要
+                discountAmount = 2.0; 
+                
+                // 2. 更新 UI 状态
+                document.getElementById('promo-status').innerText = "✅ RM2.00 OFF!"; 
+                document.getElementById('promo-status').className = "text-[9px] font-bold text-jgHelmetGreen italic";
+                document.getElementById('promo-btn').innerText = "USED"; 
+                document.getElementById('promo-btn').disabled = true;
+                
+                const discountRow = document.getElementById('display-discount-row');
+                if(discountRow) {
+                    discountRow.classList.remove('hidden'); 
+                    document.getElementById('display-discount').innerText = "2.00";
+                }
+
+                // 3. 【执行减钱】挪到前面来！
+                calculateTotal(); 
+
+                // 4. 最后才尝试弹窗，加个 try 防止它报错把整个程序搞死
+                try {
+                    showJiranAlert("🎉", "Applied!", "Discount RM2.00 used!");
+                } catch (e) {
+                    // 如果 showJiranAlert 没定义，就用原生的弹窗
+                    alert("🎉 Applied! Discount RM2.00 used!"); 
+                }
+                
+            } else { 
+                try {
+                    showJiranAlert("❌", "Invalid Code", "Please check your code."); 
+                } catch (e) {
+                    alert("❌ Invalid Code");
+                }
+            }
         }
+
 
         function updateStops(val) { 
             stopCount = Math.max(1, stopCount + val); 

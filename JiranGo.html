@@ -430,36 +430,41 @@
         }
 
         function calculateTotal() {
-    // 1. 计算逻辑保持不变
+    // 1. 计算基础运费 (Buy=8, Ambil=6)
     var baseFee = (currentType === 'buy') ? 8.0 : 6.0; 
     var itemsCost = 0;
     
+    // 2. 只有在 'buy' 模式下才去算商品钱
     if(currentType === 'buy') {
-        document.querySelectorAll('#form-buy .item-price').forEach(p => itemsCost += parseFloat(p.value || 0));
+        document.querySelectorAll('#form-buy .item-price').forEach(p => {
+            itemsCost += parseFloat(p.value || 0);
+        });
     }
-    
+
+    // 3. 计算最终服务费 (基础费 + 多站点的加价)
     var finalFee = baseFee + (stopCount - 1) * 2.0;
 
-    // 2. 【保险锁 1】更新明细显示，加个判断防止报错
+    // --- 重点修改这里 ---
+    // 更新右侧明细文字
     const feeEl = document.getElementById('display-fee');
     const itemsEl = document.getElementById('display-items');
+    
     if(feeEl) feeEl.innerText = finalFee.toFixed(2);
-    if(itemsEl) itemsEl.innerText = itemsCost.toFixed(2);
+    
+    // 如果是 Ambil 模式，Items 应该强制显示 0.00
+    if(itemsEl) {
+        itemsEl.innerText = (currentType === 'buy') ? itemsCost.toFixed(2) : "0.00";
+    }
 
-    // 3. 【保险锁 2】确保 discountAmount 是最新的
-    // 这一行最重要，确保减去的是 2.0
-    var totalVal = Math.max(0, (finalFee + itemsCost) - discountAmount);
+    // 4. 计算总价
+    var currentDiscount = (typeof discountAmount !== 'undefined') ? discountAmount : 0;
+    var totalVal = Math.max(0, (finalFee + itemsCost) - currentDiscount);
 
-    // 4. 【保险锁 3】更新大字总额，防止因为找不到 ID 而卡死
+    // 更新大字
     const totalPriceEl = document.getElementById('total-price');
-    if(totalPriceEl) {
-        totalPriceEl.innerText = totalVal.toFixed(2);
-    }
+    if(totalPriceEl) totalPriceEl.innerText = totalVal.toFixed(2);
+}
 
-    const modalTotalEl = document.getElementById('modal-total');
-    if(modalTotalEl) {
-        modalTotalEl.innerText = totalVal.toFixed(2);
-    }
 
     // 打印到后台看看数字对不对
     console.log("Total updated to: " + totalVal); 

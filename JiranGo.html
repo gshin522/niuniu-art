@@ -60,25 +60,29 @@
         .dot.active { background: #F9A826; width: 20px; border-radius: 10px; }
 
 
-    /* 评价自动滚动动画 */
+        /* 🚀 评价自动滚动动画 */
     .review-scroll {
+        /* 定义动画：名称 持续时间 时间曲线 无限循环 */
         animation: scrollReviews 10s linear infinite;
+        will-change: transform; /* 提升渲染性能 */
     }
 
+    /* 定义关键帧 - 针对 h-4 (16px) 优化 */
     @keyframes scrollReviews {
         0% { transform: translateY(0); }
         25% { transform: translateY(0); }
-        35% { transform: translateY(-33.33%); }
-        60% { transform: translateY(-33.33%); }
-        70% { transform: translateY(-66.66%); }
-        95% { transform: translateY(-66.66%); }
+        35% { transform: translateY(-16px); } /* 滑动一格的高度 */
+        60% { transform: translateY(-16px); }
+        70% { transform: translateY(-32px); } /* 滑动两格的高度 */
+        95% { transform: translateY(-32px); }
         100% { transform: translateY(0); }
     }
     
-    /* 鼠标悬停时停止滚动，方便邻居阅读 */
+    /* 鼠标悬停时停止滚动 */
     .review-scroll:hover {
         animation-play-state: paused;
     }
+
         
     </style>
 </head>
@@ -220,33 +224,31 @@
             </div>
         </div>
         <button onclick="openPayment()" class="w-full bg-jgDeepGreen text-white py-5 rounded-2xl font-black text-xl shadow-lg active:scale-95">Order & Pay Now</button>
-        <div class="mt-6 px-4 pb-10">
-    <div class="flex items-center justify-between mb-3">
+        <div class="fixed bottom-0 left-0 right-0 p-4 pb-16 bg-white border-t border-gray-100 shadow-2xl z-50 rounded-t-3xl">
+    <div class="flex items-center justify-between mb-2">
         <h5 class="text-jgDeepGreen font-black text-xs tracking-wider uppercase">Neighbors' Feedback</h5>
         <div class="flex text-jgOrange text-[10px]">⭐⭐⭐⭐⭐</div>
     </div>
     
-    <div class="overflow-hidden relative h-16 bg-white rounded-2xl border border-gray-100 shadow-sm p-3">
-        <div class="review-scroll space-y-4">
-            <div class="text-[10px] text-gray-600 leading-tight">
-                <span class="font-bold text-jgDeepGreen">@Siti (Gombak):</span> 
-                "Sangat pantas! Barang sampai depan pintu condo. Terbaik!"
+    <div class="overflow-hidden relative h-10 bg-white rounded-lg p-2">
+        <div class="review-scroll space-y-1">
+            <div class="h-4 text-[9px] text-gray-600 leading-tight">
+                <span class="font-bold text-jgDeepGreen">@Siti (Gombak):</span> "Barang sampai depan pintu condo. Terbaik!"
             </div>
-            <div class="text-[10px] text-gray-600 leading-tight border-t pt-2">
-                <span class="font-bold text-jgDeepGreen">@Uncle Lim:</span> 
-                "Terima kasih JiranGo, tolong belikan beras 10kg sampai ke tingkat 3."
+            <div class="h-4 text-[9px] text-gray-600 leading-tight">
+                <span class="font-bold text-jgDeepGreen">@Uncle Lim:</span> "Service personal shopper yang teliti."
             </div>
-            <div class="text-[10px] text-gray-600 leading-tight border-t pt-2">
-                <span class="font-bold text-jgDeepGreen">@Ms. Wong:</span> 
-                "Service yang dipercayai. Rider sangat sopan!"
+            <div class="h-4 text-[9px] text-gray-600 leading-tight">
+                <span class="font-bold text-jgDeepGreen">@Ms. Wong:</span> "Sangat dipercayai. Rider sangat sopan!"
             </div>
         </div>
     </div>
     
-    <p class="text-[9px] text-gray-400 mt-2 text-center">
-        Satisfied? <a href="#" class="underline decoration-jgOrange text-jgOrange">Send us your feedback!</a>
+    <p class="text-[9px] text-gray-400 mt-1 text-center">
+        Satisfied? <a href="#" class="underline decoration-jgOrange text-jgOrange">Tell us!</a>
     </p>
 </div>
+
 
     </div>
 

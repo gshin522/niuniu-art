@@ -277,7 +277,15 @@
         function closePromoModal() { document.getElementById('promo-modal').style.display = 'none'; }
         function moveSlide(direction) { currentSlideIndex = (currentSlideIndex + direction + 4) % 4; updateSlider(); }
         function currentSlide(index) { currentSlideIndex = index; updateSlider(); }
-        function updateSlider() { document.getElementById('slider-wrapper').style.transform = `translateX(-${currentSlideIndex * 33.333}%)`; document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === currentSlideIndex)); }
+        function updateSlider() {
+    // 关键：4张图所以每次移动 25%
+    document.getElementById('slider-wrapper').style.transform = `translateX(-${currentSlideIndex * 25}%)`;
+    
+    // 更新点点
+    document.querySelectorAll('.dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentSlideIndex);
+    });
+}
 
         function applyPromo() {
             const code = document.getElementById('promo-input').value.toUpperCase().trim();

@@ -58,6 +58,28 @@
         .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: white; border: 1px solid #eee; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; color: #2D7D46; z-index: 10; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: #e5e7eb; transition: all 0.3s; }
         .dot.active { background: #F9A826; width: 20px; border-radius: 10px; }
+
+
+    /* 评价自动滚动动画 */
+    .review-scroll {
+        animation: scrollReviews 10s linear infinite;
+    }
+
+    @keyframes scrollReviews {
+        0% { transform: translateY(0); }
+        25% { transform: translateY(0); }
+        35% { transform: translateY(-33.33%); }
+        60% { transform: translateY(-33.33%); }
+        70% { transform: translateY(-66.66%); }
+        95% { transform: translateY(-66.66%); }
+        100% { transform: translateY(0); }
+    }
+    
+    /* 鼠标悬停时停止滚动，方便邻居阅读 */
+    .review-scroll:hover {
+        animation-play-state: paused;
+    }
+        
     </style>
 </head>
 <body class="pb-80">

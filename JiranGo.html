@@ -430,18 +430,41 @@
         }
 
         function calculateTotal() {
-            var baseFee = (currentType === 'buy') ? 8.0 : 6.0; var itemsCost = 0;
-            if(currentType === 'buy') document.querySelectorAll('#form-buy .item-price').forEach(p => itemsCost += parseFloat(p.value || 0));
-            var finalFee = baseFee + (stopCount - 1) * 2.0;
-            document.getElementById('display-fee').innerText = finalFee.toFixed(2);
-            document.getElementById('display-items').innerText = itemsCost.toFixed(2);
-            var totalVal = Math.max(0, (finalFee + itemsCost) - discountAmount);
-            document.getElementById('total-price').innerText = totalVal.toFixed(2);
-            document.getElementById('modal-total').innerText = totalVal.toFixed(2);
-            // 在 calculateTotal 函数的末尾，加上这一句：
-            console.log("Total updated to: " + totalVal); 
+    // 1. 计算逻辑保持不变
+    var baseFee = (currentType === 'buy') ? 8.0 : 6.0; 
+    var itemsCost = 0;
+    
+    if(currentType === 'buy') {
+        document.querySelectorAll('#form-buy .item-price').forEach(p => itemsCost += parseFloat(p.value || 0));
+    }
+    
+    var finalFee = baseFee + (stopCount - 1) * 2.0;
 
-        }
+    // 2. 【保险锁 1】更新明细显示，加个判断防止报错
+    const feeEl = document.getElementById('display-fee');
+    const itemsEl = document.getElementById('display-items');
+    if(feeEl) feeEl.innerText = finalFee.toFixed(2);
+    if(itemsEl) itemsEl.innerText = itemsCost.toFixed(2);
+
+    // 3. 【保险锁 2】确保 discountAmount 是最新的
+    // 这一行最重要，确保减去的是 2.0
+    var totalVal = Math.max(0, (finalFee + itemsCost) - discountAmount);
+
+    // 4. 【保险锁 3】更新大字总额，防止因为找不到 ID 而卡死
+    const totalPriceEl = document.getElementById('total-price');
+    if(totalPriceEl) {
+        totalPriceEl.innerText = totalVal.toFixed(2);
+    }
+
+    const modalTotalEl = document.getElementById('modal-total');
+    if(modalTotalEl) {
+        modalTotalEl.innerText = totalVal.toFixed(2);
+    }
+
+    // 打印到后台看看数字对不对
+    console.log("Total updated to: " + totalVal); 
+}
+
 
         function openPayment() {
             var isBuy = (currentType === 'buy');

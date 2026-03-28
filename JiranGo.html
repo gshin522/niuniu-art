@@ -349,10 +349,10 @@
     });
 }
 
-                        function applyPromo() {
+        function applyPromo() {
             // 1. 弹出这个，确认按钮有没有连上（如果没跳出来，说明按钮的 onclick 写错了）
-            console.log("Button Clicked!"); 
-
+            console.log("Button Clicked!");
+            alert("点到了！"); // <--- 只加这一行
             // 2. 获取输入框（加个保护，防止找不到 ID）
             var inputEl = document.getElementById('promo-input');
             if (!inputEl) {

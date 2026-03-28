@@ -349,31 +349,53 @@
     });
 }
 
-                function applyPromo() {
-            // alert("点到了！"); // 这行证明成功了，可以删掉或留着
-            
-            // 检查点 1：获取输入框的值
-            var input = document.getElementById('promo-input');
-            var code = input.value.toUpperCase().trim();
-            // alert("你输入的代码是: " + code); // 取消注释可以检查输入的对不对
+                        function applyPromo() {
+            // 1. 获取代码
+            const input = document.getElementById('promo-input');
+            const code = input.value.toUpperCase().trim();
 
             if (code === "SOKONGJIRANGO") {
-                // 检查点 2：设置折扣
+                // 2. 【核心】先把折扣变量改了！
                 discountAmount = 2.0; 
-                
-                // 检查点 3：更新打勾和文字（这一步如果卡住，说明 ID 错了）
-                document.getElementById('promo-status').innerText = "✅ RM2.00 OFF!";
-                document.getElementById('promo-btn').innerText = "USED";
-                document.getElementById('promo-btn').disabled = true;
 
-                // 检查点 4：运行计算（最关键的一步！）
-                calculateTotal(); 
-                
-                // 如果运行到这里，说明成功了！
-                alert("🎉 折扣已应用，钱应该变了！");
+                // 3. 更新 UI 显示（打勾和 USED）
+                const status = document.getElementById('promo-status');
+                if(status) {
+                    status.innerText = "✅ RM2.00 OFF!";
+                    status.className = "text-[9px] font-bold text-jgHelmetGreen italic";
+                }
+                const btn = document.getElementById('promo-btn');
+                if(btn) {
+                    btn.innerText = "USED";
+                    btn.disabled = true;
+                }
 
-            } else {
-                alert("❌ 代码不正确哦");
+                // 4. 【关键步骤】立即执行计算
+                // 我们把它放在弹窗之前，这样就算弹窗报错，钱也已经减下去了！
+                try {
+                    calculateTotal();
+                } catch(e) { console.log("计算函数出错了"); }
+
+                // 5. 显示隐藏的折扣行
+                const discRow = document.getElementById('display-discount-row');
+                if(discRow) {
+                    discRow.classList.remove('hidden');
+                    document.getElementById('display-discount').innerText = "2.00";
+                }
+
+                // 6. 最后才弹窗（加了保护，报错也不会影响上面的扣钱）
+                try {
+                    showJiranAlert("🎉", "Applied!", "Discount RM2.00 used!");
+                } catch (e) {
+                    alert("🎉 Discount RM2.00 used!"); // 如果自定义弹窗坏了，用这个保底
+                }
+                
+            } else { 
+                try {
+                    showJiranAlert("❌", "Invalid Code", "Please check your code."); 
+                } catch (e) {
+                    alert("❌ Invalid Code");
+                }
             }
         }
 

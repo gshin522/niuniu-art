@@ -349,35 +349,52 @@
     });
 }
 
-                function applyPromo() {
-    const code = document.getElementById('promo-input').value.toUpperCase().trim();
-    if (code === "SOKONGJIRANGO") {
-        // 1. 【核心】先改数值并立刻计算
-        discountAmount = 2.0; 
-        calculateTotal(); // 只要这行跑了，钱一定会变！
+                        function applyPromo() {
+            // 1. 弹出这个，确认按钮有没有连上（如果没跳出来，说明按钮的 onclick 写错了）
+            console.log("Button Clicked!"); 
 
-        // 2. 更新文字和状态
-        document.getElementById('promo-status').innerText = "✅ RM2.00 OFF!"; 
-        document.getElementById('promo-status').className = "text-[9px] font-bold text-jgHelmetGreen italic";
-        document.getElementById('promo-btn').innerText = "USED"; 
-        document.getElementById('promo-btn').disabled = true;
-        document.getElementById('display-discount-row').classList.remove('hidden'); 
-        document.getElementById('display-discount').innerText = "2.00";
+            // 2. 获取输入框（加个保护，防止找不到 ID）
+            var inputEl = document.getElementById('promo-input');
+            if (!inputEl) {
+                alert("找不到输入框 ID: promo-input");
+                return;
+            }
 
-        // 3. 最后才弹窗 (加 try 是为了防止弹窗报错卡死上面的计算)
-        try {
-            showJiranAlert("🎉", "Applied!", "Discount RM2.00 used!");
-        } catch(e) {
-            alert("🎉 Discount RM2.00 used!");
+            var code = inputEl.value.toUpperCase().trim();
+
+            if (code === "SOKONGJIRANGO") {
+                // 3. 先扣钱，这是最重要的
+                discountAmount = 2.0; 
+                
+                // 4. 尝试运行计算函数
+                if (typeof calculateTotal === "function") {
+                    calculateTotal();
+                }
+
+                // 5. 更新状态（每一行都加保护，防止其中一个 ID 错了导致后面不跑）
+                var statusEl = document.getElementById('promo-status');
+                if (statusEl) statusEl.innerText = "✅ RM2.00 OFF!";
+
+                var btnEl = document.getElementById('promo-btn');
+                if (btnEl) {
+                    btnEl.innerText = "USED";
+                    btnEl.disabled = true;
+                }
+
+                var rowEl = document.getElementById('display-discount-row');
+                if (rowEl) {
+                    rowEl.classList.remove('hidden');
+                    document.getElementById('display-discount').innerText = "2.00";
+                }
+
+                // 6. 最后弹窗
+                alert("🎉 Applied! Discount RM2.00 used!");
+
+            } else {
+                alert("❌ Invalid Code");
+            }
         }
-    } else { 
-        try {
-            showJiranAlert("❌", "Invalid Code", "Please check your code."); 
-        } catch(e) {
-            alert("❌ Invalid Code");
-        }
-    }
-}
+
 
 
 

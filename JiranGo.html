@@ -350,42 +350,35 @@
 }
 
                 function applyPromo() {
-            const code = document.getElementById('promo-input').value.toUpperCase().trim();
-            if (code === "SOKONGJIRANGO") {
-                // 1. 先把钱算好，这一步最重要
-                discountAmount = 2.0; 
-                
-                // 2. 更新 UI 状态
-                document.getElementById('promo-status').innerText = "✅ RM2.00 OFF!"; 
-                document.getElementById('promo-status').className = "text-[9px] font-bold text-jgHelmetGreen italic";
-                document.getElementById('promo-btn').innerText = "USED"; 
-                document.getElementById('promo-btn').disabled = true;
-                
-                const discountRow = document.getElementById('display-discount-row');
-                if(discountRow) {
-                    discountRow.classList.remove('hidden'); 
-                    document.getElementById('display-discount').innerText = "2.00";
-                }
+    const code = document.getElementById('promo-input').value.toUpperCase().trim();
+    if (code === "SOKONGJIRANGO") {
+        // 1. 【核心】先改数值并立刻计算
+        discountAmount = 2.0; 
+        calculateTotal(); // 只要这行跑了，钱一定会变！
 
-                // 3. 【执行减钱】挪到前面来！
-                calculateTotal(); 
+        // 2. 更新文字和状态
+        document.getElementById('promo-status').innerText = "✅ RM2.00 OFF!"; 
+        document.getElementById('promo-status').className = "text-[9px] font-bold text-jgHelmetGreen italic";
+        document.getElementById('promo-btn').innerText = "USED"; 
+        document.getElementById('promo-btn').disabled = true;
+        document.getElementById('display-discount-row').classList.remove('hidden'); 
+        document.getElementById('display-discount').innerText = "2.00";
 
-                // 4. 最后才尝试弹窗，加个 try 防止它报错把整个程序搞死
-                try {
-                    showJiranAlert("🎉", "Applied!", "Discount RM2.00 used!");
-                } catch (e) {
-                    // 如果 showJiranAlert 没定义，就用原生的弹窗
-                    alert("🎉 Applied! Discount RM2.00 used!"); 
-                }
-                
-            } else { 
-                try {
-                    showJiranAlert("❌", "Invalid Code", "Please check your code."); 
-                } catch (e) {
-                    alert("❌ Invalid Code");
-                }
-            }
+        // 3. 最后才弹窗 (加 try 是为了防止弹窗报错卡死上面的计算)
+        try {
+            showJiranAlert("🎉", "Applied!", "Discount RM2.00 used!");
+        } catch(e) {
+            alert("🎉 Discount RM2.00 used!");
         }
+    } else { 
+        try {
+            showJiranAlert("❌", "Invalid Code", "Please check your code."); 
+        } catch(e) {
+            alert("❌ Invalid Code");
+        }
+    }
+}
+
 
 
         function updateStops(val) { 
@@ -423,6 +416,9 @@
             var totalVal = Math.max(0, (finalFee + itemsCost) - discountAmount);
             document.getElementById('total-price').innerText = totalVal.toFixed(2);
             document.getElementById('modal-total').innerText = totalVal.toFixed(2);
+            // 在 calculateTotal 函数的末尾，加上这一句：
+            console.log("Total updated to: " + totalVal); 
+
         }
 
         function openPayment() {

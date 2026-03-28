@@ -349,51 +349,34 @@
     });
 }
 
-        function applyPromo() {
-            // 1. 弹出这个，确认按钮有没有连上（如果没跳出来，说明按钮的 onclick 写错了）
-            console.log("Button Clicked!");
-            alert("点到了！"); // <--- 只加这一行
-            // 2. 获取输入框（加个保护，防止找不到 ID）
-            var inputEl = document.getElementById('promo-input');
-            if (!inputEl) {
-                alert("找不到输入框 ID: promo-input");
-                return;
-            }
-
-            var code = inputEl.value.toUpperCase().trim();
+                function applyPromo() {
+            // alert("点到了！"); // 这行证明成功了，可以删掉或留着
+            
+            // 检查点 1：获取输入框的值
+            var input = document.getElementById('promo-input');
+            var code = input.value.toUpperCase().trim();
+            // alert("你输入的代码是: " + code); // 取消注释可以检查输入的对不对
 
             if (code === "SOKONGJIRANGO") {
-                // 3. 先扣钱，这是最重要的
+                // 检查点 2：设置折扣
                 discountAmount = 2.0; 
                 
-                // 4. 尝试运行计算函数
-                if (typeof calculateTotal === "function") {
-                    calculateTotal();
-                }
+                // 检查点 3：更新打勾和文字（这一步如果卡住，说明 ID 错了）
+                document.getElementById('promo-status').innerText = "✅ RM2.00 OFF!";
+                document.getElementById('promo-btn').innerText = "USED";
+                document.getElementById('promo-btn').disabled = true;
 
-                // 5. 更新状态（每一行都加保护，防止其中一个 ID 错了导致后面不跑）
-                var statusEl = document.getElementById('promo-status');
-                if (statusEl) statusEl.innerText = "✅ RM2.00 OFF!";
-
-                var btnEl = document.getElementById('promo-btn');
-                if (btnEl) {
-                    btnEl.innerText = "USED";
-                    btnEl.disabled = true;
-                }
-
-                var rowEl = document.getElementById('display-discount-row');
-                if (rowEl) {
-                    rowEl.classList.remove('hidden');
-                    document.getElementById('display-discount').innerText = "2.00";
-                }
-
-                // 6. 最后弹窗
-                alert("🎉 Applied! Discount RM2.00 used!");
+                // 检查点 4：运行计算（最关键的一步！）
+                calculateTotal(); 
+                
+                // 如果运行到这里，说明成功了！
+                alert("🎉 折扣已应用，钱应该变了！");
 
             } else {
-                alert("❌ Invalid Code");
+                alert("❌ 代码不正确哦");
             }
         }
+
 
 
 

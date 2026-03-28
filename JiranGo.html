@@ -429,14 +429,14 @@
             document.getElementById(id).appendChild(div);
         }
 
-                                function calculateTotal() {
-            // 1. 【核心修正】确保基础费切换正确
-            // Beli (buy) = 8.0, Ambil (send) = 6.0
+        function calculateTotal() {
+            // 1. 基础服务费：Beli(buy)=8.0, Ambil(send)=6.0
             var baseFee = (currentType === 'buy') ? 8.0 : 6.0; 
             var itemsCost = 0;
 
-            // 2. 只有在 Beli 模式下才累加商品价格
+            // 2. 只有在 Beli 模式下才去计算商品钱
             if(currentType === 'buy') {
+                // 抓取所有 class 为 item-price 的输入框的值
                 document.querySelectorAll('.item-price').forEach(p => {
                     var val = parseFloat(p.value);
                     if (!isNaN(val)) {
@@ -445,31 +445,36 @@
                 });
             }
             
-            // 3. 计算服务费（基础费 + 多站点的额外 2 块）
+            // 3. 计算最终运费 (基础费 + 多站点加价)
             var finalFee = baseFee + (stopCount - 1) * 2.0;
 
-            // 4. 更新右侧明细显示
-            var feeDisplay = document.getElementById('display-fee');
-            var itemsDisplay = document.getElementById('display-items');
+            // 4. 更新右侧小字明细 (Upah 和 Items)
+            var feeEl = document.getElementById('display-fee');
+            var itemsEl = document.getElementById('display-items');
             
-            if(feeDisplay) feeDisplay.innerText = finalFee.toFixed(2);
-            if(itemsDisplay) {
-                // 如果是 Ambil 模式，Items 强制显示 0.00，不让它加钱
-                itemsDisplay.innerText = (currentType === 'buy') ? itemsCost.toFixed(2) : "0.00";
+            if(feeEl) {
+                feeEl.innerText = finalFee.toFixed(2);
+            }
+            
+            if(itemsEl) {
+                // 如果是 Ambil 模式，Items 小字强制显示 0.00
+                itemsEl.innerText = (currentType === 'buy') ? itemsCost.toFixed(2) : "0.00";
             }
 
-            // 5. 计算总额：(服务费 + 商品费) - 折扣
+            // 5. 计算最终大字总额 (运费 + 商品钱 - 折扣)
+            // 确保 discountAmount 已经被 applyPromo 修改
             var totalVal = Math.max(0, (finalFee + itemsCost) - discountAmount);
-            
-            // 6. 更新大字总额，加个 if 保护防止 ID 找不到导致卡死
+
+            // 6. 更新页面上的总额显示
             var tp = document.getElementById('total-price');
             if(tp) tp.innerText = totalVal.toFixed(2);
-            
+
             var mt = document.getElementById('modal-total');
             if(mt) mt.innerText = totalVal.toFixed(2);
 
-            console.log("Current Mode:", currentType, "Base Fee:", baseFee, "Total:", totalVal);
+            console.log("Mode:", currentType, "Fee:", finalFee, "Items:", itemsCost, "Total:", totalVal);
         }
+
 
 
 

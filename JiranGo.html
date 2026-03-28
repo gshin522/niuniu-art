@@ -78,7 +78,7 @@
     </div>
 
     <div class="bg-jgDeepGreen text-white text-center py-2.5 text-[10px] font-black uppercase tracking-[0.15em] sticky top-0 z-30 shadow-sm">
-        🕒 ORDER: 9AM - 6PM | 🛵 DELIVERY: 8PM - 10PM
+        🕒 ORDER: 3PM - 6PM | 🛵 DELIVERY: 8PM - 10PM
     </div>
 
     <header class="bg-white px-4 pb-1 pt-4 border-b-2 border-jgDeepGreen/10 flex flex-col items-center">
@@ -207,7 +207,7 @@
     <script>
         var currentType = 'buy'; var stopCount = 1; var discountAmount = 0; var currentSlideIndex = 0;
 
-        // 🚀 全屏启动逻辑
+              // 🚀 全屏启动逻辑
         function startApp() {
             const doc = document.documentElement;
             if (doc.requestFullscreen) { doc.requestFullscreen(); }
@@ -216,7 +216,14 @@
 
             const splash = document.getElementById('splash-screen');
             splash.style.opacity = '0';
-            setTimeout(() => { splash.style.display = 'none'; }, 600);
+            
+            // 600毫秒后启动页消失，紧接着弹出 Special Deal
+            setTimeout(() => { 
+                splash.style.display = 'none'; 
+                
+                // ✨ 关键点：启动页消失的一瞬间，自动弹出 Modal
+                openPromoModal(); 
+            }, 600);
         }
 
         function openPromoModal() { document.getElementById('promo-modal').style.display = 'flex'; currentSlide(0); }

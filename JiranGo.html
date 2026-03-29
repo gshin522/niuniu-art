@@ -544,62 +544,22 @@
         calculateTotal();
 
 
-        // --- JiranGo 地址记忆功能 (自动化版) ---
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. 自动在输入框下面生成气泡容器
-    const addressInput = document.getElementById('buy-address');
-    if (addressInput) {
-        const hintDiv = document.createElement('div');
-        hintDiv.id = 'address-hint-container';
-        hintDiv.className = 'hidden mt-2 px-1';
-        hintDiv.innerHTML = `
-            <div onclick="useSavedAddress()" style="display:inline-flex; align-items:center; background:#f9f9f9; border:1px solid #eee; border-radius:20px; padding:6px 12px; cursor:pointer;">
-                <span style="font-size:10px; color:#999; margin-right:5px;">📍 上次:</span>
-                <span id="saved-address-text" style="font-size:10px; font-weight:bold; color:#1b5e20; max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
-                <span style="font-size:9px; color:#f57c00; font-weight:black; margin-left:8px; text-transform:uppercase;">点击填入</span>
-            </div>
-        `;
-        addressInput.parentNode.insertBefore(hintDiv, addressInput.nextSibling);
-        
-        // 2. 页面加载完成后检查是否有旧地址
-        setTimeout(checkSavedAddress, 1000); // 延迟1秒确保Splash消失后检查
-    }
-});
-
-// 点击填入功能
-function useSavedAddress() {
-    const saved = localStorage.getItem('jiranGo_LastAddr');
-    const inputField = document.getElementById('buy-address');
-    if (saved && inputField) {
-        inputField.value = saved;
-        document.getElementById('address-hint-container').style.display = 'none';
-        inputField.focus();
-    }
-}
-
-// 检查并显示
-function checkSavedAddress() {
-    const saved = localStorage.getItem('jiranGo_LastAddr');
-    const container = document.getElementById('address-hint-container');
-    const textSpan = document.getElementById('saved-address-text');
-    const inputField = document.getElementById('buy-address');
-
-    if (saved && inputField && !inputField.value) {
-        textSpan.innerText = saved;
-        container.style.display = 'block';
-    }
-}
-
-// 保存功能 (请手动在你下单的按钮逻辑最后加上 saveCurrentAddress();)
+        // 1. 保存地址的功能
 function saveCurrentAddress() {
     const addr = document.getElementById('buy-address').value;
-    if (addr && addr.trim() !== "") {
-        localStorage.setItem('jiranGo_LastAddr', addr);
+    if (addr && addr.trim() !== "") { 
+        localStorage.setItem('jiranGo_LastAddr', addr); 
     }
 }
 
-
-
+// 2. 自动填入的功能（打开 App 时执行）
+window.addEventListener('load', () => {
+    const saved = localStorage.getItem('jiranGo_LastAddr');
+    const input = document.getElementById('buy-address');
+    if (saved && input && !input.value) {
+        input.value = saved;
+    }
+});
 
         
     </script>

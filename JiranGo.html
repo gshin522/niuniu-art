@@ -576,22 +576,22 @@ window.addEventListener('load', () => {
     <div class="bg-white w-full max-w-sm rounded-[2.5rem] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
         <div class="p-6 bg-jgDeepGreen text-white flex justify-between items-center">
             <div>
-                <h3 class="font-black text-lg leading-tight">选择商店</h3>
-                <p class="text-[10px] opacity-70 uppercase tracking-widest">Select Shop / Kedai</p>
+                <h3 class="font-black text-lg leading-tight">Select Shop</h3>
+                <p class="text-[10px] opacity-70 uppercase tracking-widest">Pilih Kedai / Merchant</p>
             </div>
             <button onclick="document.getElementById('shop-modal').classList.add('hidden')" class="bg-white/20 hover:bg-white/30 w-10 h-10 rounded-full flex items-center justify-center text-2xl">&times;</button>
         </div>
 
         <div class="p-4 bg-gray-50 border-b border-gray-100">
-            <button class="w-full bg-jgOrange text-white py-3 rounded-xl font-black text-sm shadow-md active:scale-95 transition-all">
-                🌟 让我帮你选 (Rider Decide)
+            <button onclick="selectShop('🌟 Rider Decide')" class="w-full bg-jgOrange text-white py-3 rounded-xl font-black text-sm shadow-md active:scale-95 transition-all">
+                🌟 Rider Decide (Let me choose for you)
             </button>
         </div>
 
         <div class="p-4 max-h-[350px] overflow-y-auto space-y-2">
-            <p class="text-[10px] font-black text-gray-400 uppercase ml-1 mb-2">常用商店 / Popular</p>
+            <p class="text-[10px] font-black text-gray-400 uppercase ml-1 mb-2">Popular Options</p>
             
-            <button class="w-full text-left p-4 rounded-2xl border-2 border-gray-50 hover:border-jgDeepGreen/20 flex items-center gap-3 bg-white active:bg-gray-50">
+            <button onclick="selectShop('99 Speedmart')" class="w-full text-left p-4 rounded-2xl border-2 border-gray-50 hover:border-jgDeepGreen/20 flex items-center gap-3 bg-white active:bg-gray-50">
                 <span class="text-xl">🛒</span>
                 <div>
                     <div class="font-bold text-sm text-jgDeepGreen">99 Speedmart</div>
@@ -599,7 +599,7 @@ window.addEventListener('load', () => {
                 </div>
             </button>
 
-            <button class="w-full text-left p-4 rounded-2xl border-2 border-gray-50 hover:border-jgDeepGreen/20 flex items-center gap-3 bg-white active:bg-gray-50">
+            <button onclick="selectShop('Local Stall')" class="w-full text-left p-4 rounded-2xl border-2 border-gray-50 hover:border-jgDeepGreen/20 flex items-center gap-3 bg-white active:bg-gray-50">
                 <span class="text-xl">🍜</span>
                 <div>
                     <div class="font-bold text-sm text-jgDeepGreen">Local Kopitiam / Stall</div>
@@ -607,12 +607,13 @@ window.addEventListener('load', () => {
                 </div>
             </button>
 
-            <button class="w-full text-left p-4 rounded-2xl border-2 border-gray-100 border-dashed flex items-center justify-center gap-2 py-3 text-gray-400">
-                <span class="text-xs font-bold">+ 其他商店 (自行输入)</span>
+            <button onclick="selectShop('')" class="w-full text-left p-4 rounded-2xl border-2 border-gray-100 border-dashed flex items-center justify-center gap-2 py-3 text-gray-400">
+                <span class="text-xs font-bold">+ Others (Self-type)</span>
             </button>
         </div>
     </div>
 </div>
+
 
 <script>
     // 这是一个临时函数，方便你测试

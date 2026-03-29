@@ -447,10 +447,25 @@
         }
 
         function addRow(id) {
-            var div = document.createElement('div'); div.className = "flex items-end gap-2 mt-4";
-            div.innerHTML = '<div class="flex-1"><input type="text" placeholder="..." class="big-input item-name text-sm font-medium" oninput="calculateTotal()"></div><div class="w-[85px]"><input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()"></div><label class="flex items-center gap-1.5 border border-gray-100 p-2 rounded-lg cursor-pointer h-[56px] -mb-px"><input type="checkbox" class="w-4 h-4 accent-jgDeepGreen item-has-photo"><span class="text-[9px] font-black text-gray-400 leading-tight">Photo<br>Ref.</span></label>';
-            document.getElementById(id).appendChild(div);
-        }
+    const rowId = 'row-' + Date.now(); // 每一行都有个独特的身份证
+    var div = document.createElement('div'); 
+    div.className = "flex items-end gap-2 mt-4";
+    div.innerHTML = `
+        <div class="flex-1">
+            <input type="text" id="${rowId}" placeholder="..." class="big-input item-name text-sm font-medium" oninput="calculateTotal()">
+            <div onclick="openShopPicker('${rowId}')" class="text-[9px] text-jgOrange font-bold mt-1 cursor-pointer">
+                📍 Select Shop / Pilih Kedai
+            </div>
+        </div>
+        <div class="w-[85px]">
+            <input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()">
+        </div>
+        <label class="flex items-center gap-1.5 border border-gray-100 p-2 rounded-lg cursor-pointer h-[56px] -mb-px">
+            <input type="checkbox" class="w-4 h-4 accent-jgDeepGreen item-has-photo">
+            <span class="text-[9px] font-black text-gray-400 leading-tight">Photo<br>Ref.</span>
+        </label>`;
+    document.getElementById(id).appendChild(div);
+}
 
         function calculateTotal() {
             // 1. 基础服务费：Beli(buy)=8.0, Ambil(send)=6.0
@@ -499,6 +514,29 @@
         }
 
 
+// --- JiranGo 商店选择器逻辑 ---
+let currentTargetId = ''; // 这是一个全局变量，放在函数外面
+
+function openShopPicker(targetId) {
+    currentTargetId = targetId; 
+    document.getElementById('shop-modal').classList.remove('hidden');
+}
+
+function selectShop(shopName) {
+    if (currentTargetId) {
+        const targetInput = document.getElementById(currentTargetId);
+        if (targetInput) {
+            targetInput.value = shopName;
+        }
+    }
+    // 关闭弹窗
+    document.getElementById('shop-modal').classList.add('hidden');
+    // 如果你有计算总价的函数，顺便跑一下
+    if (typeof calculateTotal === "function") {
+        calculateTotal();
+    }
+}
+// --- 逻辑结束 ---
 
 
 

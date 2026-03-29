@@ -560,6 +560,60 @@ window.addEventListener('load', () => {
     }
 });
 
+<div id="shop-modal" class="fixed inset-0 bg-black/60 z-[999] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-[2.5rem] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+        <div class="p-6 bg-jgDeepGreen text-white flex justify-between items-center">
+            <div>
+                <h3 class="font-black text-lg leading-tight">选择商店</h3>
+                <p class="text-[10px] opacity-70 uppercase tracking-widest">Select Shop / Kedai</p>
+            </div>
+            <button onclick="document.getElementById('shop-modal').classList.add('hidden')" class="bg-white/20 hover:bg-white/30 w-10 h-10 rounded-full flex items-center justify-center text-2xl">&times;</button>
+        </div>
+
+        <div class="p-4 bg-gray-50 border-b border-gray-100">
+            <button class="w-full bg-jgOrange text-white py-3 rounded-xl font-black text-sm shadow-md active:scale-95 transition-all">
+                🌟 让我帮你选 (Rider Decide)
+            </button>
+        </div>
+
+        <div class="p-4 max-h-[350px] overflow-y-auto space-y-2">
+            <p class="text-[10px] font-black text-gray-400 uppercase ml-1 mb-2">常用商店 / Popular</p>
+            
+            <button class="w-full text-left p-4 rounded-2xl border-2 border-gray-50 hover:border-jgDeepGreen/20 flex items-center gap-3 bg-white active:bg-gray-50">
+                <span class="text-xl">🛒</span>
+                <div>
+                    <div class="font-bold text-sm text-jgDeepGreen">99 Speedmart</div>
+                    <div class="text-[10px] text-gray-400">Groceries & Essentials</div>
+                </div>
+            </button>
+
+            <button class="w-full text-left p-4 rounded-2xl border-2 border-gray-50 hover:border-jgDeepGreen/20 flex items-center gap-3 bg-white active:bg-gray-50">
+                <span class="text-xl">🍜</span>
+                <div>
+                    <div class="font-bold text-sm text-jgDeepGreen">Local Kopitiam / Stall</div>
+                    <div class="text-[10px] text-gray-400">Food & Beverages</div>
+                </div>
+            </button>
+
+            <button class="w-full text-left p-4 rounded-2xl border-2 border-gray-100 border-dashed flex items-center justify-center gap-2 py-3 text-gray-400">
+                <span class="text-xs font-bold">+ 其他商店 (自行输入)</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 这是一个临时函数，方便你测试
+    function showShopModalPreview() {
+        document.getElementById('shop-modal').classList.remove('hidden');
+    }
+</script>
+
+
+
+
+
+
         
     </script>
 </body>

@@ -160,7 +160,16 @@
                 <div id="buy-items" class="space-y-4">
                     <div class="flex items-end gap-2">
                         <div class="flex-1">
-                            <label class="text-[9px] font-black text-gray-400 uppercase ml-1">Items & Shop Name</label>
+
+                            
+                            <label onclick="showShopModalPreview()" class="text-[9px] font-black text-gray-400 uppercase ml-1 cursor-pointer flex items-center gap-1">
+    Items & Shop Name 
+    <span class="bg-jgOrange/10 text-jgOrange px-1.5 py-0.5 rounded-md text-[8px] animate-pulse">
+        📍 点我选商店 Select
+    </span>
+</label>
+
+                            
                             <input type="text" placeholder="e.g. Panadol (Ali Farmasi)" class="big-input item-name text-sm font-medium" oninput="calculateTotal()">
                         </div>
                         <div class="w-[85px]">

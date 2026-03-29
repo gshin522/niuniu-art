@@ -452,34 +452,37 @@
         }
 
         function addRow(id) {
-    const rowId = 'row-' + Date.now(); // 每一行都有个独特的身份证
+    const rowId = 'row-' + Date.now();
     var div = document.createElement('div'); 
     
-    // --- 1. 间距和原本一样 ---
-    div.className = "flex items-end gap-2 mt-4"; 
+    // 用 flex-nowrap 强制不准换行，gap-2 保持间距
+    div.className = "flex flex-nowrap items-end gap-2 mt-4 w-full"; 
     
     div.innerHTML = `
-        <div class="flex-1">
-            <input type="text" id="${rowId}" placeholder="..." class="big-input item-name text-sm font-medium" oninput="calculateTotal()">
-            
-            <label onclick="openShopPicker('${rowId}')" class="flex items-center gap-1 cursor-pointer mt-1 ml-1">
-                <span class="text-[9px] text-jgOrange font-bold uppercase animate-pulse">
+        <div style="width: 55%;">
+            <input type="text" id="${rowId}" placeholder="..." class="big-input item-name text-sm font-medium w-full" oninput="calculateTotal()">
+            <label onclick="openShopPicker('${rowId}')" class="flex items-center gap-1 cursor-pointer mt-1">
+                <span class="text-[8px] text-jgOrange font-bold uppercase whitespace-nowrap">
                     📍 SELECT SHOP / PILIH KEDAI
                 </span>
             </label>
         </div>
 
-        <div class="w-[85px]">
+        <div style="width: 25%;">
+            <div class="text-[8px] font-black text-gray-400 uppercase mb-1 ml-1 text-center">Est. RM</div>
             <input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()">
         </div>
 
-        <label class="flex items-center gap-1.5 border border-gray-100 p-2 rounded-lg cursor-pointer h-[56px] -mb-px">
-            <input type="checkbox" class="w-4 h-4 accent-jgDeepGreen item-has-photo">
-            <span class="text-[9px] font-black text-gray-400 leading-tight">Photo<br>Ref.</span>
-        </label>`;
+        <div style="width: 20%;">
+            <label class="flex flex-col items-center justify-center border border-gray-100 rounded-lg cursor-pointer h-[56px] bg-white">
+                <input type="checkbox" class="w-4 h-4 accent-jgDeepGreen item-has-photo">
+                <span class="text-[7px] font-black text-gray-400 leading-tight text-center mt-1">PHOTO</span>
+            </label>
+        </div>`;
         
     document.getElementById(id).appendChild(div);
 }
+
 
 
         function calculateTotal() {

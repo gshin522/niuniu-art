@@ -581,24 +581,25 @@ function selectShop(shopName) {
         let emptyRows = 0;
         const itemRows = document.querySelectorAll('#buy-items > div');
 
-        itemRows.forEach((row, index) => {
+                itemRows.forEach((row, index) => {
             var itemName = row.querySelector('.item-name').value.trim();
             var itemPrice = row.querySelector('.item-price').value.trim();
 
-            // 如果这一行写了名字，但没写价格
+            // 🔥 双向逻辑：
+            // 1. 写了名字没写钱
             if (itemName !== "" && (itemPrice === "" || parseFloat(itemPrice) <= 0)) {
                 allValid = false;
                 showJiranAlert("💰", "Missing Price", "Row " + (index + 1) + ": Please enter estimated price for '" + itemName + "'.");
             }
             
+            // 2. 🔥 新增：给了钱没写名字
+            if (itemName === "" && itemPrice !== "" && parseFloat(itemPrice) > 0) {
+                allValid = false;
+                showJiranAlert("🛒", "Missing Item Name", "Row " + (index + 1) + ": Please describe what you are buying for RM " + itemPrice + ".");
+            }
+
             if (itemName === "") emptyRows++;
         });
-
-        // 如果连第一行都是空的
-        if (emptyRows === itemRows.length) {
-            showJiranAlert("🛒", "Missing Items", "Please add at least one item and its estimated price.");
-            return;
-        }
 
         if (!allValid) return; // 如果有任何一行没填价格，拦截！
 

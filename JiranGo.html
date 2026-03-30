@@ -568,23 +568,55 @@ function selectShop(shopName) {
 
 
         function openPayment() {
-            var isBuy = (currentType === 'buy');
-            if (isBuy) {
-                var addr = document.getElementById('buy-address').value.trim();
-                var firstItem = document.querySelector('.item-name').value.trim();
-                var firstPrice = document.querySelector('.item-price').value.trim();
-                if (addr.length < 10) { showJiranAlert("🏠", "Address Too Short", "Min. 10 characters required for delivery address."); return; }
-                if (firstItem === "" || firstPrice === "") { showJiranAlert("🛒", "Missing Items", "Please add item and estimated price."); return; }
-            } else {
-                var pFrom = document.getElementById('send-pickup').value.trim();
-                var pTo = document.getElementById('send-dropoff').value.trim();
-                var desc = document.getElementById('send-item-desc').value.trim();
-                if (pFrom.length < 10 || pTo.length < 10) { showJiranAlert("🚚", "Address Too Short", "Min. 10 characters required for addresses."); return; }
-                if (desc === "") { showJiranAlert("📦", "Item Missing", "Please describe the item."); return; }
-            }
-            document.getElementById('pay-modal').style.display = 'flex';
-            saveCurrentAddress();
+    var isBuy = (currentType === 'buy');
+    if (isBuy) {
+        var addr = document.getElementById('buy-address').value.trim();
+        if (addr.length < 10) { 
+            showJiranAlert("🏠", "Address Too Short", "Min. 10 characters required for delivery address."); 
+            return; 
         }
+
+        // 🔥 新增：检查所有物品行
+        let allValid = true;
+        let emptyRows = 0;
+        const itemRows = document.querySelectorAll('#buy-items > div');
+
+        itemRows.forEach((row, index) => {
+            var itemName = row.querySelector('.item-name').value.trim();
+            var itemPrice = row.querySelector('.item-price').value.trim();
+
+            // 如果这一行写了名字，但没写价格
+            if (itemName !== "" && (itemPrice === "" || parseFloat(itemPrice) <= 0)) {
+                allValid = false;
+                showJiranAlert("💰", "Missing Price", "Row " + (index + 1) + ": Please enter estimated price for '" + itemName + "'.");
+            }
+            
+            if (itemName === "") emptyRows++;
+        });
+
+        // 如果连第一行都是空的
+        if (emptyRows === itemRows.length) {
+            showJiranAlert("🛒", "Missing Items", "Please add at least one item and its estimated price.");
+            return;
+        }
+
+        if (!allValid) return; // 如果有任何一行没填价格，拦截！
+
+    } else {
+        // Send (Pickup) 逻辑保持不变
+        var pFrom = document.getElementById('send-pickup').value.trim();
+        var pTo = document.getElementById('send-dropoff').value.trim();
+        var desc = document.getElementById('send-item-desc').value.trim();
+        if (pFrom.length < 10 || pTo.length < 10) { showJiranAlert("🚚", "Address Too Short", "Min. 10 characters required for addresses."); return; }
+        if (desc === "") { showJiranAlert("📦", "Item Missing", "Please describe the item."); return; }
+    }
+
+    // 全部检查通过，才打开支付弹窗
+    document.getElementById('pay-modal').style.display = 'flex';
+    saveCurrentAddress();
+}
+
+        
 
         function finishOrder() {
             var isBuy = (currentType === 'buy');

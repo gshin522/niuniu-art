@@ -537,17 +537,33 @@ function selectShop(shopName) {
     if (currentTargetId) {
         const targetInput = document.getElementById(currentTargetId);
         if (targetInput) {
-            targetInput.value = shopName;
+            // 1. 获取原本已经写好的内容（去掉两边的空格）
+            let originalItem = targetInput.value.trim();
+            
+            // 2. 如果选的是 "Others" (传过来是空值)，就让用户继续自己打
+            if (shopName === "") {
+                targetInput.focus(); 
+            } 
+            // 3. 如果原本是空的，直接填入店名
+            else if (originalItem === "") {
+                targetInput.value = shopName;
+            } 
+            // 4. 🔥 核心逻辑：如果原本有东西，就用 @ 符号连接
+            else {
+                // 如果原本已经有 @ 了（比如用户选错了想重选），我们先清理掉旧的店名
+                if (originalItem.includes(" @ ")) {
+                    originalItem = originalItem.split(" @ ")[0];
+                }
+                targetInput.value = originalItem + " @ " + shopName;
+            }
         }
     }
     // 关闭弹窗
     document.getElementById('shop-modal').classList.add('hidden');
-    // 如果你有计算总价的函数，顺便跑一下
-    if (typeof calculateTotal === "function") {
-        calculateTotal();
-    }
+    
+    // 选完后，如果需要自动计算（比如店名影响价格），可以跑一下
+    if (typeof calculateTotal === "function") calculateTotal();
 }
-// --- 逻辑结束 ---
 
 
 

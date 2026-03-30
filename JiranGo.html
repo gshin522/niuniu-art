@@ -449,34 +449,25 @@
             updateStops(0);
         }
 
-        function addRow(id) {
-    const rowId = 'row-' + Date.now();
-    var div = document.createElement('div'); 
-    // 用最原始、最稳的类名
-    div.className = "flex items-end gap-2 mt-4 pb-2 border-b border-gray-50"; 
-    
-    div.innerHTML = `
-        <div class="flex-1">
-            <div class="flex items-center gap-1.5">
-                <input type="text" id="${rowId}" placeholder="..." class="big-input item-name text-sm font-medium flex-1" oninput="calculateTotal()">
-                
-                <button onclick="openShopPicker('${rowId}')" class="bg-gray-50 border border-gray-100 p-2 rounded-xl text-lg h-[50px] w-[50px] flex items-center justify-center active:scale-95 transition-all">
-                    🏬
-                </button>
-            </div>
+      // 修改 addRow 里的这一块
+div.innerHTML = `
+    <div class="flex-1 min-w-0"> <div class="flex items-center gap-1.5">
+            <input type="text" id="${rowId}" placeholder="..." class="big-input item-name text-sm font-medium flex-1" oninput="calculateTotal()">
+            <button onclick="openShopPicker('${rowId}')" class="bg-gray-50 border border-gray-100 p-2 rounded-xl text-lg h-[50px] w-[50px] flex-shrink-0 flex items-center justify-center active:scale-95">
+                🏬
+            </button>
         </div>
+    </div>
 
-        <div class="w-[85px]">
-            <input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()">
-        </div>
+    <div class="w-[80px] flex-shrink-0">
+        <input type="number" placeholder="0" class="price-input item-price w-full" oninput="calculateTotal()">
+    </div>
 
-        <label class="flex items-center gap-1.5 border border-gray-100 p-2 rounded-lg cursor-pointer h-[56px]">
+    <div class="w-[60px] flex-shrink-0">
+        <label class="flex items-center justify-center border border-gray-100 rounded-lg cursor-pointer h-[50px]">
             <input type="checkbox" class="w-4 h-4 accent-jgDeepGreen item-has-photo">
-            <span class="text-[9px] font-black text-gray-400 leading-tight">Photo<br>Ref.</span>
-        </label>`;
-        
-    document.getElementById(id).appendChild(div);
-}
+        </label>
+    </div>`;
 
 
         function calculateTotal() {

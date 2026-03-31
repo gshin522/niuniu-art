@@ -159,6 +159,30 @@
                 <p class="text-[9px] font-bold text-gray-400 italic px-1">Please add items, estimated price and tick if you have a photo.</p>
                 <div id="buy-items" class="space-y-4">
 
+
+<div id="form-send" class="hidden space-y-4">
+    <label class="text-[10px] font-black text-jgHelmetGreen uppercase ml-1 tracking-widest">Pickup From (Alamat Ambil)</label>
+    <input type="text" id="send-pickup" placeholder="e.g. 10, Jalan SG 2/5 (Kpg Laksamana)" class="big-input text-sm font-medium">
+    
+    <label class="text-[10px] font-black text-jgHelmetGreen uppercase ml-1 tracking-widest">Deliver To (Alamat Hantar)</label>
+    <input type="text" id="send-dropoff" placeholder="e.g. 30, Jalan AG 1/20 (Your Address)" class="big-input text-sm font-medium">
+    
+    <div class="border-t-2 border-dashed border-gray-100 my-4"></div>
+    
+    <label class="text-[10px] font-black text-jgHelmetGreen uppercase ml-1 tracking-widest">Item Description (Barang Apa?)</label>
+    <input type="text" id="send-item-desc" placeholder="e.g. Dokumen / Makanan / Parcel" class="big-input text-sm font-medium">
+
+    <label class="flex items-center gap-3 border border-gray-100 p-4 rounded-2xl cursor-pointer bg-gray-50/50">
+        <input type="checkbox" id="send-has-photo" class="w-6 h-6 accent-jgHelmetGreen">
+        <div>
+            <b class="text-sm block">Reference Photo?</b>
+            <span class="text-[9px] font-bold text-gray-400 italic">Tick if you will send photo via WhatsApp.</span>
+        </div>
+    </label>
+</div>
+
+
+
                     
   <div class="flex items-end gap-2 mt-4 w-full flex-nowrap">
     <div style="width: 60%; flex-shrink: 0;">
